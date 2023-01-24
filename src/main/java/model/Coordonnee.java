@@ -1,5 +1,8 @@
 package main.java.model;
 
+/*
+ * La classe Coordonnee va servir pour définir le plateau
+ */
 public class Coordonnee {
 
     /*
