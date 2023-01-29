@@ -21,9 +21,5 @@ public class Test {
             System.out.println(p.gridHexagone.get(c));
             System.out.println("----------------------------");
         }
-
-        Coordonnee c1 = new Coordonnee(0, 0);
-        Coordonnee c2 = new Coordonnee(1, 6);
-        Coordonnee c3 = new Coordonnee(0, 0);
     }
 }

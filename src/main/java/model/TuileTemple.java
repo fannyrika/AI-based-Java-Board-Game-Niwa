@@ -1,7 +1,5 @@
 package main.java.model;
 
-import main.java.model.Hexagone.Couleurs;
-
 public class TuileTemple extends Tuile {
 
     /**

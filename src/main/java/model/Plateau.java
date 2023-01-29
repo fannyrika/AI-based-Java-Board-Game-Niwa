@@ -1,11 +1,13 @@
 package main.java.model;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
+import main.java.model.interfaces.DeplacementPion;
 import main.java.model.interfaces.HexagoneAutour;
 import main.java.model.interfaces.TuilesAutour;
 
-public class Plateau {
+public class Plateau implements DeplacementPion {
 
     /**
      * Attributs permettant de définir un plateau
@@ -127,7 +129,7 @@ public class Plateau {
     }
 
     /**
-     * Méthode pour placer un pion autour du temple du proprietaire avant que la partie commence
+     * Méthode pour placer un pion autour du temple de son proprietaire avant que la partie commence
      * @param p -> Le pion à placer
      * @param c -> L'endroit où placer le pion
      * @return -> true si le pion est placé (la location du pion est donc mise à jour), false sinon (pion trop loin du temple OU emplacement occupé)
@@ -141,5 +143,80 @@ public class Plateau {
             }
         }
         return false;
-    }    
+    }
+
+    /**
+     * Méthode privée, toujours dans le sens horaire :
+     * @param p -> pion à déplacer
+     * @param direction
+     * | 0 -> NE
+     * | 1 -> E
+     * | 2 -> SE
+     * | 3 -> SO
+     * | 4 -> O
+     * | 5 -> NO
+     */
+    private ArrayList<Coordonnee> canMoveLocationsDirection(Pion p, Coordonnee position, int direction) {
+        if(direction > 5){return new ArrayList<Coordonnee>();}        // N'est pas censé arriver si le jeu est fait correctement
+
+        Coordonnee[] choix = HexagoneAutour.get(position);
+
+        if(!gridHexagone.containsKey(choix[direction])){return new ArrayList<Coordonnee>();}      // CAS 0 : Le pion veut aller hors du plateau -> on return une liste vide
+
+        if(p.empty()){    // CAS 1 : Le pion n'a pas de perle
+            if(gridPion.containsKey(choix[direction])){     // CAS 1.1 : il y a un personnage sur sa direction -> il doit donc sauter
+                Coordonnee[] choixApres = HexagoneAutour.get(choix[direction]);
+                Coordonnee c1;
+                Coordonnee c2;
+                Coordonnee c3;
+                if(direction == 0){
+                    c1 = choixApres[5];
+                    c2 = choixApres[0];
+                    c3 = choixApres[1];
+                }
+                else{
+                    c1 = choixApres[direction-1];
+                    c2 = choixApres[direction];
+                    c3 = choixApres[direction+1];
+                }
+
+                if(gridPion.containsKey(c1) && gridPion.containsKey(c2) && gridPion.containsKey(c3)){       // CAS 1.1.1 : Les 3 emplacements derriere sont occupées également, il faut sauter + loin
+                    return canMoveLocationsDirection(p, choix[direction], direction);
+                }
+                else{       // CAS 1.1.2 : Il y a au moins un des emplacements derrière non-occupées
+                    ArrayList<Coordonnee> arrives = new ArrayList<Coordonnee>();
+                    if(!gridPion.containsKey(c1)){arrives.add(c1);}
+                    if(!gridPion.containsKey(c2)){arrives.add(c2);}
+                    if(!gridPion.containsKey(c3)){arrives.add(c3);}
+                    return arrives;
+                }
+            }
+            else{                                           // CAS 1.2 : il n'y a pas de personnage sur sa direction, il ne peut donc rien faire -> on return une liste vide
+                return new ArrayList<Coordonnee>();
+            }
+        }
+        else{           // CAS 2 : Le pion a au moins une perle
+            if(gridHexagone.get(position).portes[direction] == p.peek()){   // CAS 2.1 : La couleur de la perle match avec celle de la porte
+                ArrayList<Coordonnee> arrive = new ArrayList<Coordonnee>();
+                arrive.add(choix[direction]);
+                return arrive;
+            }
+            else{       // CAS 2.2 : La couleur de la perle ne match pas avec la porte -> on return une liste vide
+                return new ArrayList<Coordonnee>();
+            }
+        }
+    }
+
+    /**
+     * Override de la méthode de l'interface "DeplacementPion" (choix de déplacement d'un pion)
+     * @param p -> Pion à déplacer
+     */
+    @Override
+    public ArrayList<Coordonnee> canMoveLocations(Pion p){
+        ArrayList<Coordonnee> possibilites = canMoveLocationsDirection(p, p.getLocation(), 0);
+        for (int i = 1; i < 6; i++) {
+            possibilites.addAll(canMoveLocationsDirection(p, p.getLocation(), i));
+        }
+        return possibilites;
+    }
 }

@@ -2,8 +2,6 @@ package main.java.model;
 
 import java.util.ArrayList;
 
-import main.java.model.Hexagone.Couleurs;
-
 /**
  * Classe qui va représenter un joueur
  */
@@ -20,6 +18,11 @@ public class Joueur {
      */
     protected TuileTemple temple;
     protected ArrayList<Pion> pions;
+
+    /**
+     * Cette perle représente la perle à remettre sur l'un des 2 autres pions après avoir déplacer un pion
+     */
+    protected Couleurs perleOrphelin;
 
     /**
      * Constructeur sans argument, permettant d'initialiser un joueur

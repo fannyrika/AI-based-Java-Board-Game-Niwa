@@ -2,6 +2,10 @@ package main.java.model.interfaces;
 
 import main.java.model.Coordonnee;
 
+/**
+ * Interface qui va permettre de donner toutes les coordonnées autour d'un hexagone (6 coordonnées)
+ * - En partant du nord-est et dans le sens horaire 
+ */
 public interface HexagoneAutour {
     public static Coordonnee[] get(Coordonnee c){
         int x = c.getX();

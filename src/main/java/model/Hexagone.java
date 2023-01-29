@@ -17,11 +17,8 @@ import main.java.model.interfaces.Copy;
 public class Hexagone implements Copy<Hexagone> {
     
     /**
-     * Enumération pour les 3 différentes couleurs de portes possible
-     * +
      * La liste contenant ces portes (de taille 6 pour chaque face d'un hexagone)
      */
-    protected enum Couleurs {ROUGE, VERT, ORANGE}
     protected Couleurs[] portes;
 
     /**

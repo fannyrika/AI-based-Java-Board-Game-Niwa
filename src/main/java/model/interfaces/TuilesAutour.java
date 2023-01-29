@@ -3,7 +3,7 @@ package main.java.model.interfaces;
 import main.java.model.Coordonnee;
 
 /**
- * Classe qui va permettre de donner toutes les coordonnées autour d'une tuile
+ * Interface qui va permettre de donner toutes les coordonnées autour d'une tuile (6 coordonnées)
  * - En partant du nord et dans le sens horaire
  */
 public interface TuilesAutour {

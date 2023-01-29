@@ -1,7 +1,6 @@
 package main.java.model;
 
 import java.util.Stack;
-import main.java.model.Hexagone.Couleurs;
 
 /**
  * Pourquoi étendre la classe "Stack" ?
@@ -36,4 +35,17 @@ public class Pion extends Stack<Couleurs> {
      */
     public void setLocation(Coordonnee c){this.location = c;}
     public void setLocation(int x, int y){this.location = new Coordonnee(x, y);}
+
+    /**
+     * Méthode pour faire une passe de perle d'un pion à l'autre
+     * @param p -> pion qui recoit la perle
+     * @return true si le pion actuel possède une perle à donner, false sinon
+     */
+    public boolean passPerleTo(Pion p){
+        if(!empty()){
+            p.add(pop());
+            return true;
+        }
+        return false;
+    }
 }

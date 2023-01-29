@@ -3,8 +3,6 @@ package main.java.model;
 import java.util.ArrayList;
 import java.util.Random;
 
-import main.java.model.Hexagone.Couleurs;
-
 /**
  * Class Tuile :
  * 
