@@ -1,17 +1,17 @@
 package main.java.model;
 
-/*
+/**
  * La classe Coordonnee va servir pour définir le plateau
  */
 public class Coordonnee {
 
-    /*
+    /**
      * Attributs permettant de définir une coordonnee
      */
     protected int x;
     protected int y;
 
-    /*
+    /**
      * Constructeur prenant un "x" et "y", et les affectant aux attributs
      */
     public Coordonnee(int x, int y){
