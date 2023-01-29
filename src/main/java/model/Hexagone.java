@@ -1,5 +1,7 @@
 package main.java.model;
 
+import main.java.model.interfaces.Copy;
+
 /**
  * Class Hexagone :
  * 

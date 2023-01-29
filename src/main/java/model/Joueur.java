@@ -9,6 +9,9 @@ import main.java.model.Hexagone.Couleurs;
  */
 public class Joueur {
 
+    /**
+     * MAX_PIONS : le nombre de pions maximal qu'un joueur peut avoir (il ne faut pas dépasser 6 parce qu'il n'y a que 6 emplacements autour d'un temple)
+     */
     protected static final int MAX_PIONS = 3;
     protected static final int NB_PEARLS_AT_START = 2;
 
@@ -38,5 +41,4 @@ public class Joueur {
             pions.add(p);
         }
     }
-    
 }

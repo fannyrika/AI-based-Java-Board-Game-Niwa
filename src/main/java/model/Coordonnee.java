@@ -18,6 +18,9 @@ public class Coordonnee {
         this.x = x;
         this.y = y;
     }
+
+    public int getX(){return x;}
+    public int getY(){return y;}
     
     /*
      * Pourquoi redéfinir equals() et hashCode() ?

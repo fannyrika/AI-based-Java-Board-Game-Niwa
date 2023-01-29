@@ -197,6 +197,25 @@ public class Tuile {
     }
 
     /**
+     * Méthode pour savoir les coordonnees du centre de la tuile, dans le repère des tuiles
+     * @return la coordonnee voulue
+     */
+    public Coordonnee getLocationInGridTuile(){
+        if(centre.getLocation() != null){
+            return new Coordonnee(centre.getLocation().x / 3, centre.getLocation().y);
+        }
+        return null;
+    } 
+
+    /**
+     * Méthode pour savoir les coordonnees du centre de la tuile, dans le repère des hexagones
+     * @return la coordonnee voulue
+     */
+    public Coordonnee getLocationInGridHexagone(){
+        return centre.getLocation();
+    }
+
+    /**
      * Méthode pour savoir si la tuile représente un temple ou non
      * @return un boolean qui permet de savoir si c'est un temple ou non
      */

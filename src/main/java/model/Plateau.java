@@ -2,6 +2,9 @@ package main.java.model;
 
 import java.util.HashMap;
 
+import main.java.model.interfaces.HexagoneAutour;
+import main.java.model.interfaces.TuilesAutour;
+
 public class Plateau {
 
     /**
@@ -9,6 +12,7 @@ public class Plateau {
      */
     protected HashMap<Coordonnee,Tuile> gridTuile;
     protected HashMap<Coordonnee,Hexagone> gridHexagone;
+    protected HashMap<Coordonnee,Pion> gridPion;
 
     /**
      * Constructeur sans arguments, initialisant les attributs
@@ -56,30 +60,17 @@ public class Plateau {
     }
 
     /**
-     * Méthode privée, permettant de placer tous les hexagones d'une tuile dans le gridHexagone
+     * Méthode privée, permettant de placer/d'imprimer tous les hexagones d'une tuile dans le gridHexagone
      * 
      * @param t -> La tuile qu'on place, pour récupérer ses hexagones
      * @param ghc -> la variable "ghc" représente les coordonnées de l'hexagone centrale dans le gridHexagone, et non pas dans le gridTuile
      */
     private void placerHexagones(Tuile t, Coordonnee ghc){
+        t.centre.setLocation(ghc);
         gridHexagone.put(ghc, t.centre.copy());
-        int x = ghc.x;
-        int y = ghc.y;
-        if(ghc.x % 2 == 0){
-            tamponHexagone(t.hexagones[0], new Coordonnee(x+1, y));
-            tamponHexagone(t.hexagones[1], new Coordonnee(x+2, y));
-            tamponHexagone(t.hexagones[2], new Coordonnee(x+1, y-1));
-            tamponHexagone(t.hexagones[3], new Coordonnee(x-1, y-1));
-            tamponHexagone(t.hexagones[4], new Coordonnee(x-2, y));
-            tamponHexagone(t.hexagones[5], new Coordonnee(x-1, y));
-        }
-        else{
-            tamponHexagone(t.hexagones[0], new Coordonnee(x+1, y+1));
-            tamponHexagone(t.hexagones[1], new Coordonnee(x+2, y));
-            tamponHexagone(t.hexagones[2], new Coordonnee(x+1, y));
-            tamponHexagone(t.hexagones[3], new Coordonnee(x-1, y));
-            tamponHexagone(t.hexagones[4], new Coordonnee(x-2, y));
-            tamponHexagone(t.hexagones[5], new Coordonnee(x-1, y+1));
+        Coordonnee[] ha = HexagoneAutour.get(ghc);
+        for (int i = 0; i < t.hexagones.length; i++) {
+            tamponHexagone(t.hexagones[i], ha[i]);
         }
     }
 
@@ -92,8 +83,8 @@ public class Plateau {
      */
     private void tamponHexagone(Hexagone h, Coordonnee c){
         if(gridHexagone.containsKey(c)){
-            Hexagone placed = gridHexagone.get(c);
-            placed.tamponBy(h);
+            Hexagone old = gridHexagone.get(c);
+            old.tamponBy(h);
         }
         else{
             gridHexagone.put(c, h.copy());
@@ -111,29 +102,8 @@ public class Plateau {
     }
 
     public boolean placeTuileContraint(Tuile t, int x, int y){
-        Coordonnee n = null;
-        Coordonnee ne = null;
-        Coordonnee se = null;
-        Coordonnee s = null;
-        Coordonnee so = null;
-        Coordonnee no = null;
-        if(x%2==0){
-            n = new Coordonnee(x, y+1);
-            ne = new Coordonnee(x+1, y);
-            se = new Coordonnee(x+1, y-1);
-            s = new Coordonnee(x, y-1);
-            so = new Coordonnee(x-1, y-1);
-            no = new Coordonnee(x-1, y);
-        }
-        else{
-            n = new Coordonnee(x, y+1);
-            ne = new Coordonnee(x+1, y+1);
-            se = new Coordonnee(x+1, y);
-            s = new Coordonnee(x, y-1);
-            so = new Coordonnee(x-1, y);
-            no = new Coordonnee(x-1, y+1);
-        }
-        if(gridTuile.containsKey(n) || gridTuile.containsKey(ne) || gridTuile.containsKey(se) || gridTuile.containsKey(s) || gridTuile.containsKey(so) || gridTuile.containsKey(no)){
+        Coordonnee[] ta = TuilesAutour.get(new Coordonnee(x, y));
+        if(gridTuile.containsKey(ta[0]) || gridTuile.containsKey(ta[1]) || gridTuile.containsKey(ta[2]) || gridTuile.containsKey(ta[3]) || gridTuile.containsKey(ta[4]) || gridTuile.containsKey(ta[5])){
             placeTuileForce(t, x, y);
             return true;
         }
@@ -141,19 +111,35 @@ public class Plateau {
     }
 
     /**
-     * Méthode pour savoir si l'emplacement sur la coordonnee en argument est occupé ou non
-     * 
-     * @param c -> Coordonnee dans le gridTuile
+     * Méthode pour placer de force un pion à un certain encdroit (sauf si l'endroit est occupé)
+     * @param p -> pion à placer
+     * @param c -> endroit où placer le pion
+     * @return true si le pion a été placer, false sinon (parce que l'endroit est occupé)
      */
-    public boolean isOccupee(Coordonnee c){
-        return gridTuile.containsKey(c);
+    public boolean placerPionForce(Pion p, Coordonnee c){
+        if(!gridPion.containsKey(c)){
+            gridPion.remove(p.getLocation());
+            p.setLocation(c);
+            gridPion.put(c, p);
+            return true;
+        }
+        return false;
     }
 
     /**
-     * Idem, mais avec deux entiers directement
+     * Méthode pour placer un pion autour du temple du proprietaire avant que la partie commence
+     * @param p -> Le pion à placer
+     * @param c -> L'endroit où placer le pion
+     * @return -> true si le pion est placé (la location du pion est donc mise à jour), false sinon (pion trop loin du temple OU emplacement occupé)
      */
-    public boolean isOccupee(int x, int y){
-        return isOccupee(new Coordonnee(x, y));
-    }
-    
+    public boolean placeStartPion(Pion p, Coordonnee c){
+        Coordonnee t = p.getProprietaire().temple.getLocationInGridHexagone();
+        Coordonnee[] autourTemple = HexagoneAutour.get(t);
+        for (Coordonnee autour : autourTemple) {
+            if(c.equals(autour)){
+                return placerPionForce(p, c);
+            }
+        }
+        return false;
+    }    
 }

@@ -1,4 +1,4 @@
-package main.java.model;
+package main.java.model.interfaces;
 
 public interface Copy<T> {
     public T copy();

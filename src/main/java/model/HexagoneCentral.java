@@ -11,6 +11,7 @@ public class HexagoneCentral extends Hexagone {
      * @warning -> l'attribut ne se défini pas dans le constructeur, mais via la méthode "setTemple(boolean b)"
      */
     protected boolean temple;
+    protected Coordonnee location;
 
     /**
      * Même constructeur que sa classe mère
@@ -32,4 +33,15 @@ public class HexagoneCentral extends Hexagone {
     public boolean isTemple(){
         return temple;
     }    
+
+    @Override
+    public HexagoneCentral copy(){
+        HexagoneCentral copy = new HexagoneCentral(portes[0], portes[1], portes[2], portes[3], portes[4],portes[5]);
+        copy.setLocation(location);
+        return copy;
+    }
+
+    public void setLocation(Coordonnee c){this.location = c;}
+    public void setLocation(int x, int y){this.location = new Coordonnee(x, y);}
+    public Coordonnee getLocation(){return location;}
 }
