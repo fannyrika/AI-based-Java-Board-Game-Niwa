@@ -172,7 +172,7 @@ public class Tuile {
         hexagones[1] = new Hexagone(null, null, null, null, centre.portes[1], p1);
 
         hexagones[2] = new Hexagone(null, null, null, null, p2, centre.portes[2]);
-        hexagones[3] = new Hexagone(centre.portes[3], null, null, null, null, p2);
+        hexagones[3] = new Hexagone(centre.portes[3], p2, null, null, null, null);
 
         hexagones[4] = new Hexagone(p3, centre.portes[4], null, null, null, null);
         hexagones[5] = new Hexagone(null, null, centre.portes[5], p3, null, null);

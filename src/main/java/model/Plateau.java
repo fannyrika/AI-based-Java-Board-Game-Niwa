@@ -21,7 +21,7 @@ public class Plateau {
     /**
      * Méthode pour placer une tuile à une certaine coordonnee de manière forcée
      * c'est-à-dire que la tuile se placera sur la coordonnee, sans vérifier les contraintes de placement (sauf s'il y a déjà une tuile à cette emplacement)
-     * ( exemple : la tuile se placera même s'il n'y a pas de tuile autour d'elle avec qui se coller )
+     * ( exemple : la tuile se placera même s'il n'y a pas de tuile autour d'elle avec qui se coller)
      * 
      * @param t -> Tuile à placée
      * @param c -> Coordonnee dans le gridTuile
@@ -38,6 +38,21 @@ public class Plateau {
 
     public boolean placeTuileForce(Tuile t, int x, int y){
         return placeTuileForce(t, new Coordonnee(x, y));
+    }
+
+    /**
+     * Méthode de placement la plus puissante, elle ignore toutes les contraintes et place la tuile quoiqu'il arrive
+     * 
+     * @param t -> la tuile a placée
+     * @param c -> les coordonees dans le gridTuile
+     * @return forcément true
+     */
+    public boolean placeTuileBrutForce(Tuile t, Coordonnee c){
+        if(gridTuile.containsKey(c)){
+            gridTuile.remove(c);
+        }
+        placeTuileForce(t, c);
+        return true;
     }
 
     /**

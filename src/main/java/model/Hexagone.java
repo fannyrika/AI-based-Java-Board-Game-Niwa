@@ -83,5 +83,4 @@ public class Hexagone implements Copy<Hexagone> {
     public String toStringPartiel(){
         return "["+portes[0]+","+portes[1]+","+portes[2]+","+portes[3]+","+portes[4]+","+portes[5]+"]";
     }
-
 }

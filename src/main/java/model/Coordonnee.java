@@ -53,5 +53,10 @@ public class Coordonnee {
         hash = 31 * hash + this.y;
         return hash;
     }
+
+    @Override
+    public String toString(){
+        return getClass().getName()+"@"+Integer.toHexString(hashCode())+" -> [x = "+x+", y = "+y+"]";
+    }
     
 }
