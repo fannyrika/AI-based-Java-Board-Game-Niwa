@@ -3,7 +3,7 @@ package main.java.model;
 import java.util.ArrayList;
 import java.util.Random;
 
-import main.java.model.Hexagone.Porte;
+import main.java.model.Hexagone.Couleurs;
 
 /**
  * Class Tuile :
@@ -20,7 +20,7 @@ public class Tuile {
     /**
      * Attribut privé, utile pour la création des portes des hexagones
      */
-    private ArrayList<Porte> portesDispo;
+    private ArrayList<Couleurs> portesDispo;
 
     /**
      * Hexagone centrale
@@ -53,9 +53,9 @@ public class Tuile {
      * Méthode privée, pour remplir la liste de couleurs disponible pour une seule tuile (3 rouge, 3 vert, et 3 orange)
      */
     private void setPortesDispo(){
-        portesDispo = new ArrayList<Porte>();
-        for (Porte p : Porte.values()){
-            for (int i = 0; i < Porte.values().length; i++) {
+        portesDispo = new ArrayList<Couleurs>();
+        for (Couleurs p : Couleurs.values()){
+            for (int i = 0; i < Couleurs.values().length; i++) {
                 portesDispo.add(p);
             }
         }
@@ -67,10 +67,10 @@ public class Tuile {
     private void setHexagoneCentral(){
         Random r = new Random();
         if(r.nextInt(2) == 0){                                      // Cas ou : l'hexagone central a seulement 2 couleurs chacun sur 3 faces 
-            Porte p1 = Porte.values()[r.nextInt(Porte.values().length)];
-            Porte p2 = p1;
+            Couleurs p1 = Couleurs.values()[r.nextInt(Couleurs.values().length)];
+            Couleurs p2 = p1;
             while (p2 == p1) {
-                p2 = Porte.values()[r.nextInt(Porte.values().length)];
+                p2 = Couleurs.values()[r.nextInt(Couleurs.values().length)];
             }
             for (int i = 0; i < hexagones.length/2; i++) {
                 portesDispo.remove(p1);
@@ -98,13 +98,13 @@ public class Tuile {
             }
         }
         else{           // Cas ou : l'hexagone central a les 3 couleurs chacun sur 2 faces (mais jamais 2 couleurs cote à cote)
-            ArrayList<Porte> portes = new ArrayList<Porte>();
-            portes.add(Porte.ROUGE);portes.add(Porte.VERT);portes.add(Porte.ORANGE);
-            Porte p1 = portes.get(r.nextInt(portes.size()));
+            ArrayList<Couleurs> portes = new ArrayList<Couleurs>();
+            portes.add(Couleurs.ROUGE);portes.add(Couleurs.VERT);portes.add(Couleurs.ORANGE);
+            Couleurs p1 = portes.get(r.nextInt(portes.size()));
             portes.remove(p1);
-            Porte p2 = portes.get(r.nextInt(portes.size()));
+            Couleurs p2 = portes.get(r.nextInt(portes.size()));
             portes.remove(p2);
-            Porte p3 = portes.get(r.nextInt(portes.size()));
+            Couleurs p3 = portes.get(r.nextInt(portes.size()));
             portes.remove(p3);
 
             for (int i = 0; i < hexagones.length/3; i++) {
@@ -143,12 +143,12 @@ public class Tuile {
 
     private void setHexagoneNonComplet(){
         Random r = new Random();
-        Porte p1 = null;
-        Porte p2 = null;
-        Porte p3 = null;
+        Couleurs p1 = null;
+        Couleurs p2 = null;
+        Couleurs p3 = null;
 
         while (p1 == null) {
-            Porte p = portesDispo.get(r.nextInt(portesDispo.size()));
+            Couleurs p = portesDispo.get(r.nextInt(portesDispo.size()));
             if(p != centre.portes[0] && p != centre.portes[1]){
                 p1 = p;
                 portesDispo.remove(p1);

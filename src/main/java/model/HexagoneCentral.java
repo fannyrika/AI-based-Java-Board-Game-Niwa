@@ -15,7 +15,7 @@ public class HexagoneCentral extends Hexagone {
     /**
      * Même constructeur que sa classe mère
      */
-    public HexagoneCentral(Porte ne, Porte e, Porte se, Porte so, Porte o, Porte no) {
+    public HexagoneCentral(Couleurs ne, Couleurs e, Couleurs se, Couleurs so, Couleurs o, Couleurs no) {
         super(ne, e, se, so, o, no);
     }
 

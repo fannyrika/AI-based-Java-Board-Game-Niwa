@@ -19,14 +19,14 @@ public class Hexagone implements Copy<Hexagone> {
      * +
      * La liste contenant ces portes (de taille 6 pour chaque face d'un hexagone)
      */
-    protected enum Porte {ROUGE, VERT, ORANGE}
-    protected Porte[] portes;
+    protected enum Couleurs {ROUGE, VERT, ORANGE}
+    protected Couleurs[] portes;
 
     /**
      * Constructeur qui défini les 6 portes de l'hexagone avec les arguments (donnés dans le sens horaire, et en partant de la porte en haut à droite)
      */
-    public Hexagone(Porte ne, Porte e, Porte se, Porte so, Porte o, Porte no){
-        portes = new Porte[6];
+    public Hexagone(Couleurs ne, Couleurs e, Couleurs se, Couleurs so, Couleurs o, Couleurs no){
+        portes = new Couleurs[6];
         portes[0] = ne;
         portes[1] = e;
         portes[2] = se;
@@ -39,7 +39,7 @@ public class Hexagone implements Copy<Hexagone> {
      * Méthode qui tourne la tuile actuelle dans le sens horaire
      */
     public void rotate(){
-        Porte tmp = portes[5];
+        Couleurs tmp = portes[5];
         portes[5] = portes[4];
         portes[4] = portes[3];
         portes[3] = portes[2];

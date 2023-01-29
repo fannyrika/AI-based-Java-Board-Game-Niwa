@@ -1,6 +1,6 @@
 package main.java.model;
 
-import main.java.model.Hexagone.Porte;
+import main.java.model.Hexagone.Couleurs;
 
 public class TuileTemple extends Tuile {
 
@@ -23,14 +23,14 @@ public class TuileTemple extends Tuile {
      * Les tuiles temple ont toujours les mêmes portes aux mêmes endroits
      */
     private void setTemple(){
-        centre = new HexagoneCentral(Porte.VERT, Porte.VERT, Porte.ROUGE, Porte.ROUGE, Porte.ORANGE, Porte.ORANGE);
+        centre = new HexagoneCentral(Couleurs.VERT, Couleurs.VERT, Couleurs.ROUGE, Couleurs.ROUGE, Couleurs.ORANGE, Couleurs.ORANGE);
 
-        hexagones[0] = new Hexagone(null, null, Porte.VERT, Porte.VERT, null, null);
-        hexagones[1] = new Hexagone(null, null, null, null, Porte.VERT, Porte.VERT);
-        hexagones[2] = new Hexagone(null, null, null, null, Porte.ROUGE, Porte.ROUGE);
-        hexagones[3] = new Hexagone(Porte.ROUGE, Porte.ROUGE, null, null, null, null);
-        hexagones[4] = new Hexagone(Porte.ORANGE, Porte.ORANGE, null, null, null, null);
-        hexagones[5] = new Hexagone(null, null, Porte.ORANGE, Porte.ORANGE, null, null);
+        hexagones[0] = new Hexagone(null, null, Couleurs.VERT, Couleurs.VERT, null, null);
+        hexagones[1] = new Hexagone(null, null, null, null, Couleurs.VERT, Couleurs.VERT);
+        hexagones[2] = new Hexagone(null, null, null, null, Couleurs.ROUGE, Couleurs.ROUGE);
+        hexagones[3] = new Hexagone(Couleurs.ROUGE, Couleurs.ROUGE, null, null, null, null);
+        hexagones[4] = new Hexagone(Couleurs.ORANGE, Couleurs.ORANGE, null, null, null, null);
+        hexagones[5] = new Hexagone(null, null, Couleurs.ORANGE, Couleurs.ORANGE, null, null);
 
         centre.setTemple(true);
     }
