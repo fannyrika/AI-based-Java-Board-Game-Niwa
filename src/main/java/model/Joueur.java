@@ -17,17 +17,20 @@ public class Joueur {
      * Attributs permettant de définir un joueur
      */
     protected TuileTemple temple;
-    protected ArrayList<Pion> pions;
+    protected ArrayList<Pion> pions=new ArrayList<Pion>();
 
     /**
      * Cette perle représente la perle à remettre sur l'un des 2 autres pions après avoir déplacer un pion
      */
     protected Couleurs perleOrphelin;
 
+    protected int id;
+
     /**
      * Constructeur sans argument, permettant d'initialiser un joueur
      */
     public Joueur(){
+        this.id=-1;
         this.temple = new TuileTemple(this);
         initalisePions();
     }
@@ -43,5 +46,23 @@ public class Joueur {
             }
             pions.add(p);
         }
+    }
+
+    public void setId(int id){
+        this.id=id;
+    }
+
+    public int getId(){
+        return id;
+    }
+
+    public String toString(){
+        String str="";
+        str+="id="+id+" ";
+        for(int i=0; i<pions.size(); i++){
+            str+=pions.get(i).toString();
+            str+=" ";
+        }
+        return str;
     }
 }
