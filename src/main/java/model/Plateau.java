@@ -5,9 +5,10 @@ import java.util.HashMap;
 
 import main.java.model.interfaces.DeplacementPion;
 import main.java.model.interfaces.HexagoneAutour;
+import main.java.model.interfaces.PlacerTuile;
 import main.java.model.interfaces.TuilesAutour;
 
-public class Plateau implements DeplacementPion {
+public class Plateau implements DeplacementPion, PlacerTuile {
 
     /**
      * Attributs permettant de définir un plateau
@@ -218,5 +219,11 @@ public class Plateau implements DeplacementPion {
             possibilites.addAll(canMoveLocationsDirection(p, p.getLocation(), i));
         }
         return possibilites;
+    }
+
+    @Override
+    public ArrayList<Coordonnee> canPlaceLocations(Tuile t) {
+        // TODO Auto-generated method stub
+        return null;
     }
 }

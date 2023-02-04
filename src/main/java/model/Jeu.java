@@ -13,11 +13,13 @@ public class Jeu {
     protected ArrayList<Joueur> gangeurs = null;
     protected Joueur joueurCourant;
     protected boolean shouldContinue=false;
+    protected boolean isPlacingTuile=true;
 
     protected Plateau plateau;
     protected Tuile tuileCourante;
     protected Tuile tuileInit = null;
     protected Sac sac;
+    protected ArrayList<TuileTemple> tuileTemples = null;
     
     protected Pion pionCourant = null;
 
@@ -33,11 +35,13 @@ public class Jeu {
         }
         for(int i=0;i<joueurs.size();i++){
             joueurs.get(i).setId(i);
+            tuileTemples.add(new TuileTemple(joueurs.get(i)));
         }
 
         sac = new Sac();
         plateau=new Plateau();
-        tuileInit=sac.piocher();
+        tuileInit=tuileTemples.get(0);
+        plateau.placeTuileBrutForce(tuileInit, new Coordonnee(0, 0));
     }
 
     //setters and getters
@@ -57,6 +61,10 @@ public class Jeu {
         shouldContinue=s;
     }
 
+    public void setPlacingTuile(boolean s){
+        isPlacingTuile=false;
+    }
+
     public ArrayList<Joueur> getJoueurs() {
         return joueurs;
     }
@@ -71,6 +79,10 @@ public class Jeu {
 
     public boolean shouldContinue(){
         return shouldContinue;
+    }
+
+    public boolean isPlacingTuile(){
+        return isPlacingTuile;
     }
 
     public Plateau getPlateau(){

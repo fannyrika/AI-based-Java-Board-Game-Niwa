@@ -4,6 +4,8 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 
 import java.awt.*;
+import java.awt.event.*;
+import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -14,18 +16,27 @@ import java.util.ArrayList;
 
 import main.java.model.*;
 
-public class JeuVue extends JFrame{
-    public Jeu model;
-    public Controleur controleur;
+public class JeuVue extends JFrame implements KeyListener{
+    protected Jeu model;
+    protected Controleur controleur;
 
-    //public JTextField textFieldPion;
-    //public JButton buttonPion;
+    /**
+     * qui sert à choisir la location
+     */
+    protected int indexChoisi=0;
+    protected ArrayList<Coordonnee> locationsPossibles;
+
+    /**
+     * placer les tuiles sans temples
+     */
+    protected JButton placerTuileTriviale;
+    protected JButton placerTuileTemple;
 
     public JeuVue(Jeu m) throws IOException{
         super();
         this.model=m;
         controleur=new Controleur(model, this);
-        //TODO: construire l'interface graphique
+        //TODO: construire l'interface graphique (avec la tuileTemple du joueur0 comme la tuile initiale)
     }
      
     //À MODIFIER
@@ -127,6 +138,9 @@ public class JeuVue extends JFrame{
                 //    controleur.controlIA();
                 //}
                 
+                locationsPossibles = afficherPossibleTuilePosition(model.getTuileCourant());
+                indexChoisi=0;
+                
                 //waiting
                 while(model.shouldContinue()==false){
                     System.out.print("");
@@ -140,6 +154,28 @@ public class JeuVue extends JFrame{
                 break;
             }
         }
+    }
+
+    public ArrayList<Coordonnee> afficherPossibleTuilePosition(Tuile tuile) {
+        ArrayList<Coordonnee> locationsPossibles = model.getPlateau().canPlaceLocations(model.getTuileCourant());
+        for(int i=0; i<locationsPossibles.size(); i++) {
+            dessinerCercleRouge(locationsPossibles.get(i));
+        }
+        return locationsPossibles;
+    }
+
+    /**
+     * TODO: dessiner un cercle rouge (indiquant la locations possible) dont le centre est sur la coordonné donné
+     */
+    public void dessinerCercleRouge(Coordonnee location){
+
+    }
+
+    /**
+     * TODO: dessiner un cercle blanc (indiquant la location choisie) dont le centre est sur la coordonné donné
+     */
+    public void dessinerCercleBlanc(Coordonnee location){
+        
     }
 
     public void jouer() {
@@ -182,6 +218,37 @@ public class JeuVue extends JFrame{
         creerPlateau();
         jouer();
         //TODO: quitter le jeu (fermer la fenêtre...)
+    }
+
+    @Override
+    public void keyTyped(KeyEvent e) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+        // TODO Auto-generated method stub
+        if ( e.getKeyCode()==KeyEvent.VK_RIGHT ){
+            indexChoisi = (indexChoisi + 1) % locationsPossibles.size();
+            dessinerCercleBlanc(locationsPossibles.get(indexChoisi));
+        }
+        else if ( e.getKeyCode()==KeyEvent.VK_LEFT ){
+            indexChoisi = (indexChoisi - 1) % locationsPossibles.size();
+            dessinerCercleBlanc(locationsPossibles.get(indexChoisi));
+        }
+        else if(e.getKeyCode()==KeyEvent.VK_SPACE){
+            //en train de deplacer le pion
+            //if(!model.isPlacingTuile()){
+            //    model.getPlateau().placerPionForce(null, null)
+            //}
+        }
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
+        // TODO Auto-generated method stub
+        
     }
 
 }
