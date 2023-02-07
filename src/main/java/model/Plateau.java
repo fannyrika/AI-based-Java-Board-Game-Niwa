@@ -22,6 +22,7 @@ public class Plateau implements DeplacementPion {
     public Plateau(){
         this.gridTuile = new HashMap<Coordonnee,Tuile>();
         this.gridHexagone = new HashMap<Coordonnee,Hexagone>();
+        this.gridPion = new HashMap<Coordonnee,Pion>();
     }
 
     /**
@@ -57,8 +58,7 @@ public class Plateau implements DeplacementPion {
         if(gridTuile.containsKey(c)){
             gridTuile.remove(c);
         }
-        placeTuileForce(t, c);
-        return true;
+        return placeTuileForce(t, c);
     }
 
     /**
@@ -106,17 +106,16 @@ public class Plateau implements DeplacementPion {
     public boolean placeTuileContraint(Tuile t, int x, int y){
         Coordonnee[] ta = TuilesAutour.get(new Coordonnee(x, y));
         if(gridTuile.containsKey(ta[0]) || gridTuile.containsKey(ta[1]) || gridTuile.containsKey(ta[2]) || gridTuile.containsKey(ta[3]) || gridTuile.containsKey(ta[4]) || gridTuile.containsKey(ta[5])){
-            placeTuileForce(t, x, y);
-            return true;
+            return placeTuileForce(t, x, y);
         }
         return false;
     }
 
     /**
-     * Méthode pour placer de force un pion à un certain encdroit (sauf si l'endroit est occupé)
+     * Méthode pour placer de force un pion à un certain endroit (sauf si l'endroit est occupé)
      * @param p -> pion à placer
      * @param c -> endroit où placer le pion
-     * @return true si le pion a été placer, false sinon (parce que l'endroit est occupé)
+     * @return true si le pion a été placé, false sinon (parce que l'endroit est occupé)
      */
     public boolean placerPionForce(Pion p, Coordonnee c){
         if(!gridPion.containsKey(c)){

@@ -13,6 +13,12 @@ import main.java.model.interfaces.Copy;
  *  portes[2] -> la porte en bas à droite
  *  portes[3] -> la porte en bas à gauche
  *  etc...
+ * 
+ *   5     0
+ *     / \
+ * 4  |   |  1
+ *     \ /
+ *   3     2
  */
 public class Hexagone implements Copy<Hexagone> {
     
