@@ -26,10 +26,6 @@ public class TuileGraphique extends Polygon {
         center.setLocation(center.x + GridTuile.screen.getWidth()/2,center.y + GridTuile.screen.getHeight()/2);     // On place le (0,0) au centre de la page
     }
 
-    private Point[] givePoints(int x, int y){
-        return givePoints(new Point(x,y));
-    }
-
     private Point[] givePoints(Point p){
         Point[] points = new Point[6];
         int index = 0;
@@ -89,7 +85,7 @@ public class TuileGraphique extends Polygon {
         drawLineColor(g, tuile.getHexagoneCentral().getPortes()[4], this.xpoints[5], this.ypoints[5], centreGauche.x, centreGauche.y);
         drawLineColor(g, tuile.getHexagoneCentral().getPortes()[5], this.xpoints[9], this.ypoints[9], centreGauche.x, centreGauche.y);
         drawLineColor(g, tuile.getHexagoneCentral().getPortes()[0], this.xpoints[9], this.ypoints[9], centreDroite.x, centreDroite.y);
-        drawLineColor(g, tuile.getHexagoneCentral().getPortes()[0], this.xpoints[0], this.ypoints[0], centreDroite.x, centreDroite.y);
+        drawLineColor(g, tuile.getHexagoneCentral().getPortes()[1], this.xpoints[0], this.ypoints[0], centreDroite.x, centreDroite.y);
 
         drawLineColor(g, tuile.getHexagones()[2].getPortes()[4], this.xpoints[2], this.ypoints[2], center.x, center.y);
         drawLineColor(g, tuile.getHexagones()[4].getPortes()[0], this.xpoints[7], this.ypoints[7], centreGauche.x, centreGauche.y);
