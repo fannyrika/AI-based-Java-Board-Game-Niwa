@@ -28,6 +28,12 @@ public class Hexagone implements Copy<Hexagone> {
     protected Couleurs[] portes;
 
     /**
+     * Getteur pour les portes
+     * @return le tableau de portes
+     */
+    public Couleurs[] getPortes(){return portes;}
+
+    /**
      * Constructeur qui défini les 6 portes de l'hexagone avec les arguments (donnés dans le sens horaire, et en partant de la porte en haut à droite)
      */
     public Hexagone(Couleurs ne, Couleurs e, Couleurs se, Couleurs so, Couleurs o, Couleurs no){

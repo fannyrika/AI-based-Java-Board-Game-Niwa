@@ -16,6 +16,10 @@ public class Plateau implements DeplacementPion {
     protected HashMap<Coordonnee,Hexagone> gridHexagone;
     protected HashMap<Coordonnee,Pion> gridPion;
 
+    public HashMap<Coordonnee,Tuile> getGridTuile(){return gridTuile;}
+    public HashMap<Coordonnee,Hexagone> getGridHexagone(){return gridHexagone;}
+    public HashMap<Coordonnee,Pion> getGridPion(){return gridPion;}
+
     /**
      * Constructeur sans arguments, initialisant les attributs
      */

@@ -20,7 +20,7 @@ public class Joueur {
      * Attributs permettant de définir un joueur
      */
     protected TuileTemple temple;
-    protected ArrayList<Pion> pions;
+    protected ArrayList<Pion> pions = new ArrayList<Pion>();;
 
     /**
      * Cette perle représente la perle à remettre sur l'un des 2 autres pions après avoir déplacer un pion

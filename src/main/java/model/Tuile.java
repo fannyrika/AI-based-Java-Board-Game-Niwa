@@ -29,6 +29,12 @@ public class Tuile {
     protected Hexagone[] hexagones = new Hexagone[6];
 
     /**
+     * Getteurs
+     */
+    public HexagoneCentral getHexagoneCentral(){return centre;}
+    public Hexagone[] getHexagones(){return hexagones;}
+
+    /**
      * Constructeur initialisant une tuile sans temple
      */
     public Tuile(){
