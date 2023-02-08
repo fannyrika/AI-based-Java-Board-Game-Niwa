@@ -7,11 +7,45 @@ import main.java.model.Tuile;
 
 public class TuileGraphique extends Polygon {
 
+    /**
+     * La tuile qu'on veut représenter graphiquement
+     */
     protected Tuile tuile;
-    protected static final int radius = 50; 
+    /**
+     * Le rayon des hexagones (grossièrement : la taille des tuiles)
+     */
+    protected static final int radius = 50;
+    /**
+     * Représente le centre de l'hexagone du bas de la tuile
+     */
+    /*
+     * Graphiquement, le centre est représenté par la lettre X  :
+     * 
+     *            #               # 
+     *       #         #     #         #
+     *                                 
+     *       #         #     #         # 
+     *            #               # 
+     *                    #    
+     *               #         #
+     *                    X     
+     *               #         #
+     *                    #
+     */
     protected Point center;
+    /**
+     * La couleur qu'aura l'intérieur de la tuile
+     * - WHITE pour les tuiles situé sur des x pairs
+     * - GRAY pour les tuiles situé sur des x impairs
+     */
     protected Color color;
     
+    /**
+     * Constructeur d'une tuile graphique
+     * @param tuile -> La tuile à représenter
+     * @param x -> La coordonnee en x
+     * @param y -> La coordonnee en y
+     */
     public TuileGraphique(Tuile tuile, int x, int y){
         this.tuile = tuile;
         if(x%2 == 0){
@@ -22,10 +56,23 @@ public class TuileGraphique extends Polygon {
             color = Color.GRAY;
             this.center = new Point(radius*x*5/2,-3*radius*y - 3*radius/2);
         }
-        
         center.setLocation(center.x + GridTuile.screen.getWidth()/2,center.y + GridTuile.screen.getHeight()/2);     // On place le (0,0) au centre de la page
     }
 
+    /**
+     * Méthode privée permettant de récuperer les 6 points autour d'un centre permettant de définir un hexagone
+     * @param p -> Le centre
+     * @return -> Un tableau contenant les 6 points autour du centre
+     */
+    /*
+     * Voici chaque points[i], avec p étant le centre :
+     * 
+     *                    0
+     *               5         1
+     *                    p     
+     *               4         2
+     *                    3
+     */
     private Point[] givePoints(Point p){
         Point[] points = new Point[6];
         int index = 0;
@@ -39,7 +86,19 @@ public class TuileGraphique extends Polygon {
         return points;
     }
 
+    /**
+     * Méthode privée, permettant de tracer un trait d'une certaine couleur (utilisée pour tracer les portes de couleurs)
+     * @param g -> Le graphique sur lequel on dessine
+     * @param c -> La couleur du trait
+     * @param x1 -> x de départ
+     * @param y1 -> y de départ
+     * @param x2 -> x d'arrivée
+     * @param y2 -> y d'arrivée
+     */
     private void drawLineColor(Graphics g, Couleurs c, int x1, int y1, int x2, int y2){
+        g.setColor(Color.BLACK);
+        ((Graphics2D) g).setStroke(new BasicStroke(radius/6));
+        g.drawLine(x1, y1, x2, y2);
         switch (c) {
             case ROUGE:
                 g.setColor(Color.RED);
@@ -51,9 +110,14 @@ public class TuileGraphique extends Polygon {
                 g.setColor(Color.GREEN);
                 break;
         }
+        ((Graphics2D) g).setStroke(new BasicStroke(radius/8));
         g.drawLine(x1, y1, x2, y2);
     }
 
+    /**
+     * Méthode pour tracer la tuile dans son intégralité
+     * @param g -> Le graphique sur lequel on dessine
+     */
     public void drawTile(Graphics g){
         // On trace chaque face de la tuile
         Point[] bas = givePoints(center);
@@ -79,7 +143,6 @@ public class TuileGraphique extends Polygon {
         g.fillPolygon(this);
 
         // On trace les portes
-        ((Graphics2D) g).setStroke(new BasicStroke(radius/6));
         drawLineColor(g, tuile.getHexagoneCentral().getPortes()[2], this.xpoints[0], this.ypoints[0], center.x, center.y);
         drawLineColor(g, tuile.getHexagoneCentral().getPortes()[3], this.xpoints[5], this.ypoints[5], center.x, center.y);
         drawLineColor(g, tuile.getHexagoneCentral().getPortes()[4], this.xpoints[5], this.ypoints[5], centreGauche.x, centreGauche.y);
@@ -103,6 +166,6 @@ public class TuileGraphique extends Polygon {
             }
         }
 
-        ((Graphics2D) g).setStroke(new BasicStroke());
+        ((Graphics2D) g).setStroke(new BasicStroke());  // On remet l'épaisseur des traits à sa valeur d'origine
     }
 }

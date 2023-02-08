@@ -16,21 +16,28 @@ public class Joueur {
      */
     protected static final int NB_PEARLS_AT_START = 2;
 
+    protected static int ID_STATIC = 0;
+    protected int id;
+
     /**
      * Attributs permettant de définir un joueur
      */
     protected TuileTemple temple;
-    protected ArrayList<Pion> pions = new ArrayList<Pion>();;
+    protected ArrayList<Pion> pions = new ArrayList<Pion>();
 
     /**
      * Cette perle représente la perle à remettre sur l'un des 2 autres pions après avoir déplacer un pion
      */
     protected Couleurs perleOrphelin;
 
+    public int getID(){return id;}
+
     /**
      * Constructeur sans argument, permettant d'initialiser un joueur
      */
     public Joueur(){
+        this.id = ID_STATIC;
+        ID_STATIC++;
         this.temple = new TuileTemple(this);
         initalisePions();
     }

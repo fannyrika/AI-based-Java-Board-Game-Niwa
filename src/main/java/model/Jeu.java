@@ -39,6 +39,9 @@ public class Jeu {
     // Méthodes nécessaires pour un jeu de plateau
     public ArrayList<Joueur> getJoueurs(){return joueurs;}
     public Plateau getPlateau(){return plateau;}
+    public ArrayList<Tuile> getSac(){return sac;}
+    public ArrayList<TuileTemple> getSacTemples(){return sacTemples;}
+
 
     /**
      * Constructeur permettant d'initialiser les attributs
