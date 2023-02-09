@@ -25,11 +25,11 @@ public class TuileGraphique extends Polygon {
      * Représente le centre de l'hexagone du bas de la tuile
      */
     /*
-     * Graphiquement, le centre est représenté par la lettre X  :
+     * Graphiquement, le centre est représenté par la lettre X, centreGauche par G, et centreDroite par D  :
      * 
      *            #               # 
      *       #         #     #         #
-     *                                 
+     *            G               D     
      *       #         #     #         # 
      *            #               # 
      *                    #    
@@ -39,6 +39,8 @@ public class TuileGraphique extends Polygon {
      *                    #
      */
     protected Point center;
+    protected Point centreGauche;
+    protected Point centreDroite;
     /**
      * La couleur qu'aura l'intérieur de la tuile
      * - WHITE pour les tuiles situé sur des x pairs
@@ -63,6 +65,8 @@ public class TuileGraphique extends Polygon {
             this.center = new Point(radius*x*5/2,-3*radius*y - 3*radius/2);
         }
         center.setLocation(center.x + GridTuile.screen.getWidth()/2 + GridTuile.dx,center.y + GridTuile.screen.getHeight()/2 + GridTuile.dy);     // On place le (0,0) au centre de la page
+        centreGauche = givePoints(new Point(center.x,center.y-radius))[5];
+        centreDroite = givePoints(new Point(center.x,center.y-radius))[1];
     }
 
     /**
@@ -131,7 +135,6 @@ public class TuileGraphique extends Polygon {
             this.addPoint(bas[i].x,bas[i].y);
         }
 
-        Point centreGauche = new Point(this.xpoints[this.npoints-1],this.ypoints[this.npoints-1]-radius);
         Point[] gauche = givePoints(centreGauche);
         for (int i = 3; i < 6; i++){
             this.addPoint(gauche[i].x,gauche[i].y);
@@ -140,7 +143,6 @@ public class TuileGraphique extends Polygon {
             this.addPoint(gauche[i].x,gauche[i].y);
         }
 
-        Point centreDroite = new Point(bas[1].x,bas[1].y-radius);
         Point[] droite = givePoints(centreDroite);
         for (int i = 0; i < 3; i++){
             this.addPoint(droite[i].x,droite[i].y);

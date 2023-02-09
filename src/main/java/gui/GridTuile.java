@@ -127,7 +127,7 @@ public class GridTuile extends JPanel implements KeyListener {
 
     public static void main(String[] args) {
 
-        JFrame frame = new JFrame("Draw Tiles");
+        JFrame frame = new JFrame("Plateau Tuiles");
         GridTuile gridTuile = new GridTuile();
 
         // On effectue nos tests :
