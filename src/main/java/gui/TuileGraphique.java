@@ -14,7 +14,13 @@ public class TuileGraphique extends Polygon {
     /**
      * Le rayon des hexagones (grossièrement : la taille des tuiles)
      */
-    protected static final int radius = 50;
+    protected static int radius = 50;
+
+    /**
+     * Le rayon minimal autorisé
+     */
+    protected static final int RADIUS_MIN = 20;
+
     /**
      * Représente le centre de l'hexagone du bas de la tuile
      */
@@ -56,7 +62,7 @@ public class TuileGraphique extends Polygon {
             color = Color.GRAY;
             this.center = new Point(radius*x*5/2,-3*radius*y - 3*radius/2);
         }
-        center.setLocation(center.x + GridTuile.screen.getWidth()/2,center.y + GridTuile.screen.getHeight()/2);     // On place le (0,0) au centre de la page
+        center.setLocation(center.x + GridTuile.screen.getWidth()/2 + GridTuile.dx,center.y + GridTuile.screen.getHeight()/2 + GridTuile.dy);     // On place le (0,0) au centre de la page
     }
 
     /**
@@ -167,5 +173,16 @@ public class TuileGraphique extends Polygon {
         }
 
         ((Graphics2D) g).setStroke(new BasicStroke());  // On remet l'épaisseur des traits à sa valeur d'origine
+    }
+
+    /**
+     * Méthode permettant de zoomer et dezoomer (modifier la valeur de "radius")
+     * @param zoom -> Valeur de zoomage/dezoomage
+     */
+    public static void zoom(int zoom){
+        radius += zoom;
+        if(radius <= RADIUS_MIN){
+            radius = RADIUS_MIN;
+        }
     }
 }
