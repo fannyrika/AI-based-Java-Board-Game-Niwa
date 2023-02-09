@@ -43,6 +43,14 @@ public class GridTuile extends JPanel implements KeyListener {
      */
     public GridTuile(){
         this.setPreferredSize(screen);
+        this.addComponentListener(new ComponentAdapter() {                  // Ce bout de code sert à remettre le plateau au centre lorsqu'on resize la fenetre
+            public void componentResized(ComponentEvent componentEvent) {
+                GridTuile.dx = 0;
+                GridTuile.dy = 0;
+                screen = GridTuile.this.getSize();
+                repaint();
+            }
+        });
     }
 
     @Override
@@ -141,7 +149,7 @@ public class GridTuile extends JPanel implements KeyListener {
             public void windowOpened(WindowEvent e) { 
             frame.requestFocus();	
             }
-            });
+        });
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.add(gridTuile);
         frame.pack();
