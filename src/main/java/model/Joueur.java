@@ -65,4 +65,8 @@ public class Joueur {
         }
         return str;
     }
+
+    public ArrayList<Pion> getPions(){
+        return this.pions;
+    }
 }

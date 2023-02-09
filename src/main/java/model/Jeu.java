@@ -12,8 +12,7 @@ public class Jeu {
      */
     protected ArrayList<Joueur> gangeurs = null;
     protected Joueur joueurCourant;
-    protected boolean shouldContinue=false;
-    protected boolean isPlacingTuile=true;
+    //protected boolean shouldContinue=false;
 
     protected Plateau plateau;
     protected Tuile tuileCourante;
@@ -23,13 +22,15 @@ public class Jeu {
     
     protected Pion pionCourant = null;
 
+    protected JeuEtat jeuEtat;
+
     //public Jeu(ArrayList<Joueur> joueurs){
     //    this.joueurs=joueurs;
     //}
 
     public Jeu(int nbJoueurs){
         joueurs=new ArrayList<Joueur>();
-        shouldContinue=false;
+        jeuEtat = JeuEtat.CHOOSING_TUILE_LOCATION;
         for(int i=0; i<nbJoueurs; i++){
             joueurs.add(new Joueur());
         }
@@ -41,12 +42,16 @@ public class Jeu {
         sac = new Sac();
         plateau=new Plateau();
         tuileInit=tuileTemples.get(0);
-        plateau.placeTuileBrutForce(tuileInit, new Coordonnee(0, 0));
+        //TODO: placer les tuiles avec temple selon le nombre du joueurs
     }
 
     //setters and getters
     public void setJoueurCourant(Joueur j){
         joueurCourant=j;
+    }
+
+    public void setPionCourant(Pion p){
+        pionCourant=p;
     }
 
     public void setGagneur(Joueur j){
@@ -57,12 +62,14 @@ public class Jeu {
         tuileCourante=t;
     }
 
-    public void setShouldContinue(boolean s){
-        shouldContinue=s;
+    public void setJeuEtat(JeuEtat j){
+        jeuEtat=j;
     }
 
-    public void setPlacingTuile(boolean s){
-        isPlacingTuile=false;
+    //getters
+
+    public JeuEtat getJeuEtat(){
+        return jeuEtat;
     }
 
     public ArrayList<Joueur> getJoueurs() {
@@ -75,14 +82,6 @@ public class Jeu {
 
     public Joueur getJoueurCourant() {
         return joueurCourant;
-    }
-
-    public boolean shouldContinue(){
-        return shouldContinue;
-    }
-
-    public boolean isPlacingTuile(){
-        return isPlacingTuile;
     }
 
     public Plateau getPlateau(){
