@@ -2,6 +2,7 @@ package main.java.gui;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.plaf.synth.SynthSpinnerUI;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -16,31 +17,48 @@ import java.util.ArrayList;
 
 import main.java.model.*;
 
-public class JeuVue extends JFrame implements KeyListener, JeuVueInterface{
+//TODO:
+//
+/**
+ * l'interface graphique du jeu
+ */
+public class JeuVue extends JFrame implements KeyListener{
     protected Jeu model;
     //protected Controleur controleur;
     /**
-     * qui sert à sauvegarder l'index de location choisie
+     * qui sert 脿 sauvegarder l'index de location choisie
      */
     protected int indexChoisi=0;
     protected ArrayList<Coordonnee> locationsPossibles;
 
-    protected JButton placerTuileSansTemple;
-    protected JButton placerTuileTemple;
-    protected JButton rotaterTuile;
+    protected GridTuile gridTuile;
 
     public JeuVue(Jeu m) throws IOException{
-        super();
-        this.model=m;
+        setTitle("Plateau Tuiles");
+        model=m;
+        gridTuile = new GridTuile(model);
         //controleur=new Controleur(model, this);
         //TODO: construire l'interface graphique (avec la tuileTemple du joueur0 comme la tuile initiale)
+        addKeyListener(gridTuile);
+        addKeyListener(this);
+        addWindowListener(new WindowAdapter() {
+            public void windowOpened(WindowEvent e) { 
+            requestFocus();	
+            }
+        });
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        add(gridTuile);
+        pack();
+        setLocationRelativeTo(null);
+        setVisible(true);
     }
 
-    /**
+
+        /**
      * TODO: dessiner les tuiles avec temples;
      */
      
-    public void creerPlateau() {
+     public void creerPlateau() {
         while(true){
             //for(int i=0; i<model.getJoueurs().size(); i++) System.out.println("affiche joueurs:"+model.getJoueurs().get(i));
             for(int i=0; i<model.getJoueurs().size(); i++){
@@ -54,10 +72,17 @@ public class JeuVue extends JFrame implements KeyListener, JeuVueInterface{
                 //if(model.joueurCourant instanceof JoueurIA){
                 //    controleur.controlIA();
                 //}
-                afficherInstruction("Tappez ← → pour la location pour cette tuile. Tappez SPACE pour vérifier la choix.");
+                
+                afficherInstruction("Tappez S/F pour chosir la location pour cette tuile. Tappez SPACE pour v茅rifier la choix.");
                 locationsPossibles = afficherPossibleTuilePosition();
                 indexChoisi=0;
-                
+
+                model.setTuileCourante(model.piocher());
+                model.getPlateau().placeTuileBrutForce(
+                    model.getTuileCourant(), locationsPossibles.get(0)
+                );
+
+                repaint();
                 //waiting
                 while(model.getJeuEtat()!=JeuEtat.CONTINUE){
                     System.out.print("");
@@ -67,7 +92,7 @@ public class JeuVue extends JFrame implements KeyListener, JeuVueInterface{
                 
                 model.setJeuEtat(JeuEtat.CHOOSING_TUILE_LOCATION);
             }
-            if(model.getSac().estVide()){
+            if(model.getSac().size()==0){
                 break;
             }
         }
@@ -81,6 +106,7 @@ public class JeuVue extends JFrame implements KeyListener, JeuVueInterface{
                 System.out.println("current player changed!");//debug
                 model.setJoueurCourant(model.getJoueurs().get(i));
                 System.out.println(model.getJoueurCourant());//debug
+                repaint();
                 //TODO: afficher l'information du joueur courant
                 //validate();
                 //repaint();
@@ -124,101 +150,11 @@ public class JeuVue extends JFrame implements KeyListener, JeuVueInterface{
     public void lancer() throws IOException{
         creerPlateau();
         jouer();
-        //TODO: quitter le jeu (fermer la fenêtre etc...)
-    }
-
-    @Override
-    public void keyTyped(KeyEvent e) {
-    }
-
-    @Override
-    public void keyPressed(KeyEvent e) {
-        if ( e.getKeyCode()==KeyEvent.VK_RIGHT ){
-            if(model.getJeuEtat()==JeuEtat.CHOOSING_PION){
-                indexChoisi=(indexChoisi + 1) % model.getJoueurCourant().getPions().size();
-                dessinerCercleBlanc(model.getJoueurCourant().getPions().get(indexChoisi).getLocation());
-            }
-            else if(model.getJeuEtat()==JeuEtat.ROTATING_TUILE){
-                model.getTuileCourant().rotate();
-                //TODO: renouveler la vue de tuile tournée
-            }
-            else if(model.getJeuEtat()==JeuEtat.CHOOSING_TUILE_LOCATION){
-                    indexChoisi = (indexChoisi + 1) % locationsPossibles.size();
-                    dessinerTuile(locationsPossibles.get(indexChoisi));
-                }
-            else if(model.getJeuEtat()==JeuEtat.PLACING_PION || 
-            model.getJeuEtat()==JeuEtat.CHOOSING_PEARL_DESTINATION){
-                indexChoisi = (indexChoisi + 1) % locationsPossibles.size();
-                dessinerCercleBlanc(locationsPossibles.get(indexChoisi));
-            }
-        }
-        else if ( e.getKeyCode()==KeyEvent.VK_LEFT ){
-            if(model.getJeuEtat()==JeuEtat.CHOOSING_PION){
-                indexChoisi=(indexChoisi - 1) % model.getJoueurCourant().getPions().size();
-                dessinerCercleBlanc(model.getJoueurCourant().getPions().get(indexChoisi).getLocation());
-            }
-            else if(model.getJeuEtat()==JeuEtat.ROTATING_TUILE){
-                //sens de l'inverse
-                //-1 mod 3 = 2 (fois)
-                model.getTuileCourant().rotate();
-                model.getTuileCourant().rotate();
-                //TODO: renouveler la vue de tuile tournée
-            }
-            else if(model.getJeuEtat()==JeuEtat.CHOOSING_TUILE_LOCATION){
-                    indexChoisi = (indexChoisi + 1) % locationsPossibles.size();
-                    dessinerTuile(locationsPossibles.get(indexChoisi));
-                }
-            else if(model.getJeuEtat()==JeuEtat.PLACING_PION || 
-            model.getJeuEtat()==JeuEtat.CHOOSING_PEARL_DESTINATION){
-                indexChoisi = (indexChoisi + 1) % locationsPossibles.size();
-                dessinerCercleBlanc(locationsPossibles.get(indexChoisi));
-            }
-        }
-        else if(e.getKeyCode()==KeyEvent.VK_SPACE){
-            if(model.getJeuEtat()==JeuEtat.CHOOSING_TUILE_LOCATION){
-                //TODO:programmez ici pour effacer tous les cercles
-                //TODO: renouveler la vue des pions
-                model.getPlateau().placeTuileContraint(model.getTuileCourant(), locationsPossibles.get(indexChoisi));
-                model.setJeuEtat(JeuEtat.ROTATING_TUILE);
-                afficherInstruction("Tappez ← → pour tourner la tuile. Tappez SPACE pour vérifier la choix.");
-            }
-            else if(model.getJeuEtat()==JeuEtat.ROTATING_TUILE){
-                //TODO:programmez ici pour effacer tous les cercles
-                //TODO: renouveler la vue des pions
-                model.setJeuEtat(JeuEtat.CHOOSING_PION);
-                afficherInstruction("Tappez ← → pour chosir un pion à déplacer. Tappez SPACE pour vérifier la choix ou passer votre tour.");
-            }
-            else if(model.getJeuEtat()==JeuEtat.CHOOSING_PION){
-                //TODO:programmez ici pour effacer tous les cercles
-                //TODO: renouveler la vue des pions
-                model.setPionCourant(model.getJoueurCourant().getPions().get(indexChoisi));
-                model.setJeuEtat(JeuEtat.PLACING_PION);
-                afficherInstruction("Tappez ← → pour chosir la location. Tappez SPACE pour vérifier la choix ou passer votre tour.");
-            }
-            else if(model.getJeuEtat()==JeuEtat.PLACING_PION){
-                //TODO:programmez ici pour effacer tous les cercles
-                //TODO: renouveler la vue des pions
-                model.getPlateau().placerPionForce(model.getPionCourant(), locationsPossibles.get(indexChoisi));
-                model.setJeuEtat(JeuEtat.CHOOSING_PEARL_DESTINATION);
-                afficherInstruction("Tappez ← → pour chosir un pion à passer la perle. Tappez SPACE pour vérifier la choix ou passer votre tour.");
-            }
-            else if(model.getJeuEtat()==JeuEtat.CHOOSING_PEARL_DESTINATION){
-                //TODO:programmez ici pour effacer tous les cercles
-                //TODO: renouveler la vue des pions
-                model.getPionCourant().passPerleTo(
-                    model.getJoueurCourant().getPions().get(indexChoisi)
-                );
-                model.setJeuEtat(JeuEtat.CONTINUE);
-            }
-        }
-        
-    }
-
-    @Override
-    public void keyReleased(KeyEvent e) {
+        //TODO: quitter le jeu (fermer la fen锚tre etc...)
     }
 
     public void afficherInstruction(String str){
+        System.out.println(str);//debug
         //TODO
     }
     
@@ -246,7 +182,7 @@ public class JeuVue extends JFrame implements KeyListener, JeuVueInterface{
     }
 
     /**
-     * TODO: dessiner un cercle rouge (indiquant la locations possible) dont le centre est sur la coordonné donné
+     * TODO: dessiner un cercle rouge (indiquant la locations possible) dont le centre est sur la coordonn茅 donn茅
      * taille du cercle: un peu plus grand que la taille du cercle dans le centre des certaines tuiles
      */
     public void dessinerCercleRouge(Coordonnee location){
@@ -254,19 +190,166 @@ public class JeuVue extends JFrame implements KeyListener, JeuVueInterface{
     }
 
     /**
-     * TODO: dessiner un cercle blanc (indiquant la location choisie) dont le centre est sur la coordonné donné
+     * TODO: dessiner un cercle blanc (indiquant la location choisie) dont le centre est sur la coordonn茅 donn茅
      * taille du cercle: un peu plus grand que la taille du cercle dans le centre des certaines tuiles
      */
     public void dessinerCercleBlanc(Coordonnee location){
         
     }
 
-        /**
-     * TODO: dessiner une tuile (indiquant la location choisie)
-     * taille du cercle: un peu plus grand que la taille du cercle dans le centre des certaines tuiles
-     */
-    public void dessinerTuile(Coordonnee location){
+    @Override
+    public void keyTyped(KeyEvent e) {
+        switch (e.getKeyChar()) {
+            case 's':   // gauche
+                //if(model.getJeuEtat()==JeuEtat.CHOOSING_PION){
+                //    indexChoisi=(indexChoisi - 1) % model.getJoueurCourant().getPions().size();
+                //    dessinerCercleBlanc(model.getJoueurCourant().getPions().get(indexChoisi).getLocation());
+                //}
+                //else 
+                if(model.getJeuEtat()==JeuEtat.ROTATING_TUILE){
+                    Coordonnee coordonnee = model.getTuileCourant().getLocationInGridTuile();
+                    model.getPlateau().removeTuileBrutForce(coordonnee);
+                    repaint();
+                    
+                    Tuile tuileTmp = model.getTuileCourant();
+                    //sens horaire inverse
+                    //-1 mod 3 = 2 (fois)
+                    tuileTmp.rotate();
+                    tuileTmp.rotate();
+                    model.setTuileCourante(tuileTmp);
+                    model.getPlateau().placeTuileBrutForce( model.getTuileCourant(), coordonnee );
+                    repaint();
+                }
+                else if(model.getJeuEtat()==JeuEtat.CHOOSING_TUILE_LOCATION){
+                    model.getPlateau().removeTuileBrutForce(locationsPossibles.get(indexChoisi));
+                    repaint();
+                    
+                    if(indexChoisi==0){
+                        indexChoisi+=locationsPossibles.size();
+                    }
+                    indexChoisi = (indexChoisi - 1) % locationsPossibles.size();
+                    model.getPlateau().placeTuileBrutForce(
+                        model.getTuileCourant(), locationsPossibles.get(indexChoisi)
+                    );
+                    repaint();
+                }
+                //else if(model.getJeuEtat()==JeuEtat.PLACING_PION || 
+                //model.getJeuEtat()==JeuEtat.CHOOSING_PEARL_DESTINATION){
+                //    indexChoisi = (indexChoisi + 1) % locationsPossibles.size();
+                //    dessinerCercleBlanc(locationsPossibles.get(indexChoisi));
+                //}
+                break;
+            case 'f':   // droite
+                if(model.getJeuEtat()==JeuEtat.CHOOSING_PION){
+                    indexChoisi=(indexChoisi + 1) % model.getJoueurCourant().getPions().size();
+                    dessinerCercleBlanc(model.getJoueurCourant().getPions().get(indexChoisi).getLocation());
+                }
+                else if(model.getJeuEtat()==JeuEtat.ROTATING_TUILE){
+                    Coordonnee coordonnee = model.getTuileCourant().getLocationInGridTuile();
+                    model.getPlateau().removeTuileBrutForce(coordonnee);
+                    repaint();
+                    
+                    Tuile tuileTmp = model.getTuileCourant();
+                    tuileTmp.rotate();
+                    model.setTuileCourante(tuileTmp);
+                    model.getPlateau().placeTuileBrutForce( model.getTuileCourant(), coordonnee );
+                    repaint();
+                }
+                else if(model.getJeuEtat()==JeuEtat.CHOOSING_TUILE_LOCATION){
+                    model.getPlateau().removeTuileBrutForce(locationsPossibles.get(indexChoisi));
+                    repaint();
+                    
+                    indexChoisi = (indexChoisi + 1) % locationsPossibles.size();
+                    model.getPlateau().placeTuileBrutForce(
+                        model.getTuileCourant(), locationsPossibles.get(indexChoisi)
+                    );
+                    repaint();
+                }
+                else if(model.getJeuEtat()==JeuEtat.PLACING_PION || 
+                model.getJeuEtat()==JeuEtat.CHOOSING_PEARL_DESTINATION){
+                    indexChoisi = (indexChoisi + 1) % locationsPossibles.size();
+                    dessinerCercleBlanc(locationsPossibles.get(indexChoisi));
+                }
+                break;
+            case ' ':   // verifier le choix
+                if(model.getJeuEtat()==JeuEtat.CHOOSING_TUILE_LOCATION){
+                    //TODO:programmez ici pour effacer tous les cercles
+                    //TODO: renouveler la vue des pions
+                    model.getPlateau().placeTuileContraint(model.getTuileCourant(), locationsPossibles.get(indexChoisi));
+                    model.setJeuEtat(JeuEtat.ROTATING_TUILE);
+                    afficherInstruction("Tappez 鈫鈫pour tourner la tuile. Tappez SPACE pour v茅rifier la choix.");
+                }
+                else if(model.getJeuEtat()==JeuEtat.ROTATING_TUILE){
+                    //TODO:programmez ici pour effacer tous les cercles
+                    model.setJeuEtat(JeuEtat.CONTINUE);
+                    afficherInstruction("Tappez 鈫鈫pour chosir un pion 脿 d茅placer. Tappez SPACE pour v茅rifier la choix ou passer votre tour.");
+                }
+                //else if(model.getJeuEtat()==JeuEtat.CHOOSING_PION){
+                //    //TODO:programmez ici pour effacer tous les cercles
+                //    //TODO: renouveler la vue des pions
+                //    model.setPionCourant(model.getJoueurCourant().getPions().get(indexChoisi));
+                //    model.setJeuEtat(JeuEtat.CONTINUE);
+                //    afficherInstruction("Tappez 鈫鈫pour chosir la location. Tappez SPACE pour v茅rifier la choix ou passer votre tour.");
+                //}
+                //else if(model.getJeuEtat()==JeuEtat.PLACING_PION){
+                //    //TODO:programmez ici pour effacer tous les cercles
+                //    //TODO: renouveler la vue des pions
+                //    model.getPlateau().placerPionForce(model.getPionCourant(), locationsPossibles.get(indexChoisi));
+                //    model.setJeuEtat(JeuEtat.CONTINUE);
+                //    afficherInstruction("Tappez 鈫鈫pour chosir un pion 脿 passer la perle. Tappez SPACE pour v茅rifier la choix ou passer votre tour.");
+                //}
+                //else if(model.getJeuEtat()==JeuEtat.CHOOSING_PEARL_DESTINATION){
+                //    //TODO:programmez ici pour effacer tous les cercles
+                //    //TODO: renouveler la vue des pions
+                //    model.getPionCourant().passPerleTo(
+                //        model.getJoueurCourant().getPions().get(indexChoisi)
+                //    );
+                //    model.setJeuEtat(JeuEtat.CONTINUE);
+                //}
+                break;
+            case 'p':   // commencer a faire des operations sur la vue generale de la plateau
+                if(model.getJeuEtat()==JeuEtat.CHANGING_VIEW){
+                    //sortir la mode
+                    model.setJeuEtat(model.getDernierEtat());
+                    break;
+                }
+                //sinon entrer la mode
+                model.setDernierEtat(model.getJeuEtat());
+                model.setJeuEtat(JeuEtat.CHANGING_VIEW);
+                break;
+            case 'n':   // next step
+                if( model.getJeuEtat()==JeuEtat.CHOOSING_TUILE_LOCATION ||
+                model.getJeuEtat()==JeuEtat.ROTATING_TUILE){
+                    //terminer la construction des tuiles et commencer a deplacer les pions
+                    model.setJeuEtat(JeuEtat.CHOOSING_PION);
+                }
+                break;
+            default:
+                break;
+        }
         
+        //if( e.getKeyCode() == KeyEvent.VK_ENTER){}
+        //else if ( e.getKeyCode()==KeyEvent.VK_RIGHT ){}
+        //else if ( e.getKeyCode()==KeyEvent.VK_LEFT ){}
+        //else if(e.getKeyCode()==KeyEvent.VK_SPACE){}
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    public static void main(String[] args) throws IOException {
+        Jeu model =  new Jeu(2);
+        JeuVue jeuVue = new JeuVue(model);
+        jeuVue.lancer();
     }
 
 }

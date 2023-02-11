@@ -13,6 +13,12 @@ import main.java.model.interfaces.Copy;
  *  portes[2] -> la porte en bas à droite
  *  portes[3] -> la porte en bas à gauche
  *  etc...
+ * 
+ *   5     0
+ *     / \
+ * 4  |   |  1
+ *     \ /
+ *   3     2
  */
 public class Hexagone implements Copy<Hexagone> {
     
@@ -20,6 +26,12 @@ public class Hexagone implements Copy<Hexagone> {
      * La liste contenant ces portes (de taille 6 pour chaque face d'un hexagone)
      */
     protected Couleurs[] portes;
+
+    /**
+     * Getteur pour les portes
+     * @return le tableau de portes
+     */
+    public Couleurs[] getPortes(){return portes;}
 
     /**
      * Constructeur qui défini les 6 portes de l'hexagone avec les arguments (donnés dans le sens horaire, et en partant de la porte en haut à droite)

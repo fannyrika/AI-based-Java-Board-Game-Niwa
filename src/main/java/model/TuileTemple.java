@@ -6,6 +6,8 @@ public class TuileTemple extends Tuile {
      * Attribut pour savoir à qui est le temple
      */
     protected Joueur proprietaire;
+
+    public Joueur getProprietaire(){return proprietaire;}
     
     /**
      * Constructeur initialisant une tuile avec temple

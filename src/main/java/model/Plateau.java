@@ -5,10 +5,9 @@ import java.util.HashMap;
 
 import main.java.model.interfaces.DeplacementPion;
 import main.java.model.interfaces.HexagoneAutour;
-import main.java.model.interfaces.PlacerTuile;
 import main.java.model.interfaces.TuilesAutour;
 
-public class Plateau implements DeplacementPion, PlacerTuile {
+public class Plateau implements DeplacementPion {
 
     /**
      * Attributs permettant de définir un plateau
@@ -17,12 +16,17 @@ public class Plateau implements DeplacementPion, PlacerTuile {
     protected HashMap<Coordonnee,Hexagone> gridHexagone;
     protected HashMap<Coordonnee,Pion> gridPion;
 
+    public HashMap<Coordonnee,Tuile> getGridTuile(){return gridTuile;}
+    public HashMap<Coordonnee,Hexagone> getGridHexagone(){return gridHexagone;}
+    public HashMap<Coordonnee,Pion> getGridPion(){return gridPion;}
+
     /**
      * Constructeur sans arguments, initialisant les attributs
      */
     public Plateau(){
         this.gridTuile = new HashMap<Coordonnee,Tuile>();
         this.gridHexagone = new HashMap<Coordonnee,Hexagone>();
+        this.gridPion = new HashMap<Coordonnee,Pion>();
     }
 
     /**
@@ -58,8 +62,7 @@ public class Plateau implements DeplacementPion, PlacerTuile {
         if(gridTuile.containsKey(c)){
             gridTuile.remove(c);
         }
-        placeTuileForce(t, c);
-        return true;
+        return placeTuileForce(t, c);
     }
 
     /**
@@ -107,17 +110,16 @@ public class Plateau implements DeplacementPion, PlacerTuile {
     public boolean placeTuileContraint(Tuile t, int x, int y){
         Coordonnee[] ta = TuilesAutour.get(new Coordonnee(x, y));
         if(gridTuile.containsKey(ta[0]) || gridTuile.containsKey(ta[1]) || gridTuile.containsKey(ta[2]) || gridTuile.containsKey(ta[3]) || gridTuile.containsKey(ta[4]) || gridTuile.containsKey(ta[5])){
-            placeTuileForce(t, x, y);
-            return true;
+            return placeTuileForce(t, x, y);
         }
         return false;
     }
 
     /**
-     * Méthode pour placer de force un pion à un certain encdroit (sauf si l'endroit est occupé)
+     * Méthode pour placer de force un pion à un certain endroit (sauf si l'endroit est occupé)
      * @param p -> pion à placer
      * @param c -> endroit où placer le pion
-     * @return true si le pion a été placer, false sinon (parce que l'endroit est occupé)
+     * @return true si le pion a été placé, false sinon (parce que l'endroit est occupé)
      */
     public boolean placerPionForce(Pion p, Coordonnee c){
         if(!gridPion.containsKey(c)){
@@ -220,10 +222,19 @@ public class Plateau implements DeplacementPion, PlacerTuile {
         }
         return possibilites;
     }
-
-    @Override
     public ArrayList<Coordonnee> canPlaceLocations(Tuile t) {
-        // TODO Auto-generated method stub
-        return null;
+        Coordonnee[] tuilesAutours = TuilesAutour.get(t.getLocationInGridTuile());
+        ArrayList<Coordonnee> locationsPossibles = new ArrayList<Coordonnee>();
+        for(int i=0; i<tuilesAutours.length; i++){
+            if(!gridTuile.containsKey(tuilesAutours[i])){
+                locationsPossibles.add(tuilesAutours[i]);
+            }
+        }
+        return locationsPossibles;
+    }
+    public boolean removeTuileBrutForce(Coordonnee c) {
+        if(!gridTuile.containsKey(c)){return false;}
+        gridTuile.remove(c);
+        return true;
     }
 }

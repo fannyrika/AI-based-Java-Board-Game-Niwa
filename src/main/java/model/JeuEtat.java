@@ -1,7 +1,6 @@
 package main.java.model;
 
 public enum JeuEtat {
-    //PLACING_TUILE,
     CHOOSING_TUILE_LOCATION,
     ROTATING_TUILE,
 
@@ -9,5 +8,7 @@ public enum JeuEtat {
     PLACING_PION,
     CHOOSING_PEARL_DESTINATION,
     
-    CONTINUE;
+    CONTINUE,
+
+    CHANGING_VIEW;
 }

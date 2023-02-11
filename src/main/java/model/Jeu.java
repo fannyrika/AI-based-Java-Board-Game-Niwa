@@ -1,108 +1,107 @@
 package main.java.model;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 /**
- * pour gérer le déroulement du jeu
+ * La classes qui gerer le deroulement du jeu
  */
 public class Jeu {
-    protected ArrayList<Joueur> joueurs = null;
-    /**
-     * joueurs qui sont déjà arrivés au temple d'un autre joueur
-     */
-    protected ArrayList<Joueur> gangeurs = null;
-    protected Joueur joueurCourant;
-    //protected boolean shouldContinue=false;
 
-    protected Plateau plateau;
-    protected Tuile tuileCourante;
-    protected Tuile tuileInit = null;
-    protected Sac sac;
-    protected ArrayList<TuileTemple> tuileTemples = null;
+    /**
+     * Liste qui va contenir la liste des joueurs
+     * 
+     * Pourquoi avoir fait une liste de joueurs et pas un tableau ou autre ?
+     * Si nous voulons rajouter un option qui permettra de jouer au jeu avec un nombre variable de joueurs, il est plus facile de passer par une liste.
+     */
+    protected ArrayList<Joueur> joueurs = new ArrayList<Joueur>();
+    protected ArrayList<Joueur> gangeurs = new ArrayList<Joueur>();
+    protected Joueur joueurCourant = new Joueur();
+    /**
+     * Le jeu nécessite un plateau pour jouer
+     */
+    protected Plateau plateau = new Plateau();
+    /**
+     * Représente le sac de tuile (hors tuile temple)
+     */
+    protected ArrayList<Tuile> sac = new ArrayList<Tuile>();
+    /**
+     * Représente le sac des temples
+     */
+    protected ArrayList<TuileTemple> sacTemples = new ArrayList<TuileTemple>();
+    protected Tuile tuileCourante = new Tuile();
     
-    protected Pion pionCourant = null;
+    protected Pion pionCourant = new Pion(joueurCourant);
 
     protected JeuEtat jeuEtat;
-
-    //public Jeu(ArrayList<Joueur> joueurs){
-    //    this.joueurs=joueurs;
-    //}
-
-    public Jeu(int nbJoueurs){
-        joueurs=new ArrayList<Joueur>();
-        jeuEtat = JeuEtat.CHOOSING_TUILE_LOCATION;
-        for(int i=0; i<nbJoueurs; i++){
-            joueurs.add(new Joueur());
+    protected JeuEtat dernierEtat;
+    
+    //remplac�� par l'attribut id de joueur
+    /**
+     * Entier qui permettra de savoir à qui est le tour
+     * 
+     * @Exemple : 
+     * - tour = 0 -> joueur numéro 1 qui joue
+     * - tour = 1 -> joueur numéro 2 qui joue
+     * etc...
+     */
+    //protected int tour = 0;
+    
+    protected static final int NB_TUILES = 12;
+    
+     /**
+     * Constructeur permettant d'initialiser les attributs
+     * 
+     * @param nb_joueurs -> Le nombre de joueurs que le jeu pourra acueillir
+     */
+    public Jeu(int nb_joueurs){
+    	jeuEtat = JeuEtat.CHOOSING_TUILE_LOCATION;
+        for (int i = 0; i < nb_joueurs; i++) {
+            Joueur j = new Joueur();
+            joueurs.add(j);             // On ajoute les joueurs dans la liste de joueurs
+            sacTemples.add(j.temple);   // On ajoute chaque temple dans la liste des temples
         }
-        for(int i=0;i<joueurs.size();i++){
-            joueurs.get(i).setId(i);
-            tuileTemples.add(new TuileTemple(joueurs.get(i)));
-        }
-
-        sac = new Sac();
-        plateau=new Plateau();
-        tuileInit=tuileTemples.get(0);
-        //TODO: placer les tuiles avec temple selon le nombre du joueurs
-    }
-
-    //setters and getters
-    public void setJoueurCourant(Joueur j){
-        joueurCourant=j;
-    }
-
-    public void setPionCourant(Pion p){
-        pionCourant=p;
-    }
-
-    public void setGagneur(Joueur j){
-        gangeurs.add(j);
-    }
-
-    public void setTuileCourante(Tuile t){
-        tuileCourante=t;
-    }
-
-    public void setJeuEtat(JeuEtat j){
-        jeuEtat=j;
-    }
-
-    //getters
-
-    public JeuEtat getJeuEtat(){
-        return jeuEtat;
-    }
-
-    public ArrayList<Joueur> getJoueurs() {
-        return joueurs;
-    }
-
-    public ArrayList<Joueur> getGagneurs(){
-        return gangeurs;
-    }
-
-    public Joueur getJoueurCourant() {
-        return joueurCourant;
-    }
-
-    public Plateau getPlateau(){
-        return plateau;
+        initSac();
+        tuileCourante=sacTemples.get(0);
+        plateau.placeTuileForce(tuileCourante, 0, 0);
     }
     
-    public Tuile getTuileCourant(){
-        return tuileCourante;
+    
+    public void initSac(){
+        for (int i = 0; i < NB_TUILES; i++) {
+            sac.add(new Tuile());
+        }
     }
-
-    public Tuile getTuileInit(){
-        return tuileInit;
+    
+    //Cette fonction permet de piocher une tuile aléatoire dans le sac
+    public Tuile piocher(){
+        Random r=new Random();
+        //int n = r.nextInt(0,sac.size());
+        int n = r.nextInt(sac.size());
+        Tuile piocher = sac.get(n);
+        sac.remove(n);
+        return piocher;
     }
-
-    public Sac getSac(){
-        return sac;
-    }
-
-    public Pion getPionCourant(){
-        return pionCourant;
-    }
+    
+    //setters
+    public void setJoueurCourant(Joueur j){ joueurCourant=j;}
+    public void setPionCourant(Pion p){ pionCourant=p;}
+    public void setGagneur(Joueur j){ gangeurs.add(j);}
+    public void setTuileCourante(Tuile t){ tuileCourante=t; }
+    public void setJeuEtat(JeuEtat j){ jeuEtat=j;}
+    public void setDernierEtat(JeuEtat d){ dernierEtat = d;}
+    //getters
+    public JeuEtat getJeuEtat(){ return jeuEtat; }
+    public JeuEtat getDernierEtat(){ return dernierEtat;}
+    // Méthodes nécessaires pour un jeu de plateau
+    public ArrayList<Joueur> getJoueurs(){return joueurs;}
+    public Plateau getPlateau(){return plateau;}
+    public ArrayList<Tuile> getSac(){return sac;}
+    public ArrayList<TuileTemple> getSacTemples(){return sacTemples;}
+    public ArrayList<Joueur> getGagneurs(){ return gangeurs; }
+    public Joueur getJoueurCourant() { return joueurCourant; }
+    public Tuile getTuileCourant(){ return tuileCourante; }
+    public Pion getPionCourant(){ return pionCourant; }
 
     public static void main(String[] args) {
         Jeu jeu=new Jeu(3);
