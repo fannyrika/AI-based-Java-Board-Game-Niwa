@@ -118,7 +118,7 @@ public class Plateau implements DeplacementPion {
     /**
      * Méthode pour placer de force un pion à un certain endroit (sauf si l'endroit est occupé)
      * @param p -> pion à placer
-     * @param c -> endroit où placer le pion
+     * @param c -> endroit où placer le pion (dans le gridHexagone/gridPion)
      * @return true si le pion a été placé, false sinon (parce que l'endroit est occupé)
      */
     public boolean placerPionForce(Pion p, Coordonnee c){
@@ -134,7 +134,7 @@ public class Plateau implements DeplacementPion {
     /**
      * Méthode pour placer un pion autour du temple de son proprietaire avant que la partie commence
      * @param p -> Le pion à placer
-     * @param c -> L'endroit où placer le pion
+     * @param c -> L'endroit où placer le pion (dans le gridHexagone/gridPion)
      * @return -> true si le pion est placé (la location du pion est donc mise à jour), false sinon (pion trop loin du temple OU emplacement occupé)
      */
     public boolean placeStartPion(Pion p, Coordonnee c){
@@ -149,7 +149,7 @@ public class Plateau implements DeplacementPion {
     }
 
     /**
-     * Méthode privée, toujours dans le sens horaire :
+     * Méthode privée qui retourne une liste de Coordonne, qui indique les emplacements où le pion peut atterir par rapport à sa direction et les perles qu'il possède
      * @param p -> pion à déplacer
      * @param direction
      * | 0 -> NE
@@ -158,6 +158,7 @@ public class Plateau implements DeplacementPion {
      * | 3 -> SO
      * | 4 -> O
      * | 5 -> NO
+     * @return -> la liste de coordonnee
      */
     private ArrayList<Coordonnee> canMoveLocationsDirection(Pion p, Coordonnee position, int direction) {
         if(direction > 5){return new ArrayList<Coordonnee>();}        // N'est pas censé arriver si le jeu est fait correctement
@@ -213,6 +214,7 @@ public class Plateau implements DeplacementPion {
     /**
      * Override de la méthode de l'interface "DeplacementPion" (choix de déplacement d'un pion)
      * @param p -> Pion à déplacer
+     * @return -> la liste de tous les emplacements ou le pion peut atterir en fonction des perles qu'il contient
      */
     @Override
     public ArrayList<Coordonnee> canMoveLocations(Pion p){
