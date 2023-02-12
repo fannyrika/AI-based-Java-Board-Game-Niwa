@@ -222,6 +222,12 @@ public class Plateau implements DeplacementPion {
         }
         return possibilites;
     }
+
+    /**
+     * Méthode permettant de connaître les emplacements libres autour d'une tuile
+     * @param t -> La tuile
+     * @return une liste de coordonnee contenant les places libres
+     */
     public ArrayList<Coordonnee> canPlaceLocations(Tuile t) {
         Coordonnee[] tuilesAutours = TuilesAutour.get(t.getLocationInGridTuile());
         ArrayList<Coordonnee> locationsPossibles = new ArrayList<Coordonnee>();
@@ -232,8 +238,50 @@ public class Plateau implements DeplacementPion {
         }
         return locationsPossibles;
     }
+
+    /**
+     * Méthode permettant de retirer une tuile déjà posée sur le plateau
+     * @Warning -> On ne retire pas simplement la tuile, il faut aussi mettre à jour le gridHexagone pour que le tout coincide
+     * @param c -> La coordonnee de la tuile à retirer
+     * @return true si retirée avec succes, false sinon
+     */
     public boolean removeTuileBrutForce(Coordonnee c) {
         if(!gridTuile.containsKey(c)){return false;}
+
+        Tuile tuile = gridTuile.get(c);
+        Coordonnee[] hexagonesAutour = HexagoneAutour.get(tuile.getLocationInGridHexagone());
+        gridHexagone.remove(tuile.getLocationInGridHexagone());     // On retire complétement l'hexagone centrale quoiqu'il arrive
+        
+        // On s'occupe de l'hexagone NE
+        gridHexagone.get(hexagonesAutour[0]).portes[2] = null;
+        gridHexagone.get(hexagonesAutour[0]).portes[3] = null;
+        if(gridHexagone.get(hexagonesAutour[0]).isNull()){gridHexagone.remove(hexagonesAutour[0]);}
+
+        // On s'occupe de l'hexagone E
+        gridHexagone.get(hexagonesAutour[1]).portes[4] = null;
+        gridHexagone.get(hexagonesAutour[1]).portes[5] = null;
+        if(gridHexagone.get(hexagonesAutour[1]).isNull()){gridHexagone.remove(hexagonesAutour[1]);}
+
+        // On s'occupe de l'hexagone SE
+        gridHexagone.get(hexagonesAutour[2]).portes[4] = null;
+        gridHexagone.get(hexagonesAutour[2]).portes[5] = null;
+        if(gridHexagone.get(hexagonesAutour[2]).isNull()){gridHexagone.remove(hexagonesAutour[2]);}
+
+        // On s'occupe de l'hexagone SO
+        gridHexagone.get(hexagonesAutour[3]).portes[0] = null;
+        gridHexagone.get(hexagonesAutour[3]).portes[1] = null;
+        if(gridHexagone.get(hexagonesAutour[3]).isNull()){gridHexagone.remove(hexagonesAutour[3]);}
+
+        // On s'occupe de l'hexagone O
+        gridHexagone.get(hexagonesAutour[4]).portes[0] = null;
+        gridHexagone.get(hexagonesAutour[4]).portes[1] = null;
+        if(gridHexagone.get(hexagonesAutour[4]).isNull()){gridHexagone.remove(hexagonesAutour[4]);}
+
+        // On s'occupe de l'hexagone NO
+        gridHexagone.get(hexagonesAutour[5]).portes[2] = null;
+        gridHexagone.get(hexagonesAutour[5]).portes[3] = null;
+        if(gridHexagone.get(hexagonesAutour[5]).isNull()){gridHexagone.remove(hexagonesAutour[5]);}
+
         gridTuile.remove(c);
         return true;
     }

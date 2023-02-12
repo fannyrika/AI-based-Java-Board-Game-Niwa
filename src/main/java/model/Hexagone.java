@@ -87,6 +87,17 @@ public class Hexagone implements Copy<Hexagone> {
         return new Hexagone(portes[0], portes[1], portes[2], portes[3], portes[4],portes[5]);
     }
 
+    /**
+     * Petite méthode permettant de savoir si toutes les portes d'un hexagone sont == null ou non
+     * @return
+     */
+    public boolean isNull(){
+        for (int i = 0; i < portes.length; i++) {
+            if(portes[i] != null){return false;}
+        }
+        return true;
+    }
+
     @Override
     public String toString(){
         return getClass().getName()+"@"+Integer.toHexString(hashCode())+" -> "+toStringPartiel();
