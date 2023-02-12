@@ -41,6 +41,14 @@ public class HexagoneCentral extends Hexagone {
         return copy;
     }
 
+    /**
+     * @return une tuile qui est la tuile actuelle mais tournée d'un cran dans le sens horaire
+     */
+    @Override
+    public HexagoneCentral getRotation(){
+        return new HexagoneCentral(portes[5], portes[0], portes[1], portes[2], portes[3], portes[4]);
+    }
+
     public void setLocation(Coordonnee c){this.location = c;}
     public void setLocation(int x, int y){this.location = new Coordonnee(x, y);}
     public Coordonnee getLocation(){return location;}

@@ -197,7 +197,7 @@ public class Tuile {
      * @return une tuile tournée d'un cran dans le sens horaire
      */
     public Tuile getRotation(){
-        return new Tuile((HexagoneCentral)centre.getRotation().getRotation(),hexagones[4].getRotation().getRotation(), hexagones[5].getRotation().getRotation(), hexagones[0].getRotation().getRotation(), hexagones[1].getRotation().getRotation(), hexagones[2].getRotation().getRotation(), hexagones[3].getRotation().getRotation());
+        return new Tuile(centre.getRotation().getRotation(),hexagones[4].getRotation().getRotation(), hexagones[5].getRotation().getRotation(), hexagones[0].getRotation().getRotation(), hexagones[1].getRotation().getRotation(), hexagones[2].getRotation().getRotation(), hexagones[3].getRotation().getRotation());
     }
 
     /**
