@@ -224,12 +224,12 @@ public class Plateau implements DeplacementPion {
     }
 
     /**
-     * Méthode permettant de connaître les emplacements libres autour d'une tuile
+     * Méthode permettant de connaître les emplacements libres autour d'une coordonnee
      * @param t -> La tuile
      * @return une liste de coordonnee contenant les places libres
      */
-    public ArrayList<Coordonnee> canPlaceLocations(Tuile t) {
-        Coordonnee[] tuilesAutours = TuilesAutour.get(t.getLocationInGridTuile());
+    public ArrayList<Coordonnee> canPlaceLocations(Coordonnee c) {
+        Coordonnee[] tuilesAutours = TuilesAutour.get(c);
         ArrayList<Coordonnee> locationsPossibles = new ArrayList<Coordonnee>();
         for(int i=0; i<tuilesAutours.length; i++){
             if(!gridTuile.containsKey(tuilesAutours[i])){
@@ -237,6 +237,10 @@ public class Plateau implements DeplacementPion {
             }
         }
         return locationsPossibles;
+    }
+
+    public ArrayList<Coordonnee> canPlaceLocations(int x, int y){
+        return canPlaceLocations(new Coordonnee(x, y));
     }
 
     /**

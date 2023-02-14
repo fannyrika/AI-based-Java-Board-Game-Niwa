@@ -77,10 +77,15 @@ public class JeuVue extends JFrame implements KeyListener{
                 locationsPossibles = afficherPossibleTuilePosition();
                 indexChoisi=0;
 
+                Coordonnee ancienneTuileCoordonnee = model.getTuileCourant().getLocationInGridTuile();
+                ArrayList<Coordonnee> emplacementsPossibles = model.getPlateau().canPlaceLocations(ancienneTuileCoordonnee);
                 model.setTuileCourante(model.piocher());
-                model.getPlateau().placeTuileBrutForce(
-                    model.getTuileCourant(), locationsPossibles.get(0)
-                );
+                int dx = -1;
+                while (emplacementsPossibles.isEmpty()){
+                    emplacementsPossibles = model.getPlateau().canPlaceLocations(ancienneTuileCoordonnee.getX() + dx, ancienneTuileCoordonnee.getY());
+                    dx--;
+                }
+                model.getPlateau().placeTuileForce(model.getTuileCourant(), emplacementsPossibles.get(0));
 
                 repaint();
                 //waiting
@@ -159,7 +164,7 @@ public class JeuVue extends JFrame implements KeyListener{
     }
     
     public ArrayList<Coordonnee> afficherPossibleTuilePosition() {
-        ArrayList<Coordonnee> locationsPossibles = model.getPlateau().canPlaceLocations(model.getTuileCourant());
+        ArrayList<Coordonnee> locationsPossibles = model.getPlateau().canPlaceLocations(model.getTuileCourant().getLocationInGridTuile());
         for(int i=0; i<locationsPossibles.size(); i++) {
             dessinerCercleRouge(locationsPossibles.get(i));
         }
@@ -197,6 +202,18 @@ public class JeuVue extends JFrame implements KeyListener{
         
     }
 
+    private void glisserTuile(Tuile tuile, int dx, int dy){
+        int x = model.getTuileCourant().getLocationInGridTuile().getX();
+        int y = model.getTuileCourant().getLocationInGridTuile().getY();
+        model.getPlateau().removeTuileBrutForce(model.getTuileCourant().getLocationInGridTuile());
+        if(!model.getPlateau().placeTuileForce(tuile, x+dx, y+dy)){
+            if(dx > 0){glisserTuile(tuile, dx+1, dy);}
+            else if(dx < 0){glisserTuile(tuile, dx-1, dy);}
+            else if(dy > 0){glisserTuile(tuile, dx, dy+1);}
+            else if(dy < 0){glisserTuile(tuile, dx, dy-1);}
+        }
+    }
+
     @Override
     public void keyTyped(KeyEvent e) {
         switch (e.getKeyChar()) {
@@ -221,16 +238,7 @@ public class JeuVue extends JFrame implements KeyListener{
                     repaint();
                 }
                 else if(model.getJeuEtat()==JeuEtat.CHOOSING_TUILE_LOCATION){
-                    model.getPlateau().removeTuileBrutForce(locationsPossibles.get(indexChoisi));
-                    repaint();
-                    
-                    if(indexChoisi==0){
-                        indexChoisi+=locationsPossibles.size();
-                    }
-                    indexChoisi = (indexChoisi - 1) % locationsPossibles.size();
-                    model.getPlateau().placeTuileBrutForce(
-                        model.getTuileCourant(), locationsPossibles.get(indexChoisi)
-                    );
+                    glisserTuile(model.getTuileCourant(), -1, 0);
                     repaint();
                 }
                 //else if(model.getJeuEtat()==JeuEtat.PLACING_PION || 
@@ -256,13 +264,7 @@ public class JeuVue extends JFrame implements KeyListener{
                     repaint();
                 }
                 else if(model.getJeuEtat()==JeuEtat.CHOOSING_TUILE_LOCATION){
-                    model.getPlateau().removeTuileBrutForce(locationsPossibles.get(indexChoisi));
-                    repaint();
-                    
-                    indexChoisi = (indexChoisi + 1) % locationsPossibles.size();
-                    model.getPlateau().placeTuileBrutForce(
-                        model.getTuileCourant(), locationsPossibles.get(indexChoisi)
-                    );
+                    glisserTuile(model.getTuileCourant(), 1, 0);
                     repaint();
                 }
                 else if(model.getJeuEtat()==JeuEtat.PLACING_PION || 
@@ -271,13 +273,30 @@ public class JeuVue extends JFrame implements KeyListener{
                     dessinerCercleBlanc(locationsPossibles.get(indexChoisi));
                 }
                 break;
+            case 'd':   // bas
+                if(model.getJeuEtat()==JeuEtat.CHOOSING_TUILE_LOCATION){
+                    glisserTuile(model.getTuileCourant(), 0, -1);
+                    repaint();
+                }
+                break;
+            case 'e':   // haut
+                if(model.getJeuEtat()==JeuEtat.CHOOSING_TUILE_LOCATION){
+                    glisserTuile(model.getTuileCourant(), 0, 1);
+                    repaint();
+                }
+                break;
             case ' ':   // verifier le choix
                 if(model.getJeuEtat()==JeuEtat.CHOOSING_TUILE_LOCATION){
                     //TODO:programmez ici pour effacer tous les cercles
                     //TODO: renouveler la vue des pions
-                    model.getPlateau().placeTuileContraint(model.getTuileCourant(), locationsPossibles.get(indexChoisi));
-                    model.setJeuEtat(JeuEtat.ROTATING_TUILE);
-                    afficherInstruction("Tappez 鈫鈫pour tourner la tuile. Tappez SPACE pour v茅rifier la choix.");
+                    model.getPlateau().removeTuileBrutForce(model.getTuileCourant().getLocationInGridTuile());      // On enlève la tuile courante du plateau
+                    if(model.getPlateau().placeTuileContraint(model.getTuileCourant(), model.getTuileCourant().getLocationInGridTuile())){  // Et on tente de la replacer, mais avec les contraintes
+                        model.setJeuEtat(JeuEtat.ROTATING_TUILE);                                                                           // Si la tuile se place, on passe à la rotation
+                        afficherInstruction("Tappez 鈫鈫pour tourner la tuile. Tappez SPACE pour v茅rifier la choix.");
+                    }
+                    else{                                                                                                                   // Sinon, on reste sur le deplacement de tuile
+                        model.getPlateau().placeTuileForce(model.getTuileCourant(),model.getTuileCourant().getLocationInGridTuile());
+                    }
                 }
                 else if(model.getJeuEtat()==JeuEtat.ROTATING_TUILE){
                     //TODO:programmez ici pour effacer tous les cercles

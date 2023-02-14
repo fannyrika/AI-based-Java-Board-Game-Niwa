@@ -16,7 +16,10 @@ public class Jeu {
      */
     protected ArrayList<Joueur> joueurs = new ArrayList<Joueur>();
     protected ArrayList<Joueur> gangeurs = new ArrayList<Joueur>();
-    protected Joueur joueurCourant = new Joueur();
+    /**
+     * Représente le joueur courant, mis sur le premier joueur lorsque l'objet "Jeu" est crée
+     */
+    protected Joueur joueurCourant;
     /**
      * Le jeu nécessite un plateau pour jouer
      */
@@ -31,7 +34,10 @@ public class Jeu {
     protected ArrayList<TuileTemple> sacTemples = new ArrayList<TuileTemple>();
     protected Tuile tuileCourante = new Tuile();
     
-    protected Pion pionCourant = new Pion(joueurCourant);
+    /**
+     * Représente le pion courant, mis sur le premier pion du premier joueur lorsque l'objet "Jeu" est crée
+     */
+    protected Pion pionCourant;
 
     protected JeuEtat jeuEtat;
     protected JeuEtat dernierEtat;
@@ -61,6 +67,8 @@ public class Jeu {
             joueurs.add(j);             // On ajoute les joueurs dans la liste de joueurs
             sacTemples.add(j.temple);   // On ajoute chaque temple dans la liste des temples
         }
+        joueurCourant = joueurs.get(0);
+        pionCourant = joueurCourant.pions.get(0);
         initSac();
         tuileCourante=sacTemples.get(0);
         plateau.placeTuileForce(tuileCourante, 0, 0);
