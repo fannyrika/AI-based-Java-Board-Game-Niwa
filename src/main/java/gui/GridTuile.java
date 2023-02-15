@@ -3,7 +3,6 @@ package main.java.gui;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.event.WindowAdapter;
 
 import main.java.model.Coordonnee;
 import main.java.model.Jeu;
@@ -15,7 +14,6 @@ import javax.swing.*;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -54,6 +52,8 @@ public class GridTuile extends JPanel implements KeyListener {
      */
     protected static final int DISTANCE_ZOOM = 10;
 
+    protected ArrayList<TuileGraphique> tuilesGraphique = new ArrayList<TuileGraphique>();
+
     /**
      * Constructeur
      * @param m
@@ -77,6 +77,8 @@ public class GridTuile extends JPanel implements KeyListener {
         super.paintComponent(g);
         Graphics2D mainGraphics = (Graphics2D)g;
 
+        tuilesGraphique.clear();
+
         // On parcours toutes les tuiles sur le plateau, pour ainsi les dessiner
         for(Tuile t : model.getPlateau().getGridTuile().values()){
             int x = t.getLocationInGridTuile().getX();
@@ -84,20 +86,22 @@ public class GridTuile extends JPanel implements KeyListener {
             if(t instanceof TuileTemple){
                 TuileTempleGraphique tuileG = new TuileTempleGraphique((TuileTemple) t, x,y,((TuileTemple)t).getProprietaire());
                 tuileG.drawTile(mainGraphics);
+                tuilesGraphique.add(tuileG);
             }
             else{
                 TuileGraphique tuileG = new TuileGraphique(t, x,y);
                 tuileG.drawTile(mainGraphics);
+                tuilesGraphique.add(tuileG);
             }
         }
     }
 
     /**
-     * Méthode permettant de piocher une tuile dans le model et de la placer
+     * Méthode privée permettant de piocher une tuile dans le model et de la placer (utile seulement pour les tests)
      * @param x -> Coordonnee x
      * @param y -> Coordonnee y
      */
-    public void piocheAndPlace(int x, int y){
+    private void piocheAndPlace(int x, int y){
         model.getPlateau().placeTuileBrutForce(model.piocher(), new Coordonnee(x, y));
     }
 

@@ -22,29 +22,34 @@ public class TuileGraphique extends Polygon {
     protected static final int RADIUS_MIN = 20;
 
     /**
+     * Le rayon maximal autorisé
+     */
+    protected static final int RADIUS_MAX = 100;
+
+    /**
      * Représente le centre de l'hexagone du bas de la tuile
      */
     /*
-     * Graphiquement, le centre est représenté par la lettre X, centreGauche par G, et centreDroite par D  :
+     * Graphiquement, le centreBas est représenté par la lettre B, centreGauche par G, et centreDroite par D, et le centre par C  :
      * 
      *            #               # 
      *       #         #     #         #
      *            G               D     
      *       #         #     #         # 
-     *            #               # 
+     *            #       C       # 
      *                    #    
      *               #         #
-     *                    X     
+     *                    B     
      *               #         #
      *                    #
      */
-    protected Point center;
+    protected Point centre;
+    protected Point centreBas;
     protected Point centreGauche;
     protected Point centreDroite;
     /**
      * La couleur qu'aura l'intérieur de la tuile
      * - WHITE pour les tuiles situé sur des x pairs
-     * - GRAY pour les tuiles situé sur des x impairs
      */
     protected Color color;
     
@@ -56,17 +61,17 @@ public class TuileGraphique extends Polygon {
      */
     public TuileGraphique(Tuile tuile, int x, int y){
         this.tuile = tuile;
+        color = Color.WHITE;
         if(x%2 == 0){
-            this.center = new Point(radius*x*5/2,-3*radius*y);
-            color = Color.WHITE;
+            this.centreBas = new Point(radius*x*5/2,-3*radius*y);
         }
         else{
-            color = Color.GRAY;
-            this.center = new Point(radius*x*5/2,-3*radius*y - 3*radius/2);
+            this.centreBas = new Point(radius*x*5/2,-3*radius*y - 3*radius/2);
         }
-        center.setLocation(center.x + GridTuile.screen.getWidth()/2 + GridTuile.dx,center.y + GridTuile.screen.getHeight()/2 + GridTuile.dy);     // On place le (0,0) au centre de la page
-        centreGauche = givePoints(new Point(center.x,center.y-radius))[5];
-        centreDroite = givePoints(new Point(center.x,center.y-radius))[1];
+        centreBas.setLocation(centreBas.x + GridTuile.screen.getWidth()/2 + GridTuile.dx,centreBas.y + GridTuile.screen.getHeight()/2 + GridTuile.dy+radius);     // On place le (0,0) au centre de la page
+        centre = givePoints(centreBas)[0];
+        centreGauche = givePoints(new Point(centreBas.x,centreBas.y-radius))[5];
+        centreDroite = givePoints(new Point(centreBas.x,centreBas.y-radius))[1];
     }
 
     /**
@@ -130,7 +135,7 @@ public class TuileGraphique extends Polygon {
      */
     public void drawTile(Graphics g){
         // On trace chaque face de la tuile
-        Point[] bas = givePoints(center);
+        Point[] bas = givePoints(centreBas);
         for (int i = 1; i < 6; i++){
             this.addPoint(bas[i].x,bas[i].y);
         }
@@ -151,14 +156,14 @@ public class TuileGraphique extends Polygon {
         g.fillPolygon(this);
 
         // On trace les portes
-        drawLineColor(g, tuile.getHexagoneCentral().getPortes()[2], this.xpoints[0], this.ypoints[0], center.x, center.y);
-        drawLineColor(g, tuile.getHexagoneCentral().getPortes()[3], this.xpoints[5], this.ypoints[5], center.x, center.y);
+        drawLineColor(g, tuile.getHexagoneCentral().getPortes()[2], this.xpoints[0], this.ypoints[0], centreBas.x, centreBas.y);
+        drawLineColor(g, tuile.getHexagoneCentral().getPortes()[3], this.xpoints[5], this.ypoints[5], centreBas.x, centreBas.y);
         drawLineColor(g, tuile.getHexagoneCentral().getPortes()[4], this.xpoints[5], this.ypoints[5], centreGauche.x, centreGauche.y);
         drawLineColor(g, tuile.getHexagoneCentral().getPortes()[5], this.xpoints[9], this.ypoints[9], centreGauche.x, centreGauche.y);
         drawLineColor(g, tuile.getHexagoneCentral().getPortes()[0], this.xpoints[9], this.ypoints[9], centreDroite.x, centreDroite.y);
         drawLineColor(g, tuile.getHexagoneCentral().getPortes()[1], this.xpoints[0], this.ypoints[0], centreDroite.x, centreDroite.y);
 
-        drawLineColor(g, tuile.getHexagones()[2].getPortes()[4], this.xpoints[2], this.ypoints[2], center.x, center.y);
+        drawLineColor(g, tuile.getHexagones()[2].getPortes()[4], this.xpoints[2], this.ypoints[2], centreBas.x, centreBas.y);
         drawLineColor(g, tuile.getHexagones()[4].getPortes()[0], this.xpoints[7], this.ypoints[7], centreGauche.x, centreGauche.y);
         drawLineColor(g, tuile.getHexagones()[0].getPortes()[2], this.xpoints[11], this.ypoints[11], centreDroite.x, centreDroite.y);
 
@@ -183,8 +188,11 @@ public class TuileGraphique extends Polygon {
      */
     public static void zoom(int zoom){
         radius += zoom;
-        if(radius <= RADIUS_MIN){
+        if(radius < RADIUS_MIN){
             radius = RADIUS_MIN;
+        }
+        if(radius > RADIUS_MAX){
+            radius = RADIUS_MAX;
         }
     }
 }
