@@ -73,7 +73,7 @@ public class JeuVue extends JFrame implements KeyListener{
                 //    controleur.controlIA();
                 //}
                 
-                afficherInstruction("Tappez S/F pour chosir la location pour cette tuile. Tappez SPACE pour v茅rifier la choix.");
+                afficherInstruction("Tappez S/F pour chosir la location pour cette tuile.\n Tappez R pour placer votre propre camp (sauf le premier joueur dont le camp est deja placee).\n Tappez SPACE pour verifier la choix.");
                 locationsPossibles = afficherPossibleTuilePosition();
                 indexChoisi=0;
 
@@ -217,6 +217,21 @@ public class JeuVue extends JFrame implements KeyListener{
     @Override
     public void keyTyped(KeyEvent e) {
         switch (e.getKeyChar()) {
+            case 'r'://placer l'autre tuile avec temple
+                if(model.getJeuEtat()==JeuEtat.CHOOSING_TUILE_LOCATION){
+                    if(model.getJoueurCourant().dejaPlacerTemple()==false){
+                        Coordonnee coordonnee = model.getTuileCourant().getLocationInGridTuile();
+                        model.getPlateau().removeTuileBrutForce(coordonnee);
+                        repaint();
+                        
+                        Tuile tuileTmp = model.getSacTemples().get(model.getJoueurCourant().getID());
+                        model.getJoueurCourant().setDejaPlacerTemple(true);
+                        model.setTuileCourante(tuileTmp);
+                        model.getPlateau().placeTuileBrutForce( model.getTuileCourant(), coordonnee );
+                        repaint();
+                    }
+                }
+                break;
             case 's':   // gauche
                 //if(model.getJeuEtat()==JeuEtat.CHOOSING_PION){
                 //    indexChoisi=(indexChoisi - 1) % model.getJoueurCourant().getPions().size();
@@ -255,7 +270,6 @@ public class JeuVue extends JFrame implements KeyListener{
                 else if(model.getJeuEtat()==JeuEtat.ROTATING_TUILE){
                     Coordonnee coordonnee = model.getTuileCourant().getLocationInGridTuile();
                     model.getPlateau().removeTuileBrutForce(coordonnee);
-                    repaint();
                     
                     Tuile tuileTmp = model.getTuileCourant();
                     tuileTmp.rotate();

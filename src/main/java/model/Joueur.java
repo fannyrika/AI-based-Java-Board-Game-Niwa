@@ -24,6 +24,7 @@ public class Joueur {
      */
     protected TuileTemple temple;
     protected ArrayList<Pion> pions = new ArrayList<Pion>();
+    protected boolean dejaPlacerTemple = false;
 
     /**
      * Cette perle représente la perle à remettre sur l'un des 2 autres pions après avoir déplacer un pion
@@ -40,6 +41,9 @@ public class Joueur {
         ID_STATIC++;
         this.temple = new TuileTemple(this);
         initalisePions();
+        if(id==0){
+            dejaPlacerTemple=true;
+        }
     }
 
     /**
@@ -55,10 +59,6 @@ public class Joueur {
         }
     }
 
-    public int getId(){
-        return id;
-    }
-
     public String toString(){
         String str="";
         str+="id="+id+" ";
@@ -71,5 +71,13 @@ public class Joueur {
 
     public ArrayList<Pion> getPions(){
         return this.pions;
+    }
+
+    public boolean dejaPlacerTemple(){
+        return dejaPlacerTemple;
+    }
+
+    public void setDejaPlacerTemple(boolean d){
+        dejaPlacerTemple=d;
     }
 }
