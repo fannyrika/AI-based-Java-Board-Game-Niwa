@@ -71,6 +71,7 @@ public class Jeu {
         pionCourant = joueurCourant.pions.get(0);
         initSac();
         tuileCourante=sacTemples.get(0);
+        sacTemples.remove(0);
         plateau.placeTuileForce(tuileCourante, 0, 0);
     }
     
@@ -110,6 +111,11 @@ public class Jeu {
     public Joueur getJoueurCourant() { return joueurCourant; }
     public Tuile getTuileCourant(){ return tuileCourante; }
     public Pion getPionCourant(){ return pionCourant; }
+    public TuileTemple popTemple(){
+        TuileTemple temple = sacTemples.get(sacTemples.size()-1);
+        sacTemples.remove(sacTemples.size()-1);
+        return temple;
+    }
 
     public static void main(String[] args) {
         Jeu jeu=new Jeu(3);

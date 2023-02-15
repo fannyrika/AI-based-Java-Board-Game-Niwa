@@ -73,13 +73,21 @@ public class JeuVue extends JFrame implements KeyListener{
                 //    controleur.controlIA();
                 //}
                 
-                afficherInstruction("Tappez S/F pour chosir la location pour cette tuile.\n Tappez R pour placer votre propre camp (sauf le premier joueur dont le camp est deja placee).\n Tappez SPACE pour verifier la choix.");
+                afficherInstruction("Tappez S/F pour chosir la location pour cette tuile.\n Tappez R pour placer une temple.\n Tappez SPACE pour verifier la choix.");
                 locationsPossibles = afficherPossibleTuilePosition();
                 indexChoisi=0;
 
                 Coordonnee ancienneTuileCoordonnee = model.getTuileCourant().getLocationInGridTuile();
                 ArrayList<Coordonnee> emplacementsPossibles = model.getPlateau().canPlaceLocations(ancienneTuileCoordonnee);
-                model.setTuileCourante(model.piocher());
+                System.out.println("il y a "+model.getSac().size()+" tuiles dans le sac.");
+                if(model.getSac().size()>0){
+                    model.setTuileCourante(model.piocher());
+                }
+                else if(model.getSacTemples().size()>0){
+                    System.out.println("Il faut placer des camps.");
+                    model.setTuileCourante(model.popTemple());
+                }
+                else break;
                 int dx = -1;
                 while (emplacementsPossibles.isEmpty()){
                     emplacementsPossibles = model.getPlateau().canPlaceLocations(ancienneTuileCoordonnee.getX() + dx, ancienneTuileCoordonnee.getY());
@@ -97,7 +105,7 @@ public class JeuVue extends JFrame implements KeyListener{
                 
                 model.setJeuEtat(JeuEtat.CHOOSING_TUILE_LOCATION);
             }
-            if(model.getSac().size()==0){
+            if(model.getSac().size()==0 && model.getSacTemples().size()==0){
                 break;
             }
         }
@@ -218,18 +226,14 @@ public class JeuVue extends JFrame implements KeyListener{
     public void keyTyped(KeyEvent e) {
         switch (e.getKeyChar()) {
             case 'r'://placer l'autre tuile avec temple
-                if(model.getJeuEtat()==JeuEtat.CHOOSING_TUILE_LOCATION){
-                    if(model.getJoueurCourant().dejaPlacerTemple()==false){
-                        Coordonnee coordonnee = model.getTuileCourant().getLocationInGridTuile();
-                        model.getPlateau().removeTuileBrutForce(coordonnee);
-                        repaint();
-                        
-                        Tuile tuileTmp = model.getSacTemples().get(model.getJoueurCourant().getID());
-                        model.getJoueurCourant().setDejaPlacerTemple(true);
-                        model.setTuileCourante(tuileTmp);
-                        model.getPlateau().placeTuileBrutForce( model.getTuileCourant(), coordonnee );
-                        repaint();
-                    }
+                if(model.getJeuEtat()==JeuEtat.CHOOSING_TUILE_LOCATION && model.getSacTemples().size()>0){
+                    Coordonnee coordonnee = model.getTuileCourant().getLocationInGridTuile();
+                    model.getPlateau().removeTuileBrutForce(coordonnee);
+                    repaint();
+                    
+                    model.setTuileCourante(model.popTemple());
+                    model.getPlateau().placeTuileBrutForce( model.getTuileCourant(), coordonnee );
+                    repaint();
                 }
                 break;
             case 's':   // gauche
