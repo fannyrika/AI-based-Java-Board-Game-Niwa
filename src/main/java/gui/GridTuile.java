@@ -1,6 +1,8 @@
 package main.java.gui;
 
 import javax.swing.*;
+import javax.swing.event.MouseInputListener;
+
 import java.awt.*;
 import java.awt.event.*;
 
@@ -22,9 +24,10 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+import main.java.gui.TuileGraphique.Circle;
 import main.java.model.*;
 
-public class GridTuile extends JPanel implements KeyListener {
+public class GridTuile extends JPanel implements KeyListener, MouseInputListener {
 
     /**
      * Le model sur lequel le graphique se base
@@ -61,6 +64,8 @@ public class GridTuile extends JPanel implements KeyListener {
     public GridTuile(Jeu m){
         this.model=m;
         this.setPreferredSize(screen);
+        this.addMouseListener(this);
+        this.addMouseMotionListener(this);
         this.addComponentListener(new ComponentAdapter() {                  // Ce bout de code sert à remettre le plateau au centre lorsqu'on resize la fenetre
             public void componentResized(ComponentEvent componentEvent) {
                 GridTuile.dx = 0;
@@ -147,6 +152,48 @@ public class GridTuile extends JPanel implements KeyListener {
 
     @Override
     public void keyReleased(KeyEvent e) {}
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        Point clic = e.getPoint();
+        for (TuileGraphique t : tuilesGraphique) {  
+            for (Circle c : t.cercles) {
+                if(c.contains(clic)){
+                    System.out.println(c.getLocationInGridHexagone());
+                    return;
+                }
+            }
+        }
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {}
+
+    @Override
+    public void mouseReleased(MouseEvent e) {}
+
+    @Override
+    public void mouseEntered(MouseEvent e) {}
+
+    @Override
+    public void mouseExited(MouseEvent e) {}
+
+    @Override
+    public void mouseDragged(MouseEvent e) {}
+
+    @Override
+    public void mouseMoved(MouseEvent e) {
+        Point position = e.getPoint();
+        for (TuileGraphique t : tuilesGraphique) {
+            for (Circle c : t.cercles) {
+                if(c.contains(position)){
+                    this.setCursor(new Cursor(Cursor.HAND_CURSOR));
+                    return;
+                }
+            }
+        }
+        this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+    }
 
     public static void main(String[] args) {
 

@@ -2,10 +2,75 @@ package main.java.gui;
 
 import java.awt.*;
 
+import main.java.model.Coordonnee;
 import main.java.model.Couleurs;
 import main.java.model.Tuile;
+import main.java.model.interfaces.HexagoneAutour;
 
 public class TuileGraphique extends Polygon {
+
+    public class Circle {
+
+        protected int x;
+        protected int y;
+        protected static int radius = (int)(TuileGraphique.radius * HITBOX_CIRCLE_RADIUS_RATIO);
+        protected Coordonnee locationInGridHexagone;
+
+        /**
+         * Constructeur permettant de "simuler" un cercle, avec comme centre (x,y) et comme rayon "radius"
+         * @param x -> centre x
+         * @param y -> centre y
+         * @param radius -> rayon du cercle
+         */
+        public Circle(int x, int y){
+            this.x = x;
+            this.y = y;
+        }
+
+        public Circle(double x, double y){
+            this((int)x,(int)y);
+        }
+
+        public Circle(Point p){
+            this((int)p.getX(),(int)p.getY());
+        }
+
+        public int getX() {
+            return x;
+        }
+
+        public int getY() {
+            return y;
+        }
+
+        public static int getRadius(){
+            return radius;
+        }
+
+        public boolean contains(Point p){
+            int x2 = (int)p.getX();
+            int y2 = (int)p.getY();  
+            double distance = Math.sqrt((x2-this.x)*(x2-this.x) + (y2-this.y)*(y2-this.y));  
+            return distance < radius; 
+        }
+
+        public boolean contains(int x, int y){
+            return contains(new Point(x,y));
+        }
+
+        public void draw(Graphics g){
+            Graphics2D g2d = (Graphics2D)g;
+            g2d.drawOval((x-radius/2), (y-radius/2), radius, radius);
+        }
+
+        public void setLocationInGridHexagone(Coordonnee c){
+            this.locationInGridHexagone = c;
+        }
+
+        public Coordonnee getLocationInGridHexagone(){
+            return locationInGridHexagone;
+        }
+    }
 
     /**
      * La tuile qu'on veut représenter graphiquement
@@ -49,9 +114,19 @@ public class TuileGraphique extends Polygon {
     protected Point centreDroite;
     /**
      * La couleur qu'aura l'intérieur de la tuile
-     * - WHITE pour les tuiles situé sur des x pairs
      */
     protected Color color;
+
+    /**
+     * Représente le ratio du rayon des cercles par rapport au rayon des tuiles, pour comprendre, exemple tout simple :
+     * Si HITBOX_CIRCLE_RADIUS_RATIO = 0.5 , alors le rayon des cercles sera égale à : (rayon des tuiles) * 0.5 , ou pour faire simple, la moitié du rayon des tuiles 
+     */
+    protected static final double HITBOX_CIRCLE_RADIUS_RATIO = 0.5;
+    protected Circle[] cercles = new Circle[7];
+    /**
+     * Boolean pour savoir si on trace les cercles ou non
+     */
+    protected static final boolean DRAW_CIRCLE = true;
     
     /**
      * Constructeur d'une tuile graphique
@@ -62,7 +137,7 @@ public class TuileGraphique extends Polygon {
     public TuileGraphique(Tuile tuile, int x, int y){
         this.tuile = tuile;
         color = Color.WHITE;
-        if(x%2 == 0){
+        if(x%2 == 0){           // Pour pouvoir placer la tuile correctement par rapport à la parité du x
             this.centreBas = new Point(radius*x*5/2,-3*radius*y);
         }
         else{
@@ -72,6 +147,25 @@ public class TuileGraphique extends Polygon {
         centre = givePoints(centreBas)[0];
         centreGauche = givePoints(new Point(centreBas.x,centreBas.y-radius))[5];
         centreDroite = givePoints(new Point(centreBas.x,centreBas.y-radius))[1];
+    }
+
+    /**
+     * Méthode privée pour définir les cercles (pour les emplacements des pions)
+     */
+    private void defineCercles(){
+        Coordonnee HexagoneCentrale = tuile.getLocationInGridHexagone();
+        Coordonnee[] HexagonesAutour = HexagoneAutour.get(HexagoneCentrale);
+
+        cercles[0] = new Circle(centre);
+        cercles[0].setLocationInGridHexagone(HexagoneCentrale);
+
+        cercles[1] = new Circle(centreDroite.getX(),centreDroite.getY()-radius);cercles[1].setLocationInGridHexagone(HexagonesAutour[0]);
+        cercles[2] = new Circle(centre.getX()+2*radius - Circle.radius/2,centre.getY());cercles[2].setLocationInGridHexagone(HexagonesAutour[1]);
+        cercles[3] = new Circle(centreDroite.getX(),centreDroite.getY()+2*radius);cercles[3].setLocationInGridHexagone(HexagonesAutour[2]);
+
+        cercles[4] = new Circle(centreGauche.getX(),centreGauche.getY()+2*radius);cercles[4].setLocationInGridHexagone(HexagonesAutour[3]);
+        cercles[5] = new Circle(centre.getX()-2*radius + Circle.radius/2,centre.getY());cercles[5].setLocationInGridHexagone(HexagonesAutour[4]);
+        cercles[6] = new Circle(centreGauche.getX(),centreGauche.getY()-radius);cercles[6].setLocationInGridHexagone(HexagonesAutour[5]);
     }
 
     /**
@@ -180,6 +274,31 @@ public class TuileGraphique extends Polygon {
         }
 
         ((Graphics2D) g).setStroke(new BasicStroke());  // On remet l'épaisseur des traits à sa valeur d'origine
+
+        // On défini les cercles
+        defineCercles();
+
+        if(DRAW_CIRCLE){
+            for (Circle c : cercles) {
+                c.draw(g);
+            }
+        }
+    }
+
+    /**
+     * Méthode pour pouvoir changer la valeur de "radius" correctement par rapport à {@value}RADIUS_MIN et {@value}RADIUS_MAX
+     * @param newRadius -> Nouveau rayon
+     */
+    public static void setRadius(int newRadius){
+        radius = newRadius;
+        if(radius < RADIUS_MIN){
+            radius = RADIUS_MIN;
+        }
+        if(radius > RADIUS_MAX){
+            radius = RADIUS_MAX;
+        }
+
+        Circle.radius = (int)(TuileGraphique.radius * HITBOX_CIRCLE_RADIUS_RATIO);
     }
 
     /**
@@ -187,12 +306,6 @@ public class TuileGraphique extends Polygon {
      * @param zoom -> Valeur de zoomage/dezoomage
      */
     public static void zoom(int zoom){
-        radius += zoom;
-        if(radius < RADIUS_MIN){
-            radius = RADIUS_MIN;
-        }
-        if(radius > RADIUS_MAX){
-            radius = RADIUS_MAX;
-        }
+        setRadius(radius+zoom);
     }
 }
