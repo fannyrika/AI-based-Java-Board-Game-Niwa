@@ -374,6 +374,16 @@ public class JeuVue extends JFrame implements KeyListener{
     @Override
     public void keyPressed(KeyEvent e) {
         // TODO Auto-generated method stub
+        int keyCode = e.getKeyCode();
+        if (keyCode == KeyEvent.VK_HOME) {
+            System.out.println("Left arrow key pressed, keyCode=" + keyCode);
+        } else if (keyCode == KeyEvent.VK_END) {
+            System.out.println("Right arrow key pressed, keyCode=" + keyCode);
+        } else if (keyCode == KeyEvent.VK_PAGE_UP) {
+            System.out.println("Up arrow key pressed, keyCode=" + keyCode);
+        } else if (keyCode == KeyEvent.VK_PAGE_DOWN) {
+            System.out.println("Down arrow key pressed, keyCode=" + keyCode);
+        }
         
     }
 
