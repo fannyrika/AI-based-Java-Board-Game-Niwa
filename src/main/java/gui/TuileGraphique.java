@@ -9,11 +9,11 @@ import main.java.model.interfaces.HexagoneAutour;
 
 public class TuileGraphique extends Polygon {
 
-    public class Circle {
+    public static class Circle {
 
         protected int x;
         protected int y;
-        protected static int radius = (int)(TuileGraphique.radius * HITBOX_CIRCLE_RADIUS_RATIO);
+        protected static int circleRadius = (int)(TuileGraphique.radius * HITBOX_CIRCLE_RADIUS_RATIO);
         protected Coordonnee locationInGridHexagone;
 
         /**
@@ -43,15 +43,15 @@ public class TuileGraphique extends Polygon {
             return y;
         }
 
-        public static int getRadius(){
-            return radius;
+        public static int getCircleRadius(){
+            return circleRadius;
         }
 
         public boolean contains(Point p){
             int x2 = (int)p.getX();
             int y2 = (int)p.getY();  
             double distance = Math.sqrt((x2-this.x)*(x2-this.x) + (y2-this.y)*(y2-this.y));  
-            return distance < radius; 
+            return distance < circleRadius; 
         }
 
         public boolean contains(int x, int y){
@@ -60,7 +60,7 @@ public class TuileGraphique extends Polygon {
 
         public void draw(Graphics g){
             Graphics2D g2d = (Graphics2D)g;
-            g2d.drawOval((x-radius/2), (y-radius/2), radius, radius);
+            g2d.drawOval((x-circleRadius/2), (y-circleRadius/2), circleRadius, circleRadius);
         }
 
         public void setLocationInGridHexagone(Coordonnee c){
@@ -160,11 +160,11 @@ public class TuileGraphique extends Polygon {
         cercles[0].setLocationInGridHexagone(HexagoneCentrale);
 
         cercles[1] = new Circle(centreDroite.getX(),centreDroite.getY()-radius);cercles[1].setLocationInGridHexagone(HexagonesAutour[0]);
-        cercles[2] = new Circle(centre.getX()+2*radius - Circle.radius/2,centre.getY());cercles[2].setLocationInGridHexagone(HexagonesAutour[1]);
+        cercles[2] = new Circle(centre.getX()+2*radius - Circle.circleRadius*0.7,centre.getY());cercles[2].setLocationInGridHexagone(HexagonesAutour[1]);
         cercles[3] = new Circle(centreDroite.getX(),centreDroite.getY()+2*radius);cercles[3].setLocationInGridHexagone(HexagonesAutour[2]);
 
         cercles[4] = new Circle(centreGauche.getX(),centreGauche.getY()+2*radius);cercles[4].setLocationInGridHexagone(HexagonesAutour[3]);
-        cercles[5] = new Circle(centre.getX()-2*radius + Circle.radius/2,centre.getY());cercles[5].setLocationInGridHexagone(HexagonesAutour[4]);
+        cercles[5] = new Circle(centre.getX()-2*radius + Circle.circleRadius*0.7,centre.getY());cercles[5].setLocationInGridHexagone(HexagonesAutour[4]);
         cercles[6] = new Circle(centreGauche.getX(),centreGauche.getY()-radius);cercles[6].setLocationInGridHexagone(HexagonesAutour[5]);
     }
 
@@ -298,7 +298,7 @@ public class TuileGraphique extends Polygon {
             radius = RADIUS_MAX;
         }
 
-        Circle.radius = (int)(TuileGraphique.radius * HITBOX_CIRCLE_RADIUS_RATIO);
+        Circle.circleRadius = (int)(TuileGraphique.radius * HITBOX_CIRCLE_RADIUS_RATIO);
     }
 
     /**
