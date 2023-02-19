@@ -66,7 +66,7 @@ public class Jeu {
     //Cette fonction permet de piocher une tuile aléatoire dans le sac
     public Tuile piocher(){
         Random r=new Random();
-        int n = r.nextInt(0,sac.size());
+        int n = r.nextInt(sac.size());
         Tuile piocher = sac.get(n);
         sac.remove(n);
         return piocher;

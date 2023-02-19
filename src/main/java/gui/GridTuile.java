@@ -7,6 +7,8 @@ import java.awt.event.WindowAdapter;
 
 import main.java.model.Coordonnee;
 import main.java.model.Jeu;
+import main.java.model.Joueur;
+import main.java.model.Pion;
 import main.java.model.Tuile;
 import main.java.model.TuileTemple;
 
@@ -59,6 +61,8 @@ public class GridTuile extends JPanel implements KeyListener {
         super.paintComponent(g);
         Graphics2D mainGraphics = (Graphics2D)g;
 
+
+
         // On parcours toutes les tuiles sur le plateau, pour ainsi les dessiner
         for(Tuile t : jeu.getPlateau().getGridTuile().values()){
             int x = t.getLocationInGridTuile().getX();
@@ -72,6 +76,10 @@ public class GridTuile extends JPanel implements KeyListener {
                 tuileG.drawTile(mainGraphics);
             }
         }
+
+        //test pion graphique
+        PionGraphique pionGraphique = new PionGraphique(new Pion(new Joueur()), 0, 0, 3);
+        pionGraphique.draw(mainGraphics);
     }
 
     /**
@@ -129,6 +137,7 @@ public class GridTuile extends JPanel implements KeyListener {
 
         JFrame frame = new JFrame("Plateau Tuiles");
         GridTuile gridTuile = new GridTuile();
+        
 
         // On effectue nos tests :
         // On initialise le jeu avec 2 joueurs

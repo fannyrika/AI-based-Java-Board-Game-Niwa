@@ -2,6 +2,9 @@ package main.java.gui;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+
+import javax.swing.JPanel;
+
 import java.awt.*;
 import java.awt.BasicStroke;
 
@@ -9,7 +12,7 @@ import main.java.model.Coordonnee;
 import main.java.model.Joueur;
 import main.java.model.Pion;
 
-public class PionGraphique  {
+public class PionGraphique extends JPanel {
 
     private Pion pion;
     private Color color;
