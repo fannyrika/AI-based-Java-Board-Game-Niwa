@@ -11,18 +11,8 @@ import main.java.model.Jeu;
 import main.java.model.Tuile;
 import main.java.model.TuileTemple;
 
-import javax.imageio.ImageIO;
-import javax.swing.*;
-
-import java.awt.*;
-import java.awt.event.*;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import main.java.gui.TuileGraphique.Circle;
 import main.java.model.*;
@@ -77,6 +67,7 @@ public class GridTuile extends JPanel implements KeyListener, MouseInputListener
     }
 
     @Override
+    @SuppressWarnings("all")
     protected void paintComponent(Graphics g) {
         
         super.paintComponent(g);
@@ -85,7 +76,8 @@ public class GridTuile extends JPanel implements KeyListener, MouseInputListener
         tuilesGraphique.clear();
 
         // On parcours toutes les tuiles sur le plateau, pour ainsi les dessiner
-        for(Tuile t : model.getPlateau().getGridTuile().values()){
+        HashMap<Coordonnee,Tuile> tuileMapCopy = (HashMap<Coordonnee, Tuile>) model.getPlateau().getGridTuile().clone();
+        for(Tuile t : tuileMapCopy.values()){
             int x = t.getLocationInGridTuile().getX();
             int y = t.getLocationInGridTuile().getY();
             if(t instanceof TuileTemple){
@@ -100,20 +92,13 @@ public class GridTuile extends JPanel implements KeyListener, MouseInputListener
             }
         }
 
-        //TODO: On parcours toutes les pions sur le plateau, pour ainsi les dessiner
 
-        //test pion graphique
-        PionGraphique pionGraphique = new PionGraphique(new Pion(new Joueur()), 0, 0, 3);
-        pionGraphique.draw(mainGraphics);
-    }
-
-    /**
-     * Méthode privée permettant de piocher une tuile dans le model et de la placer (utile seulement pour les tests)
-     * @param x -> Coordonnee x
-     * @param y -> Coordonnee y
-     */
-    private void piocheAndPlace(int x, int y){
-        model.getPlateau().placeTuileBrutForce(model.piocher(), new Coordonnee(x, y));
+        // On parcours tous les pions sur le plateau, pour ainsi les dessiner
+        HashMap<Coordonnee,Pion> pionMapCopy = (HashMap<Coordonnee, Pion>) model.getPlateau().getGridPion().clone();
+        for (Pion p : pionMapCopy.values()){
+            PionGraphique pionG = new PionGraphique(p, p.getLocation().getX(), p.getLocation().getY());
+            pionG.draw(mainGraphics);
+        }
     }
 
     /**
@@ -131,16 +116,16 @@ public class GridTuile extends JPanel implements KeyListener, MouseInputListener
         if(model.getJeuEtat()==JeuEtat.CHANGING_VIEW){
         switch (e.getKeyChar()) {
             case 's':   // gauche
-                glisserVers(-DISTANCE_DEPLACEMENT, 0);
-                break;
-            case 'f':   // droite
                 glisserVers(DISTANCE_DEPLACEMENT, 0);
                 break;
+            case 'f':   // droite
+                glisserVers(-DISTANCE_DEPLACEMENT, 0);
+                break;
             case 'd':   // bas
-                glisserVers(0, -DISTANCE_DEPLACEMENT);
+                glisserVers(0, DISTANCE_DEPLACEMENT);
                 break;
             case 'e':   // haut
-                glisserVers(0, DISTANCE_DEPLACEMENT);
+                glisserVers(0, -DISTANCE_DEPLACEMENT);
                 break;
             case '+':   // zoom
                 TuileGraphique.zoom(DISTANCE_ZOOM);
@@ -234,39 +219,5 @@ public class GridTuile extends JPanel implements KeyListener, MouseInputListener
             }
         }
         this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-    }
-
-    public static void main(String[] args) {
-
-        JFrame frame = new JFrame("Plateau Tuiles");
-
-        // On effectue nos tests :
-        // On initialise le model avec 2 joueurs
-        Jeu model =  new Jeu(2);
-        GridTuile gridTuile = new GridTuile(model);
-        // On place quelques tuiles
-        gridTuile.piocheAndPlace(0, 0);
-        gridTuile.piocheAndPlace(1, 0);
-        gridTuile.piocheAndPlace(0, 1);
-        gridTuile.piocheAndPlace(-1, 0);
-        gridTuile.piocheAndPlace(0, -1);
-        // On place le temple du J1
-        Tuile tuile = gridTuile.model.getSacTemples().get(0);
-        tuile.rotate();
-        gridTuile.model.getPlateau().placeTuileBrutForce(gridTuile.model.getSacTemples().get(0), new Coordonnee(-1, -1));
-        // On place le temple du J2
-        //gridTuile.model.getPlateau().placeTuileBrutForce(gridTuile.model.getSacTemples().get(1), new Coordonnee(1, -1));
-
-        frame.addKeyListener(gridTuile);
-        frame.addWindowListener(new WindowAdapter() {
-            public void windowOpened(WindowEvent e) { 
-            frame.requestFocus();	
-            }
-        });
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.add(gridTuile);
-        frame.pack();
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
     }
 }

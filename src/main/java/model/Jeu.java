@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 /**
- * La classes qui gerer le deroulement du jeu
+ * La classe qui va gérer le déroulement du jeu
  */
 public class Jeu {
 
@@ -53,7 +53,7 @@ public class Jeu {
      */
     //protected int tour = 0;
     
-    protected static final int NB_TUILES = 12;
+    protected static final int NB_TUILES = 3;
     
      /**
      * Constructeur permettant d'initialiser les attributs

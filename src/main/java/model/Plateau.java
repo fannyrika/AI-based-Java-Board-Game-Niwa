@@ -149,6 +149,21 @@ public class Plateau implements DeplacementPion {
     }
 
     /**
+     * Méthode permettant de placer les pions automatiquement près des temples
+     * @param j -> Le joueur qui veut placer ses pions
+     * @return -> true si placés, false sinon
+     */
+    public boolean placeStartPionAuto(Joueur j){
+        Coordonnee[] autourTemple = HexagoneAutour.get(j.temple.getLocationInGridHexagone());
+        for (int i = 0; i < j.pions.size(); i++) {
+            if(!placeStartPion(j.pions.get(i), autourTemple[i])){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
      * Méthode privée qui retourne une liste de Coordonne, qui indique les emplacements où le pion peut atterir 
      * par rapport à sa direction et les perles qu'il possède
      * @param p -> pion à déplacer
@@ -224,6 +239,16 @@ public class Plateau implements DeplacementPion {
             possibilites.addAll(canMoveLocationsDirection(p, p.getLocation(), i));
         }
         return possibilites;
+    }
+
+    /**
+     * Méthode pour déplacer un pion vers une coordonnee
+     * @param p -> Le pion à déplacer
+     * @param c -> La coordonnee
+     * @return -> true si bien déplacé, false sinon
+     */
+    public boolean movePionTo(Pion p, Coordonnee c){
+        return placerPionForce(p, c);
     }
 
     /**

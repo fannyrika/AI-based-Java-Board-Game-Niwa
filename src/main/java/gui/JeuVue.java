@@ -112,6 +112,12 @@ public class JeuVue extends JFrame implements KeyListener{
     }
 
     public void jouer() {
+
+        // Surement temporaire : permet de placer les pions automatiquement après que les tuiles ont toutes été posées
+        for (Joueur j : model.getJoueurs()) {
+            model.getPlateau().placeStartPionAuto(j);
+        }
+
         while(true){
             //for(int i=0; i<model.getJoueurs().size(); i++) System.out.println("affiche joueurs:"+model.getJoueurs().get(i));
             for(int i=0; i<model.getJoueurs().size(); i++){

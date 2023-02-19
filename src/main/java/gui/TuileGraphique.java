@@ -299,6 +299,7 @@ public class TuileGraphique extends Polygon {
         }
 
         Circle.circleRadius = (int)(TuileGraphique.radius * HITBOX_CIRCLE_RADIUS_RATIO);
+        PionGraphique.rayonTete = (int) (TuileGraphique.radius*PionGraphique.PION_RADIUS_RATIO);
     }
 
     /**
