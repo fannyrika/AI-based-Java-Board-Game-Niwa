@@ -128,7 +128,7 @@ public class JeuVue extends JFrame implements KeyListener{
                 //    controleur.controlIA();
                 //}
                 model.setJeuEtat(JeuEtat.CHOOSING_PION);
-                afficherPossiblePionPosition();
+                //afficherPossiblePionPosition();
                 indexChoisi=0;
                 //waiting
                 while(model.getJeuEtat()!=JeuEtat.CONTINUE){
@@ -137,8 +137,8 @@ public class JeuVue extends JFrame implements KeyListener{
 
                 System.out.println("ready to place the pion");//debug
                 model.setJeuEtat(JeuEtat.PLACING_PION);
-                locationsPossibles = afficherPossibleDestination();
-                indexChoisi=0;
+                //locationsPossibles = afficherPossibleDestination();
+                //indexChoisi=0;
                 //waiting
                 while(model.getJeuEtat()!=JeuEtat.CONTINUE){
                     System.out.print("");
@@ -146,8 +146,8 @@ public class JeuVue extends JFrame implements KeyListener{
 
                 System.out.println("ready to choose the destination for the pearl");//debug
                 model.setJeuEtat(JeuEtat.CHOOSING_PEARL_DESTINATION);
-                afficherPossiblePionPosition();
-                indexChoisi=0;
+                //afficherPossiblePionPosition();
+                //indexChoisi=0;
                 //waiting
                 while(model.getJeuEtat()!=JeuEtat.CONTINUE){
                     System.out.print("");

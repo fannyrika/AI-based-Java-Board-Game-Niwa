@@ -99,6 +99,12 @@ public class GridTuile extends JPanel implements KeyListener, MouseInputListener
                 tuilesGraphique.add(tuileG);
             }
         }
+
+        //TODO: On parcours toutes les pions sur le plateau, pour ainsi les dessiner
+
+        //test pion graphique
+        PionGraphique pionGraphique = new PionGraphique(new Pion(new Joueur()), 0, 0, 3);
+        pionGraphique.draw(mainGraphics);
     }
 
     /**
@@ -160,8 +166,43 @@ public class GridTuile extends JPanel implements KeyListener, MouseInputListener
             for (Circle c : t.cercles) {
                 if(c.contains(clic)){
                     System.out.println(c.getLocationInGridHexagone());
+                    Pion pionChoisi=model.getPlateau().getGridPion().get(c.getLocationInGridHexagone());
+                    if(model.getJeuEtat()==JeuEtat.CHOOSING_PION){
+                        if(pionChoisi!=null){
+                            model.setPionCourant(pionChoisi);
+                            model.setJeuEtat(JeuEtat.CONTINUE);
+                        }
+                    }
+                    else if(model.getJeuEtat()==JeuEtat.PLACING_PION){
+                        //TODO:programmez ici pour effacer tous les cercles
+                        Coordonnee depart = model.getPionCourant().getLocation();
+                        ArrayList<Coordonnee> locationsPossible = model.getPlateau().canMoveLocations(model.getPionCourant());
+                        if(locationsPossible.contains(c.getLocationInGridHexagone())){
+                            model.getPlateau().getGridPion().remove(depart);
+                            model.getPlateau().placerPionForce(model.getPionCourant(), c.getLocationInGridHexagone());
+                            model.getPionCourant().setLocation(c.getLocationInGridHexagone());
+                            repaint();
+                            model.setJeuEtat(JeuEtat.CONTINUE);
+                        }
+                    }
+                    else if(model.getJeuEtat()==JeuEtat.CHOOSING_PEARL_DESTINATION){
+                        //TODO:programmez ici pour effacer tous les cercles
+                        if(pionChoisi!=null){
+                            model.getPionCourant().passPerleTo(pionChoisi);
+                            //renouveler la vue des 2 pions
+                            model.getPlateau().getGridPion().remove(pionChoisi.getLocation());
+                            model.getPlateau().placerPionForce(pionChoisi,pionChoisi.getLocation());
+
+                            model.getPlateau().getGridPion().remove(model.getPionCourant().getLocation());
+                            model.getPlateau().placerPionForce(model.getPionCourant(), model.getPionCourant().getLocation());
+                            repaint();
+
+                            model.setJeuEtat(JeuEtat.CONTINUE);
+                        }
+                    }
+
                     return;
-                }
+                    }
             }
         }
     }
@@ -214,7 +255,7 @@ public class GridTuile extends JPanel implements KeyListener, MouseInputListener
         tuile.rotate();
         gridTuile.model.getPlateau().placeTuileBrutForce(gridTuile.model.getSacTemples().get(0), new Coordonnee(-1, -1));
         // On place le temple du J2
-        gridTuile.model.getPlateau().placeTuileBrutForce(gridTuile.model.getSacTemples().get(1), new Coordonnee(1, -1));
+        //gridTuile.model.getPlateau().placeTuileBrutForce(gridTuile.model.getSacTemples().get(1), new Coordonnee(1, -1));
 
         frame.addKeyListener(gridTuile);
         frame.addWindowListener(new WindowAdapter() {
