@@ -3,11 +3,10 @@ package main.java.gui;
 import java.awt.Color;
 import java.awt.Graphics2D;
 
-import javax.swing.JPanel;
-
 import java.awt.*;
 import java.awt.BasicStroke;
 
+import main.java.gui.TuileGraphique.Circle;
 import main.java.model.Coordonnee;
 import main.java.model.Joueur;
 import main.java.model.Pion;
@@ -17,7 +16,7 @@ public class PionGraphique {
     private Pion pion;
     private Color color;
     private int x,y;
-    protected static final double PION_RADIUS_RATIO = 0.2;
+    protected static final double PION_RADIUS_RATIO = 0.15;
     protected static int rayonTete = (int) (TuileGraphique.radius*PION_RADIUS_RATIO);
     // TODO : Avoir un attribut pour avoir le centre du pion
     protected Point centre;
@@ -27,20 +26,17 @@ public class PionGraphique {
      * @param y la position du point le plus en haut à droite de sa tete dans l'axe des y
      * @param rayonTete la taille du rayon de la tete
      */
-    public PionGraphique(Pion pion,int x,int y) {
-        if(pion.getLocation().getX()%2 == 0){
-            this.x=(int) (x+GridTuile.screen.getWidth()/2 - rayonTete/2 + TuileGraphique.radius*x/2);
-            this.y=(int) (y+GridTuile.screen.getHeight()/2 - rayonTete + -3*TuileGraphique.radius*y);
-        }
-        else{
-            this.x=(int) (x+GridTuile.screen.getWidth()/2 - rayonTete/2 + TuileGraphique.radius*x*5/2);
-            this.y=(int) (y+GridTuile.screen.getHeight()/2 - rayonTete + -3*TuileGraphique.radius*y - 3*TuileGraphique.radius/2);
-        }
-        this.x += GridTuile.dx;
-        this.y += GridTuile.dy;
+    public PionGraphique(Pion pion) {
+        int px = pion.getLocation().getX();
+        int py = pion.getLocation().getY();
+        Circle c = GridTuile.cercles.get(new Coordonnee(px, py));
+        this.x = c.getX()-TuileGraphique.radius/6;
+        this.y = c.getY()-TuileGraphique.radius/3;
         this.pion = pion;
         this.color = this.colorByID(pion.getProprietaire());
+        this.centre = new Point(x-rayonTete/2,y+rayonTete/2);
     }
+    
 
     public Pion getPion() {
         return pion;

@@ -116,11 +116,4 @@ public class Jeu {
         sacTemples.remove(sacTemples.size()-1);
         return temple;
     }
-
-    public static void main(String[] args) {
-        Jeu jeu=new Jeu(3);
-        for(int i=0; i<3; i++){
-            System.out.println(jeu.joueurs.get(i));
-        }
-    }
 }

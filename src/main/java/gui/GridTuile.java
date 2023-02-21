@@ -46,6 +46,7 @@ public class GridTuile extends JPanel implements KeyListener, MouseInputListener
     protected static final int DISTANCE_ZOOM = 10;
 
     protected ArrayList<TuileGraphique> tuilesGraphique = new ArrayList<TuileGraphique>();
+    protected static HashMap<Coordonnee,Circle> cercles = new HashMap<Coordonnee,Circle>(); 
 
     /**
      * Constructeur
@@ -74,29 +75,35 @@ public class GridTuile extends JPanel implements KeyListener, MouseInputListener
         Graphics2D mainGraphics = (Graphics2D)g;
 
         tuilesGraphique.clear();
+        cercles.clear();
 
         // On parcours toutes les tuiles sur le plateau, pour ainsi les dessiner
         HashMap<Coordonnee,Tuile> tuileMapCopy = (HashMap<Coordonnee, Tuile>) model.getPlateau().getGridTuile().clone();
         for(Tuile t : tuileMapCopy.values()){
             int x = t.getLocationInGridTuile().getX();
             int y = t.getLocationInGridTuile().getY();
+            TuileGraphique tuileG;
             if(t instanceof TuileTemple){
-                TuileTempleGraphique tuileG = new TuileTempleGraphique((TuileTemple) t, x,y,((TuileTemple)t).getProprietaire());
-                tuileG.drawTile(mainGraphics);
-                tuilesGraphique.add(tuileG);
+                tuileG = new TuileTempleGraphique((TuileTemple) t, x,y,((TuileTemple)t).getProprietaire());
             }
             else{
-                TuileGraphique tuileG = new TuileGraphique(t, x,y);
-                tuileG.drawTile(mainGraphics);
-                tuilesGraphique.add(tuileG);
+                tuileG = new TuileGraphique(t, x,y);
             }
+
+            for (Circle c : tuileG.cercles) {
+                if(!this.cercles.containsKey(c.getLocationInGridHexagone())){
+                    this.cercles.put(c.getLocationInGridHexagone(), c);
+                }
+            }
+            tuileG.drawTile(mainGraphics);
+            tuilesGraphique.add(tuileG);
         }
 
 
         // On parcours tous les pions sur le plateau, pour ainsi les dessiner
         HashMap<Coordonnee,Pion> pionMapCopy = (HashMap<Coordonnee, Pion>) model.getPlateau().getGridPion().clone();
         for (Pion p : pionMapCopy.values()){
-            PionGraphique pionG = new PionGraphique(p, p.getLocation().getX(), p.getLocation().getY());
+            PionGraphique pionG = new PionGraphique(p);
             pionG.draw(mainGraphics);
         }
     }
@@ -213,7 +220,17 @@ public class GridTuile extends JPanel implements KeyListener, MouseInputListener
         for (TuileGraphique t : tuilesGraphique) {
             for (Circle c : t.cercles) {
                 if(c.contains(position)){
-                    this.setCursor(new Cursor(Cursor.HAND_CURSOR));
+                    if(model.getJeuEtat()==JeuEtat.CHOOSING_PION){
+                        if(model.getPlateau().getGridPion().containsKey(c.getLocationInGridHexagone())){
+                            this.setCursor(new Cursor(Cursor.HAND_CURSOR));
+                        }
+                    }
+                    else if(model.getJeuEtat()==JeuEtat.PLACING_PION){
+                        ArrayList<Coordonnee> possibilites = model.getPlateau().canMoveLocations(model.getPionCourant());
+                        if(possibilites.stream().anyMatch(v -> {return c.getLocationInGridHexagone().equals(v);})){
+                            this.setCursor(new Cursor(Cursor.HAND_CURSOR));
+                        }
+                    }
                     return;
                 }
             }

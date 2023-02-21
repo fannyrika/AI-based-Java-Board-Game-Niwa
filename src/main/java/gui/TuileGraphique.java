@@ -126,7 +126,7 @@ public class TuileGraphique extends Polygon {
     /**
      * Boolean pour savoir si on trace les cercles ou non
      */
-    protected static final boolean DRAW_CIRCLE = true;
+    protected static final boolean DRAW_CIRCLE = false;
     
     /**
      * Constructeur d'une tuile graphique
@@ -147,6 +147,8 @@ public class TuileGraphique extends Polygon {
         centre = givePoints(centreBas)[0];
         centreGauche = givePoints(new Point(centreBas.x,centreBas.y-radius))[5];
         centreDroite = givePoints(new Point(centreBas.x,centreBas.y-radius))[1];
+        // On défini les cercles
+        defineCercles();
     }
 
     /**
@@ -274,9 +276,6 @@ public class TuileGraphique extends Polygon {
         }
 
         ((Graphics2D) g).setStroke(new BasicStroke());  // On remet l'épaisseur des traits à sa valeur d'origine
-
-        // On défini les cercles
-        defineCercles();
 
         if(DRAW_CIRCLE){
             for (Circle c : cercles) {
