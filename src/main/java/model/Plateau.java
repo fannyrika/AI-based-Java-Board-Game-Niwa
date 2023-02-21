@@ -186,19 +186,10 @@ public class Plateau implements DeplacementPion {
         if(p.empty()){    // CAS 1 : Le pion n'a pas de perle
             if(gridPion.containsKey(choix[direction])){     // CAS 1.1 : il y a un personnage sur sa direction -> il doit donc sauter
                 Coordonnee[] choixApres = HexagoneAutour.get(choix[direction]);
-                Coordonnee c1;
-                Coordonnee c2;
-                Coordonnee c3;
-                if(direction == 0){
-                    c1 = choixApres[5];
-                    c2 = choixApres[0];
-                    c3 = choixApres[1];
-                }
-                else{
-                    c1 = choixApres[direction-1];
-                    c2 = choixApres[direction];
-                    c3 = choixApres[direction+1];
-                }
+
+                Coordonnee c1 = choixApres[(direction+5)%6];
+                Coordonnee c2 = choixApres[direction%6];
+                Coordonnee c3 = choixApres[(direction+1)%6];
 
                 if(gridPion.containsKey(c1) && gridPion.containsKey(c2) && gridPion.containsKey(c3)){       // CAS 1.1.1 : Les 3 emplacements derriere sont occupées également, il faut sauter + loin
                     return canMoveLocationsDirection(p, choix[direction], direction);
@@ -216,12 +207,15 @@ public class Plateau implements DeplacementPion {
             }
         }
         else{           // CAS 2 : Le pion a au moins une perle
-            if(gridHexagone.get(position).portes[direction] == p.peek()){   // CAS 2.1 : La couleur de la perle match avec celle de la porte
+            if(gridPion.containsKey(choix[direction])){                 // CAS 2.1 : Il y a un personnage sur sa route, sauf qu'il ne peut pas sauter
+                return new ArrayList<Coordonnee>();
+            }
+            if(gridHexagone.get(position).portes[direction] == p.peek()){   // CAS 2.2 : La couleur de la perle match avec celle de la porte
                 ArrayList<Coordonnee> arrive = new ArrayList<Coordonnee>();
                 arrive.add(choix[direction]);
                 return arrive;
             }
-            else{       // CAS 2.2 : La couleur de la perle ne match pas avec la porte -> on return une liste vide
+            else{       // CAS 2.3 : La couleur de la perle ne match pas avec la porte -> on return une liste vide
                 return new ArrayList<Coordonnee>();
             }
         }

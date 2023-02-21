@@ -29,7 +29,7 @@ public class PionGraphique {
     public PionGraphique(Pion pion) {
         int px = pion.getLocation().getX();
         int py = pion.getLocation().getY();
-        Circle c = GridTuile.cercles.get(new Coordonnee(px, py));
+        Circle c = GridTuile.allCircles.get(new Coordonnee(px, py));
         this.x = c.getX()-TuileGraphique.radius/6;
         this.y = c.getY()-TuileGraphique.radius/3;
         this.pion = pion;
