@@ -26,8 +26,8 @@ public class TuileTempleGraphique extends TuileGraphique {
      */
     private Color colorByID(Joueur j){
         switch (j.getID()%4) {
-            case 0: return Color.BLUE;
-            case 1: return Color.RED;
+            case 0: return new Color(0, 0, 210);
+            case 1: return new Color(210, 0, 0);
             case 2: return Color.MAGENTA;
             case 3: return Color.PINK;
             default: return Color.BLACK;

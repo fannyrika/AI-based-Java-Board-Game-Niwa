@@ -33,7 +33,8 @@ public class TestPlateau extends JFrame implements KeyListener{
 
     protected GridTuile gridTuile;
 
-    public TestPlateau(Jeu m) throws IOException{
+    public TestPlateau(Jeu m, boolean visible) throws IOException{
+        setVisible(visible);
         setTitle("Plateau Tuiles");
         model=m;
         gridTuile = new GridTuile(model);
@@ -50,7 +51,7 @@ public class TestPlateau extends JFrame implements KeyListener{
         add(gridTuile);
         pack();
         setLocationRelativeTo(null);
-        setVisible(true);
+        //setVisible(true);
     }
 
 
@@ -401,7 +402,7 @@ public class TestPlateau extends JFrame implements KeyListener{
 
     public static void main(String[] args) throws IOException {
         Jeu model =  new Jeu(2);
-        TestPlateau jeuVue = new TestPlateau(model);
+        TestPlateau jeuVue = new TestPlateau(model, true);
         jeuVue.lancer();
     }
 
