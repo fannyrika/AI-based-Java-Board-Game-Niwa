@@ -132,10 +132,10 @@ public class PionGraphique {
      */
 	private Color colorByID(Joueur j){
         switch (j.getID()%4) {
-            case 0: return Color.BLUE;
-            case 1: return Color.RED;
-            case 2: return Color.MAGENTA;
-            case 3: return Color.PINK;
+            case 0: return new Color(122, 174, 230);
+            case 1: return new Color(255, 82, 66);
+            case 2: return new Color(247, 134, 247);
+            case 3: return new Color(255, 138, 202);
             default: return Color.BLACK;
         }
     }
