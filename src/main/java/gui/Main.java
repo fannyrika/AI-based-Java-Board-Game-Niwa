@@ -14,11 +14,13 @@ public class Main {
 
 	public Main() throws UnsupportedAudioFileException, IOException, LineUnavailableException {
 		view = new JFrame();
+		view.getContentPane().add(new ScenePrincipale(true));
 		view.setTitle("Menu Principal");
+		//view.setSize(new Dimension(1000,800));
 		view.setExtendedState(JFrame.MAXIMIZED_BOTH);
 		view.setVisible(true);
 		view.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-		view.getContentPane().add(new ScenePrincipale(true));
+		
 	}
 
 	public static JFrame getView() {

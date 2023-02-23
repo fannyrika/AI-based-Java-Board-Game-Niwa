@@ -18,6 +18,7 @@ public class Joueur {
 
     protected static int ID_STATIC = 0;
     protected int id;
+    protected String nom="";
 
     /**
      * Attributs permettant de définir un joueur
@@ -36,7 +37,8 @@ public class Joueur {
     /**
      * Constructeur sans argument, permettant d'initialiser un joueur
      */
-    public Joueur(){
+    public Joueur(String n){
+        nom=n;
         this.id = ID_STATIC;
         ID_STATIC++;
         this.temple = new TuileTemple(this);
@@ -61,6 +63,7 @@ public class Joueur {
 
     public String toString(){
         String str="";
+        str+="nom:"+nom+" ";
         str+="id="+id+" ";
         for(int i=0; i<pions.size(); i++){
             str+=pions.get(i).toString();
@@ -69,15 +72,13 @@ public class Joueur {
         return str;
     }
 
-    public ArrayList<Pion> getPions(){
-        return this.pions;
-    }
+    public ArrayList<Pion> getPions(){ return this.pions; }
 
-    public boolean dejaPlacerTemple(){
-        return dejaPlacerTemple;
-    }
+    public boolean dejaPlacerTemple(){ return dejaPlacerTemple; }
 
-    public void setDejaPlacerTemple(boolean d){
-        dejaPlacerTemple=d;
-    }
+    public void setDejaPlacerTemple(boolean d){ dejaPlacerTemple=d; }
+
+    public void setTemple(TuileTemple t){ temple=t; }
+
+    public TuileTemple getTemple(){ return temple; }
 }

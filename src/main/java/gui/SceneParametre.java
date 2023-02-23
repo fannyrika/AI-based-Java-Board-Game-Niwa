@@ -6,6 +6,8 @@ import java.io.IOException;
 
 
 import main.java.model.*;
+
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 import javax.sound.sampled.LineUnavailableException;
@@ -17,13 +19,16 @@ import javax.swing.*;
 public class SceneParametre extends Scene{
 	
  	 protected Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-	    protected JPanel menu;
+	    protected JPanel menu = new JPanel();
 	    protected GridBagConstraints pos = new GridBagConstraints();
-	    protected JTextField nomJoueur, ia;
-	    protected JButton ajouter, valider;
-	    protected static LinkedList<Joueur> joueurs;
-	    protected JeuVue jeuVue;
-	    protected Jeu model ;
+	    protected JTextField nomJoueur = new JTextField();
+		//protected JTextField ia = new JTextField();
+	    protected JButton ajouter = new JButton();
+		protected JButton valider = new JButton();
+	    protected TestPlateau jeuVue;
+	    protected Jeu model;//commercer par 2 joueurs
+		protected ArrayList<Joueur> joueurs=new ArrayList<Joueur>();
+		protected ArrayList<TuileTemple> sacTemples = new ArrayList<TuileTemple>();
 
 	    public SceneParametre(boolean visible) {
 	        super(visible);
@@ -32,11 +37,10 @@ public class SceneParametre extends Scene{
 	        this.setSize(screenSize);
 	        this.setLayout(null);
 	        this.setVisible(visible);
-	        joueurs = new LinkedList<Joueur>();
 
 	        setupMenu();
 	        setupNameField();
-	        setupIAField();
+	        //setupIAField();
 	        setupAjouterButton();
 	        setupValideButton();
 	    }
@@ -62,17 +66,17 @@ public class SceneParametre extends Scene{
 	        menu.add(nomJoueur, pos);
 	    }
 
-	    public void setupIAField() {
-	        ia = new JTextField("Etes vous une IA VRAI/FAUX");
-	        ia.setPreferredSize(new Dimension(270, 60));
-	        ia.setForeground(Color.ORANGE);// couleur du texte
-	        ia.setBackground(Color.WHITE);
-	        ia.setFont(new Font("Lucida Console", Font.BOLD,15));
-	        pos.gridx = 0;
-	        pos.gridy = 1;
-	        pos.weighty=0.1;
-	        menu.add(ia, pos);
-	    }
+	    //public void setupIAField() {
+	    //    ia = new JTextField("Etes vous une IA VRAI/FAUX");
+	    //    ia.setPreferredSize(new Dimension(270, 60));
+	    //    ia.setForeground(Color.ORANGE);// couleur du texte
+	    //    ia.setBackground(Color.WHITE);
+	    //    ia.setFont(new Font("Lucida Console", Font.BOLD,15));
+	    //    pos.gridx = 0;
+	    //    pos.gridy = 1;
+	    //    pos.weighty=0.1;
+	    //    menu.add(ia, pos);
+	    //}
 
 	    public void setupAjouterButton() {
 	        ajouter = new JButton("Ajouter");
@@ -85,17 +89,21 @@ public class SceneParametre extends Scene{
 	        pos.weighty=0.1;
 
 	        ajouter.addActionListener(e -> {
-	            if ((ia.getText().equals("VRAI")) || (ia.getText().equals("FAUX"))) {
-	                System.out.println("Ajouté");
-	                if (ia.getText().equals("VRAI")) {
-	                    joueurs.add(new Joueur());
-	                } else {
-	                    joueurs.add(new Joueur());
-	                }
-	            } else {
-	                System.out.println(ia.getText());
-	                ia.setText("VRAI/FAUX");
-	            }
+	            //if ((ia.getText().equals("VRAI")) || (ia.getText().equals("FAUX"))) {
+	            //    System.out.println("Ajoutï¿½");
+	            //    if (ia.getText().equals("VRAI")) {
+	            //        joueurs.add(new Joueur());
+	            //    } else {
+	            //        joueurs.add(new Joueur());
+	            //    }
+	            //} else {
+	            //    System.out.println(ia.getText());
+	            //    ia.setText("VRAI/FAUX");
+	            //}
+				Joueur j = new Joueur(nomJoueur.getText());
+				nomJoueur.setText("Remplacer par votre nom..");
+				joueurs.add(j);             // On ajoute les joueurs dans la liste de joueurs
+				sacTemples.add(j.getTemple());   // On ajoute chaque temple dans la liste des temples
 	        });
 
 	        menu.add(ajouter, pos);
@@ -112,25 +120,21 @@ public class SceneParametre extends Scene{
 	        pos.weighty=0.1;
 
 	        valider.addActionListener(e -> {
-	        	   try {
-					jeuVue=new JeuVue(model,true);
+	        	try {
+					model = new Jeu(joueurs, sacTemples);
+					jeuVue=new TestPlateau(model,true);
+					
+					//Main.getView().add(jeuVue);
+
+					jeuVue.lancer();
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}  
-	                Main.getView().add(jeuVue);
-	                changeScene(this,jeuVue);         
+
+	                //changeScene(this,jeuVue);         
 	        });
 
 	        menu.add(valider, pos);
 	    }
-
-	    public static LinkedList<Joueur> getJoueurs() {
-	        return joueurs;
-	    }
-
-	   
-
-	
-
 }

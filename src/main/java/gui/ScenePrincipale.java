@@ -194,9 +194,9 @@ public class ScenePrincipale extends Scene {
 
     }  */
 
-    /*
-     * public static void main(String[] args) {
-     * new ScenePrincipale(true);
-     * }
-     */
+
+    public static void main(String[] args) throws UnsupportedAudioFileException, IOException, LineUnavailableException {
+        new ScenePrincipale(true);
+    }
+    
 }

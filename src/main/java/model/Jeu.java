@@ -63,10 +63,23 @@ public class Jeu {
     public Jeu(int nb_joueurs){
     	jeuEtat = JeuEtat.CHOOSING_TUILE_LOCATION;
         for (int i = 0; i < nb_joueurs; i++) {
-            Joueur j = new Joueur();
+            Joueur j = new Joueur("j0");
             joueurs.add(j);             // On ajoute les joueurs dans la liste de joueurs
             sacTemples.add(j.temple);   // On ajoute chaque temple dans la liste des temples
         }
+        joueurCourant = joueurs.get(0);
+        pionCourant = joueurCourant.pions.get(0);
+        initSac();
+        tuileCourante=sacTemples.get(0);
+        sacTemples.remove(0);
+        plateau.placeTuileForce(tuileCourante, 0, 0);
+    }
+
+    public Jeu(ArrayList<Joueur> j, ArrayList<TuileTemple> s){
+    	jeuEtat = JeuEtat.CHOOSING_TUILE_LOCATION;
+        joueurs=j;
+        sacTemples=s;
+
         joueurCourant = joueurs.get(0);
         pionCourant = joueurCourant.pions.get(0);
         initSac();
