@@ -161,13 +161,19 @@ public class GridTuile extends JPanel implements KeyListener, MouseInputListener
         for (TuileGraphique t : tuilesGraphique) {  
             for (Circle c : t.cercles) {
                 if(c.contains(clic)){
+
                     System.out.println(c.getLocationInGridHexagone());
                     Pion pionChoisi=model.getPlateau().getGridPion().get(c.getLocationInGridHexagone());
+                    
                     if(model.getJeuEtat()==JeuEtat.CHOOSING_PION){
                         if(pionChoisi!=null){
-                            // TODO : afficher les cercles des emplacements dispo
-                            //ArrayList<Coordonnee> locationsPossible = model.getPlateau().canMoveLocations(model.getPionCourant());
                             model.setPionCourant(pionChoisi);
+                            circlesToDraw.clear();
+                            ArrayList<Coordonnee> locationsPossible = model.getPlateau().canMoveLocations(model.getPionCourant());
+                            for (Coordonnee coordonnee : locationsPossible) {
+                                circlesToDraw.add(allCircles.get(coordonnee));
+                            }
+                            repaint();
                             model.setJeuEtat(JeuEtat.CONTINUE);
                         }
                     }
@@ -237,6 +243,11 @@ public class GridTuile extends JPanel implements KeyListener, MouseInputListener
                     else if(model.getJeuEtat()==JeuEtat.PLACING_PION){
                         ArrayList<Coordonnee> possibilites = model.getPlateau().canMoveLocations(model.getPionCourant());
                         if(possibilites.stream().anyMatch(v -> {return c.getLocationInGridHexagone().equals(v);})){
+                            this.setCursor(new Cursor(Cursor.HAND_CURSOR));
+                        }
+                    }
+                    else if(model.getJeuEtat()==JeuEtat.CHOOSING_PEARL_DESTINATION){
+                        if(model.getPlateau().getGridPion().containsKey(c.getLocationInGridHexagone()) && model.getPlateau().getGridPion().get(c.getLocationInGridHexagone()) != model.getPionCourant()){
                             this.setCursor(new Cursor(Cursor.HAND_CURSOR));
                         }
                     }
