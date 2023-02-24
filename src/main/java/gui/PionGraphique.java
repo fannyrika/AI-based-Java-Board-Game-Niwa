@@ -98,8 +98,8 @@ public class PionGraphique {
             }
             g2.setColor(couleurPerle);
             g2.fillOval(x+rayonTete-rayonTete/4, y-(rayonTete/2)*(i+1),rayonTete/2,rayonTete/2);
-
-}       
+        
+        }       
         //tete
         g2.setColor(new Color(255, 177, 110));
         g2.fillOval(x, y,rayonTete*2, rayonTete*2);
@@ -121,7 +121,9 @@ public class PionGraphique {
         g2.fillRoundRect(x+rayonTete/12,y+2*rayonTete,2*rayonTete,4*rayonTete, rayonTete*2, rayonTete*2);
         g2.fillRect(x+rayonTete/12,y+5*rayonTete, 2*rayonTete, rayonTete);
        
-       
+        g2.setColor(Color.BLACK);
+        g2.setStroke(new BasicStroke());
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_OFF);
         
     }
     /**

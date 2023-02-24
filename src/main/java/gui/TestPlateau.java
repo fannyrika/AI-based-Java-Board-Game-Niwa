@@ -151,13 +151,17 @@ public class TestPlateau extends JFrame implements KeyListener{
                     System.out.print("");
                 }
 
-                System.out.println("ready to choose the destination for the pearl");//debug
-                model.setJeuEtat(JeuEtat.CHOOSING_PEARL_DESTINATION);
-                //afficherPossiblePionPosition();
-                //indexChoisi=0;
-                //waiting
-                while(model.getJeuEtat()!=JeuEtat.CONTINUE){
-                    System.out.print("");
+                
+                if(model.getPionCourant().size()>0){
+                //si le pion saute, on n'a pas besoins de cette etape
+                    System.out.println("ready to choose the destination for the pearl");//debug
+                    model.setJeuEtat(JeuEtat.CHOOSING_PEARL_DESTINATION);
+                    //afficherPossiblePionPosition();
+                    //indexChoisi=0;
+                    //waiting
+                    while(model.getJeuEtat()!=JeuEtat.CONTINUE){
+                        System.out.print("");
+                    }
                 }
             }
             if(model.getGagneurs().size()==model.getJoueurs().size()-1){
