@@ -15,6 +15,8 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+import javax.swing.plaf.ScrollBarUI;
+import javax.swing.plaf.basic.BasicScrollBarUI;
 import main.java.model.*;
 public class InterfaceDeJeu extends JFrame implements KeyListener{
     protected Jeu model;
@@ -34,6 +36,10 @@ public class InterfaceDeJeu extends JFrame implements KeyListener{
         model=m;
         gridTuile = new GridTuile(model);
         JScrollPane plateau=new JScrollPane(gridTuile);
+        gridTuile.setBackground(Color.WHITE);
+        plateau.getVerticalScrollBar().setUI(new CustomScrollBarUI());
+        plateau.getHorizontalScrollBar().setUI(new CustomScrollBarUI());
+    
         tableauDeBord=new TableauDeBord(model);
         tableauDeBord.boutonQuitter.addActionListener(e->{
             this.dispose();
@@ -73,7 +79,7 @@ public class InterfaceDeJeu extends JFrame implements KeyListener{
                 model.setJoueurCourant(model.getJoueurs().get(i));
                 System.out.println("joueur courant:"+model.getJoueurCourant());//debug
                 //TODO: afficher l'information du joueur courant
-                tableauDeBord.setJoueurCourant("<html>joueur courant:<br>"+model.getJoueurCourant()+"</html>");
+               
                 //validate();
                 //repaint();
                 
@@ -121,7 +127,7 @@ public class InterfaceDeJeu extends JFrame implements KeyListener{
             }
         }
     }
-
+                                   
     public void jouer() {
 
         // Surement temporaire : permet de placer les pions automatiquement après que les tuiles ont toutes été posées
@@ -136,6 +142,7 @@ public class InterfaceDeJeu extends JFrame implements KeyListener{
                 System.out.println("current player changed!");//debug
                 model.setJoueurCourant(model.getJoueurs().get(i));
                 System.out.println(model.getJoueurCourant());//debug
+                tableauDeBord.setJoueurCourant("<html>joueur courant:<br>"+model.getJoueurCourant()+"</html>");
                 repaint();
                 //TODO: afficher l'information du joueur courant
                 //validate();
@@ -414,13 +421,49 @@ public class InterfaceDeJeu extends JFrame implements KeyListener{
         // TODO Auto-generated method stub
         
     }
-    protected void fermerInterfaceDeJeu(){
-        this.dispose();
-    }
+   
     public static void main(String[] args) throws IOException {
         Jeu model =  new Jeu(2);
         InterfaceDeJeu jeuVue = new InterfaceDeJeu(model);
         jeuVue.lancer();
     }
 
+
+///scrollbar du plateau
+class CustomScrollBarUI extends BasicScrollBarUI{
+    CustomScrollBarUI(){
+      
 }
+@Override
+protected void configureScrollBarColors() {
+    // Set the thumb and track colors
+    super.thumbColor = Color.black;
+    super.trackColor = Color.WHITE;
+
+}
+@Override
+protected JButton createDecreaseButton(int orientation) {
+    // Remove the decrease button
+    return new JButton() {
+        @Override
+        public Dimension getPreferredSize() {
+            return new Dimension(0, 0);
+        }
+    };
+}
+
+@Override
+protected JButton createIncreaseButton(int orientation) {
+    // Remove the increase button
+    return new JButton() {
+        @Override
+        public Dimension getPreferredSize() {
+            return new Dimension(0, 0);
+        }
+    };
+}
+
+   }
+
+}
+
