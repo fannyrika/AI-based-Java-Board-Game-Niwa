@@ -81,4 +81,17 @@ public class Joueur {
     public void setTemple(TuileTemple t){ temple=t; }
 
     public TuileTemple getTemple(){ return temple; }
+
+    /**
+     * Méthode pour savoir si un joueur a placé tous ses pions ou non
+     * @return true si oui, false sinon
+     */
+    public boolean placedAllPions(){
+        for (Pion pion : pions) {
+            if(!pion.isPlaced){
+                return false;
+            }
+        }
+        return true;
+    }
 }

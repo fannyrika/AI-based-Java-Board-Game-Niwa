@@ -15,6 +15,7 @@ public class Pion extends Stack<Couleurs> {
      */
     protected Joueur proprietaire;
     protected Coordonnee location;
+    protected boolean isPlaced;
 
     /**
      * Constructeur permettant d'initialiser le pion
@@ -29,12 +30,16 @@ public class Pion extends Stack<Couleurs> {
      */
     public Joueur getProprietaire(){return proprietaire;}
     public Coordonnee getLocation(){return location;}
+    public boolean isPlaced(){return isPlaced;}
 
     /*
      * Méthodes setteurs
      */
-    public void setLocation(Coordonnee c){this.location = c;}
-    public void setLocation(int x, int y){this.location = new Coordonnee(x, y);}
+    public void setLocation(Coordonnee c){
+        this.location = c;
+        isPlaced = true;
+    }
+    public void setLocation(int x, int y){setLocation(new Coordonnee(x, y));}
 
     /**
      * Méthode pour faire une passe de perle d'un pion à l'autre

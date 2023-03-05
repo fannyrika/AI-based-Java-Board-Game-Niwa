@@ -122,7 +122,7 @@ public class SceneParametre extends Scene{
 	        valider.addActionListener(e -> {
 	        	try {
 					model = new Jeu(joueurs, sacTemples);
-					jeuVue=new TestPlateau(model,true);
+					jeuVue=new TestPlateau(model);
 					
 					//Main.getView().add(jeuVue);
 

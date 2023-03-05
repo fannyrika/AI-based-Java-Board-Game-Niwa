@@ -1,5 +1,8 @@
 package main.java.model.interfaces;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 import main.java.model.Coordonnee;
 
 /**
@@ -36,5 +39,10 @@ public interface HexagoneAutour {
         }
         Coordonnee[] autour = {ne,e,se,so,o,no};
         return autour;
+    }
+
+    public static ArrayList<Coordonnee> getList(Coordonnee c){
+        Coordonnee[] tab = get(c);
+        return new ArrayList<Coordonnee>(Arrays.asList(tab));
     }
 }

@@ -88,14 +88,19 @@ public class Jeu {
         plateau.placeTuileForce(tuileCourante, 0, 0);
     }
     
-    
+    /**
+     * Permet d'initialiser le sac de tuile par rapport à l'attribut NB_TUILES
+     */
     public void initSac(){
         for (int i = 0; i < NB_TUILES; i++) {
             sac.add(new Tuile());
         }
     }
     
-    //Cette fonction permet de piocher une tuile aléatoire dans le sac
+    /**
+     * Cette fonction permet de piocher une tuile aléatoire dans le sac
+     * @return la tuile piochée dans le sac
+     */
     public Tuile piocher(){
         Random r=new Random();
         //int n = r.nextInt(0,sac.size());
@@ -103,6 +108,19 @@ public class Jeu {
         Tuile piocher = sac.get(n);
         sac.remove(n);
         return piocher;
+    }
+
+    /**
+     * Méthode pour savoir si tous les pions ont été placés ou non
+     * @return true si oui, false sinon
+     */
+    public boolean allPionsPlaced(){
+        for (Joueur j : joueurs) {
+            if(!j.placedAllPions()){
+                return false;
+            }
+        }
+        return true;
     }
     
     //setters

@@ -6,10 +6,7 @@ import javax.swing.event.MouseInputListener;
 import java.awt.*;
 import java.awt.event.*;
 
-import main.java.model.Coordonnee;
-import main.java.model.Jeu;
-import main.java.model.Tuile;
-import main.java.model.TuileTemple;
+import main.java.model.interfaces.HexagoneAutour;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -108,7 +105,9 @@ public class GridTuile extends JPanel implements KeyListener, MouseInputListener
         }
 
         for (Circle c : circlesToDraw) {
-            c.draw(mainGraphics);
+            if(c != null){
+                c.draw(mainGraphics);
+            }
         }
     }
 
@@ -164,6 +163,27 @@ public class GridTuile extends JPanel implements KeyListener, MouseInputListener
 
                     System.out.println(c.getLocationInGridHexagone());
                     Pion pionChoisi=model.getPlateau().getGridPion().get(c.getLocationInGridHexagone());
+
+                    if(model.getJeuEtat()==JeuEtat.PLACING_START_PION){
+                        if(circlesToDraw.stream().anyMatch(v -> {return v.locationInGridHexagone.equals(c.locationInGridHexagone);})){
+                            for(Coordonnee coordonnee : HexagoneAutour.get(c.locationInGridHexagone)){
+                                Hexagone h = model.getPlateau().getGridHexagone().get(coordonnee);
+                                if(h instanceof HexagoneCentral){
+                                    Tuile temple = model.getPlateau().getGridTuile().get(((HexagoneCentral) h).getLocationInGridTuile());
+                                    if(temple instanceof TuileTemple){
+                                        Joueur j = ((TuileTemple) temple).getProprietaire();
+                                        for (Pion p : j.getPions()){
+                                            if (!p.isPlaced()) {
+                                                model.getPlateau().placeStartPion(p, c.locationInGridHexagone);
+                                                showStartPionLocations();
+                                                return;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
                     
                     if(model.getJeuEtat()==JeuEtat.CHOOSING_PION){
                         if(pionChoisi!=null){
@@ -210,11 +230,29 @@ public class GridTuile extends JPanel implements KeyListener, MouseInputListener
                             }
                         }
                     }
-
                     return;
-                    }
+                }
             }
         }
+    }
+
+    /**
+     * Méthode qui montrera les endroits où on peut poser les pions de départ (c'est-à-dire les emplacements autour des temples)
+     */
+    public void showStartPionLocations(){
+        circlesToDraw.clear();
+        ArrayList<Coordonnee> autourTemples = new ArrayList<Coordonnee>();
+        for (Joueur j : model.getJoueurs()) {
+            if(!j.placedAllPions()){
+                TuileTemple temple = j.getTemple();
+                autourTemples.addAll(HexagoneAutour.getList(temple.getLocationInGridHexagone()));
+            }
+        }
+        autourTemples.removeAll(model.getPlateau().getGridPion().keySet());
+        for (Coordonnee coordonnee : autourTemples) {
+            circlesToDraw.add(allCircles.get(coordonnee));
+        }
+        repaint();
     }
 
     @Override
@@ -238,6 +276,17 @@ public class GridTuile extends JPanel implements KeyListener, MouseInputListener
         for (TuileGraphique t : tuilesGraphique) {
             for (Circle c : t.cercles) {
                 if(c.contains(position)){
+                    if(model.getJeuEtat()==JeuEtat.PLACING_START_PION){
+                        showStartPionLocations();
+                        for (Circle circle : circlesToDraw) {
+                            if(circle != null){
+                                if(circle.locationInGridHexagone.equals(c.locationInGridHexagone)){
+                                    this.setCursor(new Cursor(Cursor.HAND_CURSOR));
+                                    return;
+                                }
+                            }
+                        }
+                    }
                     if(model.getJeuEtat()==JeuEtat.CHOOSING_PION){
                         if(model.getPlateau().getGridPion().containsKey(c.getLocationInGridHexagone())){
                             this.setCursor(new Cursor(Cursor.HAND_CURSOR));

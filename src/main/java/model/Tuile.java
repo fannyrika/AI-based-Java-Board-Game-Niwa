@@ -205,10 +205,7 @@ public class Tuile {
      * @return la coordonnee voulue
      */
     public Coordonnee getLocationInGridTuile(){
-        if(centre.getLocation() != null){
-            return new Coordonnee(centre.getLocation().x / 3, centre.getLocation().y);
-        }
-        return null;
+        return centre.getLocationInGridTuile();
     } 
 
     /**

@@ -52,4 +52,10 @@ public class HexagoneCentral extends Hexagone {
     public void setLocation(Coordonnee c){this.location = c;}
     public void setLocation(int x, int y){this.location = new Coordonnee(x, y);}
     public Coordonnee getLocation(){return location;}
+    public Coordonnee getLocationInGridTuile(){
+        if(location != null){
+            return new Coordonnee(location.x / 3, location.y);
+        }
+        return null;
+    }
 }

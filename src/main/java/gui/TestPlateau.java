@@ -114,9 +114,10 @@ public class TestPlateau extends JFrame implements KeyListener{
 
     public void jouer() {
 
-        // Surement temporaire : permet de placer les pions automatiquement après que les tuiles ont toutes été posées
-        for (Joueur j : model.getJoueurs()) {
-            model.getPlateau().placeStartPionAuto(j);
+        model.setJeuEtat(JeuEtat.PLACING_START_PION);
+        // waiting
+        while (!model.allPionsPlaced()){
+            System.out.println("");
         }
 
         while(true){
