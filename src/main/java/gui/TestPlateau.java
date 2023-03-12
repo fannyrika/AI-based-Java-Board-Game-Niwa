@@ -33,6 +33,10 @@ public class TestPlateau extends JFrame implements KeyListener{
 
     protected GridTuile gridTuile;
 
+    //protected static MapEtat mapSettings = MapEtat.MANUEL;
+    protected static int nbJoueurs = 2;
+    protected static MapEtat mapSettings = MapEtat.MAP1_2P;
+
     public TestPlateau(Jeu m) throws IOException{
         setVisible(true);
         setTitle("Plateau Tuiles");
@@ -55,7 +59,7 @@ public class TestPlateau extends JFrame implements KeyListener{
     }
 
 
-        /**
+    /**
      * TODO: dessiner les tuiles avec temples;
      */
      
@@ -173,7 +177,9 @@ public class TestPlateau extends JFrame implements KeyListener{
     }
       
     public void lancer() throws IOException{
-        creerPlateau();
+        if(mapSettings == MapEtat.MANUEL){
+            creerPlateau();
+        }
         jouer();
         //TODO: quitter le jeu (fermer la fen锚tre etc...)
     }
@@ -406,7 +412,7 @@ public class TestPlateau extends JFrame implements KeyListener{
     }
 
     public static void main(String[] args) throws IOException {
-        Jeu model =  new Jeu(2);
+        Jeu model =  new Jeu(nbJoueurs,mapSettings);
         TestPlateau jeuVue = new TestPlateau(model);
         jeuVue.lancer();
     }

@@ -60,8 +60,7 @@ public class Jeu {
      * 
      * @param nb_joueurs -> Le nombre de joueurs que le jeu pourra acueillir
      */
-    public Jeu(int nb_joueurs){
-    	jeuEtat = JeuEtat.CHOOSING_TUILE_LOCATION;
+    public Jeu(int nb_joueurs, MapEtat map){
         for (int i = 0; i < nb_joueurs; i++) {
             Joueur j = new Joueur("j0");
             joueurs.add(j);             // On ajoute les joueurs dans la liste de joueurs
@@ -69,14 +68,11 @@ public class Jeu {
         }
         joueurCourant = joueurs.get(0);
         pionCourant = joueurCourant.pions.get(0);
-        initSac();
-        tuileCourante=sacTemples.get(0);
-        sacTemples.remove(0);
-        plateau.placeTuileForce(tuileCourante, 0, 0);
+        initSac(map);
+        initMap(map);
     }
 
     public Jeu(ArrayList<Joueur> j, ArrayList<TuileTemple> s){
-    	jeuEtat = JeuEtat.CHOOSING_TUILE_LOCATION;
         joueurs=j;
         sacTemples=s;
 
@@ -89,11 +85,55 @@ public class Jeu {
     }
     
     /**
-     * Permet d'initialiser le sac de tuile par rapport à l'attribut NB_TUILES
+     * Permet d'initialiser le sac de tuile
+     * @param map -> permet de savoir combien de tuile il y a à créer (par rapport à une map par défaut, ou bien dans le cas ou la map est crée manuellement)
+     */
+    public void initSac(MapEtat map){
+        if(map == MapEtat.MANUEL){
+            for (int i = 0; i < NB_TUILES; i++) {
+                sac.add(new Tuile());
+            }
+        }
+    }
+
+    /**
+     * Permet d'initialiser le sac dans le cas ou le plateau doit être créer manuellement
      */
     public void initSac(){
-        for (int i = 0; i < NB_TUILES; i++) {
-            sac.add(new Tuile());
+        initSac(MapEtat.MANUEL);
+    }
+
+    public void initMap(MapEtat map){
+        jeuEtat = JeuEtat.PLACING_START_PION;
+        if(map == MapEtat.MAP1_2P){
+            plateau.placeTuileForce(new Tuile(), 0, 0);
+            plateau.placeTuileForce(new Tuile(), 0, 1);
+            plateau.placeTuileForce(new Tuile(), 1, 0);
+            plateau.placeTuileForce(new Tuile(), 1, -1);
+            plateau.placeTuileForce(new Tuile(), 0, -1);
+            plateau.placeTuileForce(new Tuile(), -1, -1);
+            plateau.placeTuileForce(new Tuile(), -1, 0);
+
+            plateau.placeTuileForce(new Tuile(), 2, 1);
+            plateau.placeTuileForce(new Tuile(), 3, 0);
+            plateau.placeTuileForce(new Tuile(), 3, -1);
+            plateau.placeTuileForce(new Tuile(), 2, -1);
+
+            plateau.placeTuileForce(new Tuile(), -2, 1);
+            plateau.placeTuileForce(new Tuile(), -3, 0);
+            plateau.placeTuileForce(new Tuile(), -3, -1);
+            plateau.placeTuileForce(new Tuile(), -2, -1);
+
+            plateau.placeTuileForce(sacTemples.get(0), 2, 0);
+            sacTemples.remove(0);
+            plateau.placeTuileForce(sacTemples.get(0), -2, 0);
+            sacTemples.remove(0);
+        }
+        else{   // map == MapEtat.MANUEL
+            jeuEtat = JeuEtat.CHOOSING_TUILE_LOCATION;
+            tuileCourante=sacTemples.get(0);
+            sacTemples.remove(0);
+            plateau.placeTuileForce(tuileCourante, 0, 0);
         }
     }
     
