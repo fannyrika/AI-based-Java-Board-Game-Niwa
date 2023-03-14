@@ -27,11 +27,14 @@ public class InterfaceDeJeu extends JFrame implements KeyListener{
     protected int indexChoisi=0;
     protected ArrayList<Coordonnee> locationsPossibles;
 
+    protected static MapEtat mapSettings = MapEtat.MANUEL;
+    protected static int nbJoueurs = 2;
+    //protected static MapEtat mapSettings = MapEtat.MAP1_2P;
     protected GridTuile gridTuile;
     protected TableauDeBord tableauDeBord;
     public InterfaceDeJeu(Jeu m) throws IOException{
-        setLayout(new BorderLayout());
         setVisible(true);
+        setLayout(new BorderLayout());
         setTitle("NIWA");
         model=m;
         gridTuile = new GridTuile(model);
@@ -39,7 +42,6 @@ public class InterfaceDeJeu extends JFrame implements KeyListener{
         gridTuile.setBackground(Color.WHITE);
         plateau.getVerticalScrollBar().setUI(new CustomScrollBarUI());
         plateau.getHorizontalScrollBar().setUI(new CustomScrollBarUI());
-    
         tableauDeBord=new TableauDeBord(model);
         tableauDeBord.boutonQuitter.addActionListener(e->{
             this.dispose();
@@ -47,8 +49,8 @@ public class InterfaceDeJeu extends JFrame implements KeyListener{
         JPanel vueComplete=new JPanel(new BorderLayout());
         vueComplete.add(plateau, BorderLayout.CENTER);
         vueComplete.add(tableauDeBord,BorderLayout.LINE_END);
-        Dimension size =plateau.getPreferredSize();
-        size.width /= 3; // divide the width by 3
+        Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
+        size.width /= 4; // divide the width by 3
         tableauDeBord.setPreferredSize(size);
         //controleur=new Controleur(model, this);
         //TODO: construire l'interface graphique (avec la tuileTemple du joueur0 comme la tuile initiale)
@@ -130,10 +132,12 @@ public class InterfaceDeJeu extends JFrame implements KeyListener{
                                    
     public void jouer() {
 
-        // Surement temporaire : permet de placer les pions automatiquement après que les tuiles ont toutes été posées
-        for (Joueur j : model.getJoueurs()) {
-            model.getPlateau().placeStartPionAuto(j);
+        model.setJeuEtat(JeuEtat.PLACING_START_PION);
+        // waiting
+        while (!model.allPionsPlaced()){
+            System.out.println("");
         }
+
 
         while(true){
             //for(int i=0; i<model.getJoueurs().size(); i++) System.out.println("affiche joueurs:"+model.getJoueurs().get(i));
@@ -339,7 +343,7 @@ public class InterfaceDeJeu extends JFrame implements KeyListener{
                     model.getPlateau().removeTuileBrutForce(model.getTuileCourant().getLocationInGridTuile());      // On enlève la tuile courante du plateau
                     if(model.getPlateau().placeTuileContraint(model.getTuileCourant(), model.getTuileCourant().getLocationInGridTuile())){  // Et on tente de la replacer, mais avec les contraintes
                         model.setJeuEtat(JeuEtat.ROTATING_TUILE);                                                                           // Si la tuile se place, on passe à la rotation
-                        afficherInstruction("<html>Tappez 鈫鈫pour tourner la tuile.<br> Tappez SPACE pour v茅rifier la choix.</html>");
+                afficherInstruction("<html>Tappez 鈫鈫pour tourner la tuile.<br> Tappez SPACE pour v茅rifier la choix.</html>");
                     }
                     else{                                                                                                                   // Sinon, on reste sur le deplacement de tuile
                         model.getPlateau().placeTuileForce(model.getTuileCourant(),model.getTuileCourant().getLocationInGridTuile());
@@ -423,7 +427,7 @@ public class InterfaceDeJeu extends JFrame implements KeyListener{
     }
    
     public static void main(String[] args) throws IOException {
-        Jeu model =  new Jeu(2);
+        Jeu model =  new Jeu(nbJoueurs,mapSettings);
         InterfaceDeJeu jeuVue = new InterfaceDeJeu(model);
         jeuVue.lancer();
     }
@@ -436,14 +440,14 @@ class CustomScrollBarUI extends BasicScrollBarUI{
 }
 @Override
 protected void configureScrollBarColors() {
-    // Set the thumb and track colors
+ 
     super.thumbColor = Color.black;
     super.trackColor = Color.WHITE;
 
 }
 @Override
 protected JButton createDecreaseButton(int orientation) {
-    // Remove the decrease button
+   
     return new JButton() {
         @Override
         public Dimension getPreferredSize() {
