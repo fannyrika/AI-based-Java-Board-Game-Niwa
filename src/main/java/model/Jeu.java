@@ -166,8 +166,47 @@ public class Jeu {
             plateau.placeTuileForce(new Tuile(), -3, -1);
             plateau.placeTuileForce(new Tuile(), -3, 0);
             plateau.placeTuileForce(new Tuile(), -3, 1);
+        }
+        else if(map == MapEtat.MAP1_4P){
+            plateau.placeTuileForce(new Tuile(), 0, 0);
+            plateau.placeTuileForce(new Tuile(), 0, 1);
+            plateau.placeTuileForce(new Tuile(), 1, 0);
+            plateau.placeTuileForce(new Tuile(), 1, -1);
+            plateau.placeTuileForce(new Tuile(), 0, -1);
+            plateau.placeTuileForce(new Tuile(), -1, -1);
+            plateau.placeTuileForce(new Tuile(), -1, 0);
 
+            plateau.placeTuileForce(new Tuile(), 2, 1);
+            plateau.placeTuileForce(new Tuile(), 3, 0);
+            plateau.placeTuileForce(new Tuile(), 3, -1);
+            plateau.placeTuileForce(new Tuile(), 2, -1);
 
+            plateau.placeTuileForce(new Tuile(), -2, 1);
+            plateau.placeTuileForce(new Tuile(), -3, 0);
+            plateau.placeTuileForce(new Tuile(), -3, -1);
+            plateau.placeTuileForce(new Tuile(), -2, -1);
+
+            plateau.placeTuileForce(sacTemples.get(0), 2, 0);
+            sacTemples.remove(0);
+            plateau.placeTuileForce(sacTemples.get(0), -2, 0);
+            sacTemples.remove(0);
+
+            plateau.placeTuileForce(sacTemples.get(0), 0, 2);
+            sacTemples.remove(0);
+            plateau.placeTuileForce(sacTemples.get(0), 0, -2);
+            sacTemples.remove(0);
+
+            plateau.placeTuileForce(new Tuile(), -1, 1);
+            plateau.placeTuileForce(new Tuile(), 1, 1);
+            plateau.placeTuileForce(new Tuile(), -1, 2);
+            plateau.placeTuileForce(new Tuile(), 1, 2);
+            plateau.placeTuileForce(new Tuile(), 0, 3);
+
+            plateau.placeTuileForce(new Tuile(), -1, -2);
+            plateau.placeTuileForce(new Tuile(), 1, -2);
+            plateau.placeTuileForce(new Tuile(), -1, -3);
+            plateau.placeTuileForce(new Tuile(), 1,-3);
+            plateau.placeTuileForce(new Tuile(), 0, -3);
         }
         else{   // map == MapEtat.MANUEL
             jeuEtat = JeuEtat.CHOOSING_TUILE_LOCATION;
