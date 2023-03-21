@@ -61,11 +61,9 @@ public class Jeu {
      * @param nb_joueurs -> Le nombre de joueurs que le jeu pourra acueillir
      */
     public Jeu(int nb_joueurs, MapEtat map){
-        for (int i = 0; i < nb_joueurs; i++) {
-            Joueur j = new Joueur("j0");
-            joueurs.add(j);             // On ajoute les joueurs dans la liste de joueurs
-            sacTemples.add(j.temple);   // On ajoute chaque temple dans la liste des temples
-        }
+        if(map == MapEtat.MAP1_2P || map == MapEtat.MAP2_2P){initJoueurs(2);}
+        else if(map == MapEtat.MAP1_4P || map == MapEtat.MAP2_4P){initJoueurs(4);}
+        else{initJoueurs(nb_joueurs);}
         joueurCourant = joueurs.get(0);
         pionCourant = joueurCourant.pions.get(0);
         initSac(map);
@@ -82,6 +80,14 @@ public class Jeu {
         tuileCourante=sacTemples.get(0);
         sacTemples.remove(0);
         plateau.placeTuileForce(tuileCourante, 0, 0);
+    }
+
+    public void initJoueurs(int nb_j){
+        for (int i = 0; i < nb_j; i++) {
+            Joueur j = new Joueur("j0");
+            joueurs.add(j);             // On ajoute les joueurs dans la liste de joueurs
+            sacTemples.add(j.temple);   // On ajoute chaque temple dans la liste des temples
+        }
     }
     
     /**
@@ -103,6 +109,10 @@ public class Jeu {
         initSac(MapEtat.MANUEL);
     }
 
+    /**
+     * Méthode pour initialiser un plateau par rapport au paramètre donné
+     * @param map -> Permet de savoir quel plateau initialiser
+     */
     public void initMap(MapEtat map){
         jeuEtat = JeuEtat.PLACING_START_PION;
         if(map == MapEtat.MAP1_2P){
@@ -128,6 +138,36 @@ public class Jeu {
             sacTemples.remove(0);
             plateau.placeTuileForce(sacTemples.get(0), -2, 0);
             sacTemples.remove(0);
+        }
+        else if(map == MapEtat.MAP2_2P){
+            plateau.placeTuileForce(new Tuile(), 0, 0);
+            plateau.placeTuileForce(new Tuile(), 1, 0);
+            plateau.placeTuileForce(new Tuile(), 1, -1);
+            plateau.placeTuileForce(sacTemples.get(0), 2, -1);
+            sacTemples.remove(0);
+            plateau.placeTuileForce(new Tuile(), 0, -1);
+            plateau.placeTuileForce(new Tuile(), 0, -2);
+            plateau.placeTuileForce(new Tuile(), 1, -3);
+            plateau.placeTuileForce(new Tuile(), 2, -2);
+            plateau.placeTuileForce(new Tuile(), 2, 1);
+            plateau.placeTuileForce(new Tuile(), 3, 0);
+            plateau.placeTuileForce(new Tuile(), 3, -1);
+            plateau.placeTuileForce(new Tuile(), 3, -2);
+            
+            plateau.placeTuileForce(new Tuile(), -1, 0);
+            plateau.placeTuileForce(new Tuile(), 0, 1);
+            plateau.placeTuileForce(new Tuile(), -1, -1);
+            plateau.placeTuileForce(sacTemples.get(0), -2, 1);
+            sacTemples.remove(0);
+            plateau.placeTuileForce(new Tuile(), 0, 2);
+            plateau.placeTuileForce(new Tuile(), -1, 2);
+            plateau.placeTuileForce(new Tuile(), -2, 2);
+            plateau.placeTuileForce(new Tuile(), -2, -1);
+            plateau.placeTuileForce(new Tuile(), -3, -1);
+            plateau.placeTuileForce(new Tuile(), -3, 0);
+            plateau.placeTuileForce(new Tuile(), -3, 1);
+
+
         }
         else{   // map == MapEtat.MANUEL
             jeuEtat = JeuEtat.CHOOSING_TUILE_LOCATION;

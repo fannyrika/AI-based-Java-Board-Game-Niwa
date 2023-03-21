@@ -35,7 +35,7 @@ public class TestPlateau extends JFrame implements KeyListener{
 
     //protected static MapEtat mapSettings = MapEtat.MANUEL;
     protected static int nbJoueurs = 2;
-    protected static MapEtat mapSettings = MapEtat.MAP1_2P;
+    protected static MapEtat mapSettings = MapEtat.MAP2_2P;
 
     public TestPlateau(Jeu m) throws IOException{
         setVisible(true);
