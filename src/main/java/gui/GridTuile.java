@@ -119,6 +119,10 @@ public class GridTuile extends JPanel implements KeyListener, MouseInputListener
     public void glisserVers(int dx, int dy){
         GridTuile.dx += dx;
         GridTuile.dy -= dy;
+        for (Circle c : circlesToDraw) {
+            c.x += dx;
+            c.y -= dy;
+        }
     }
 
     @Override
