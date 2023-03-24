@@ -3,10 +3,12 @@ package main.java.model;
 import java.util.ArrayList;
 import java.util.Random;
 
+import main.java.model.interfaces.MapCreation;
+
 /**
  * La classe qui va gérer le déroulement du jeu
  */
-public class Jeu {
+public class Jeu implements MapCreation {
 
     /**
      * Liste qui va contenir la liste des joueurs
@@ -67,7 +69,7 @@ public class Jeu {
         joueurCourant = joueurs.get(0);
         pionCourant = joueurCourant.pions.get(0);
         initSac(map);
-        initMap(map);
+        initMap(this,map);
     }
 
     public Jeu(ArrayList<Joueur> j, ArrayList<TuileTemple> s){
@@ -108,114 +110,7 @@ public class Jeu {
     public void initSac(){
         initSac(MapEtat.MANUEL);
     }
-
-    /**
-     * Méthode pour initialiser un plateau par rapport au paramètre donné
-     * @param map -> Permet de savoir quel plateau initialiser
-     */
-    public void initMap(MapEtat map){
-        jeuEtat = JeuEtat.PLACING_START_PION;
-        if(map == MapEtat.MAP1_2P){
-            plateau.placeTuileForce(new Tuile(), 0, 0);
-            plateau.placeTuileForce(new Tuile(), 0, 1);
-            plateau.placeTuileForce(new Tuile(), 1, 0);
-            plateau.placeTuileForce(new Tuile(), 1, -1);
-            plateau.placeTuileForce(new Tuile(), 0, -1);
-            plateau.placeTuileForce(new Tuile(), -1, -1);
-            plateau.placeTuileForce(new Tuile(), -1, 0);
-
-            plateau.placeTuileForce(new Tuile(), 2, 1);
-            plateau.placeTuileForce(new Tuile(), 3, 0);
-            plateau.placeTuileForce(new Tuile(), 3, -1);
-            plateau.placeTuileForce(new Tuile(), 2, -1);
-
-            plateau.placeTuileForce(new Tuile(), -2, 1);
-            plateau.placeTuileForce(new Tuile(), -3, 0);
-            plateau.placeTuileForce(new Tuile(), -3, -1);
-            plateau.placeTuileForce(new Tuile(), -2, -1);
-
-            plateau.placeTuileForce(sacTemples.get(0), 2, 0);
-            sacTemples.remove(0);
-            plateau.placeTuileForce(sacTemples.get(0), -2, 0);
-            sacTemples.remove(0);
-        }
-        else if(map == MapEtat.MAP2_2P){
-            plateau.placeTuileForce(new Tuile(), 0, 0);
-            plateau.placeTuileForce(new Tuile(), 1, 0);
-            plateau.placeTuileForce(new Tuile(), 1, -1);
-            plateau.placeTuileForce(sacTemples.get(0), 2, -1);
-            sacTemples.remove(0);
-            plateau.placeTuileForce(new Tuile(), 0, -1);
-            plateau.placeTuileForce(new Tuile(), 0, -2);
-            plateau.placeTuileForce(new Tuile(), 1, -3);
-            plateau.placeTuileForce(new Tuile(), 2, -2);
-            plateau.placeTuileForce(new Tuile(), 2, 1);
-            plateau.placeTuileForce(new Tuile(), 3, 0);
-            plateau.placeTuileForce(new Tuile(), 3, -1);
-            plateau.placeTuileForce(new Tuile(), 3, -2);
-            
-            plateau.placeTuileForce(new Tuile(), -1, 0);
-            plateau.placeTuileForce(new Tuile(), 0, 1);
-            plateau.placeTuileForce(new Tuile(), -1, -1);
-            plateau.placeTuileForce(sacTemples.get(0), -2, 1);
-            sacTemples.remove(0);
-            plateau.placeTuileForce(new Tuile(), 0, 2);
-            plateau.placeTuileForce(new Tuile(), -1, 2);
-            plateau.placeTuileForce(new Tuile(), -2, 2);
-            plateau.placeTuileForce(new Tuile(), -2, -1);
-            plateau.placeTuileForce(new Tuile(), -3, -1);
-            plateau.placeTuileForce(new Tuile(), -3, 0);
-            plateau.placeTuileForce(new Tuile(), -3, 1);
-        }
-        else if(map == MapEtat.MAP1_4P){
-            plateau.placeTuileForce(new Tuile(), 0, 0);
-            plateau.placeTuileForce(new Tuile(), 0, 1);
-            plateau.placeTuileForce(new Tuile(), 1, 0);
-            plateau.placeTuileForce(new Tuile(), 1, -1);
-            plateau.placeTuileForce(new Tuile(), 0, -1);
-            plateau.placeTuileForce(new Tuile(), -1, -1);
-            plateau.placeTuileForce(new Tuile(), -1, 0);
-
-            plateau.placeTuileForce(new Tuile(), 2, 1);
-            plateau.placeTuileForce(new Tuile(), 3, 0);
-            plateau.placeTuileForce(new Tuile(), 3, -1);
-            plateau.placeTuileForce(new Tuile(), 2, -1);
-
-            plateau.placeTuileForce(new Tuile(), -2, 1);
-            plateau.placeTuileForce(new Tuile(), -3, 0);
-            plateau.placeTuileForce(new Tuile(), -3, -1);
-            plateau.placeTuileForce(new Tuile(), -2, -1);
-
-            plateau.placeTuileForce(sacTemples.get(0), 2, 0);
-            sacTemples.remove(0);
-            plateau.placeTuileForce(sacTemples.get(0), -2, 0);
-            sacTemples.remove(0);
-
-            plateau.placeTuileForce(sacTemples.get(0), 0, 2);
-            sacTemples.remove(0);
-            plateau.placeTuileForce(sacTemples.get(0), 0, -2);
-            sacTemples.remove(0);
-
-            plateau.placeTuileForce(new Tuile(), -1, 1);
-            plateau.placeTuileForce(new Tuile(), 1, 1);
-            plateau.placeTuileForce(new Tuile(), -1, 2);
-            plateau.placeTuileForce(new Tuile(), 1, 2);
-            plateau.placeTuileForce(new Tuile(), 0, 3);
-
-            plateau.placeTuileForce(new Tuile(), -1, -2);
-            plateau.placeTuileForce(new Tuile(), 1, -2);
-            plateau.placeTuileForce(new Tuile(), -1, -3);
-            plateau.placeTuileForce(new Tuile(), 1,-3);
-            plateau.placeTuileForce(new Tuile(), 0, -3);
-        }
-        else{   // map == MapEtat.MANUEL
-            jeuEtat = JeuEtat.CHOOSING_TUILE_LOCATION;
-            tuileCourante=sacTemples.get(0);
-            sacTemples.remove(0);
-            plateau.placeTuileForce(tuileCourante, 0, 0);
-        }
-    }
-    
+      
     /**
      * Cette fonction permet de piocher une tuile aléatoire dans le sac
      * @return la tuile piochée dans le sac

@@ -18,7 +18,6 @@ public class PionGraphique {
     private int x,y;
     protected static final double PION_RADIUS_RATIO = 0.15;
     protected static int rayonTete = (int) (TuileGraphique.radius*PION_RADIUS_RATIO);
-    // TODO : Avoir un attribut pour avoir le centre du pion
     protected Point centre;
     /**
      * @param pion le pion que l'on souhaite représenter
