@@ -183,6 +183,8 @@ public class Plateau implements DeplacementPion {
 
         if(!gridHexagone.containsKey(choix[direction])){return new ArrayList<Coordonnee>();}      // CAS 0 : Le pion veut aller hors du plateau -> on return une liste vide
 
+        if(choix[direction].equals(p.getProprietaire().getTemple().getLocationInGridHexagone())){return new ArrayList<Coordonnee>();}   // CAS 0.1 : Le pion veut aller sur son propre temple -> on return une liste vide
+
         if(p.empty()){    // CAS 1 : Le pion n'a pas de perle
             if(gridPion.containsKey(choix[direction])){     // CAS 1.1 : il y a un personnage sur sa direction -> il doit donc sauter
                 Coordonnee[] choixApres = HexagoneAutour.get(choix[direction]);
