@@ -47,7 +47,7 @@ public class Pion extends Stack<Couleurs> {
      * @return true si le pion actuel possède une perle à donner, false sinon
      */
     public boolean passPerleTo(Pion p){
-        if(!empty()){
+        if(!empty() && this != p && p.proprietaire == this.proprietaire){
             p.add(pop());
             return true;
         }

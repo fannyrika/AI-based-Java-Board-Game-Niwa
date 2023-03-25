@@ -55,7 +55,11 @@ public class Jeu implements MapCreation {
      */
     //protected int tour = 0;
     
-    protected static final int NB_TUILES = 3;
+    public static final int NB_TUILES = 3;
+    /**
+     * Représente le nombre de perles qu'un pion peut garder sur sa tête
+     */
+    public static final int NB_PEARL_MAX = 3;
     
      /**
      * Constructeur permettant d'initialiser les attributs

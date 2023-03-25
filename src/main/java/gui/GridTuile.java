@@ -220,17 +220,18 @@ public class GridTuile extends JPanel implements KeyListener, MouseInputListener
                     else if(model.getJeuEtat()==JeuEtat.CHOOSING_PEARL_DESTINATION){
                         //TODO:programmez ici pour effacer tous les cercles
                         if(pionChoisi!=null){
-                            if(pionChoisi.size()<3){//car le nombre maximal de perle c'est 3
-                                model.getPionCourant().passPerleTo(pionChoisi);
-                                //renouveler la vue des 2 pions
-                                model.getPlateau().getGridPion().remove(pionChoisi.getLocation());
-                                model.getPlateau().placerPionForce(pionChoisi,pionChoisi.getLocation());
-    
-                                model.getPlateau().getGridPion().remove(model.getPionCourant().getLocation());
-                                model.getPlateau().placerPionForce(model.getPionCourant(), model.getPionCourant().getLocation());
-                                repaint();
-    
-                                model.setJeuEtat(JeuEtat.CONTINUE);
+                            if(pionChoisi.size()<Jeu.NB_PEARL_MAX){
+                                if(model.getPionCourant().passPerleTo(pionChoisi)){
+                                    //renouveler la vue des 2 pions
+                                    model.getPlateau().getGridPion().remove(pionChoisi.getLocation());
+                                    model.getPlateau().placerPionForce(pionChoisi,pionChoisi.getLocation());
+        
+                                    model.getPlateau().getGridPion().remove(model.getPionCourant().getLocation());
+                                    model.getPlateau().placerPionForce(model.getPionCourant(), model.getPionCourant().getLocation());
+                                    repaint();
+        
+                                    model.setJeuEtat(JeuEtat.CONTINUE);
+                                }
                             }
                         }
                     }
@@ -303,7 +304,7 @@ public class GridTuile extends JPanel implements KeyListener, MouseInputListener
                         }
                     }
                     else if(model.getJeuEtat()==JeuEtat.CHOOSING_PEARL_DESTINATION){
-                        if(model.getPlateau().getGridPion().containsKey(c.getLocationInGridHexagone()) && model.getPlateau().getGridPion().get(c.getLocationInGridHexagone()) != model.getPionCourant()){
+                        if(model.getPlateau().getGridPion().containsKey(c.getLocationInGridHexagone()) && model.getPlateau().getGridPion().get(c.getLocationInGridHexagone()) != model.getPionCourant() && model.getPlateau().getGridPion().get(c.getLocationInGridHexagone()).getProprietaire() == model.getPionCourant().getProprietaire()){
                             this.setCursor(new Cursor(Cursor.HAND_CURSOR));
                         }
                     }
