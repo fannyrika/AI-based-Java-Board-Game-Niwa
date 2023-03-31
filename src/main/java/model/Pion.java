@@ -16,6 +16,8 @@ public class Pion extends Stack<Couleurs> {
     protected Joueur proprietaire;
     protected Coordonnee location;
     protected boolean isPlaced;
+    private int id=0;
+    protected static int ID_STATIC = 0;
 
     /**
      * Constructeur permettant d'initialiser le pion
@@ -23,6 +25,25 @@ public class Pion extends Stack<Couleurs> {
      */
     public Pion(Joueur j){
         this.proprietaire = j;
+        this.id = ID_STATIC;
+        ID_STATIC++;
+    }
+
+    
+    /**
+     * deep copy constructor(partially)
+     * @param p -> pion to copy
+     */
+    public Pion(Pion p){
+        this.clear();
+        this.addAll(p);
+        if(p.location != null){
+            this.location=new Coordonnee(p.location);
+        }
+        else{
+            throw new IllegalArgumentException("Pion location is null");
+        }
+        this.id = p.id;
     }
 
     /*
@@ -39,6 +60,7 @@ public class Pion extends Stack<Couleurs> {
         this.location = c;
         isPlaced = true;
     }
+
     public void setLocation(int x, int y){setLocation(new Coordonnee(x, y));}
 
     /**
@@ -52,5 +74,53 @@ public class Pion extends Stack<Couleurs> {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public String toString() {
+        return super.toString()+"-id:"+id+"-location:"+location+"-isPlaced:"+isPlaced;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if(o instanceof Pion){
+            Pion p = (Pion) o;
+            //compare all attributes
+            // Check if both locations are null
+            if (p.location == null && this.location == null) {
+                return true;
+            }
+            // Check if only one location is null
+            if (p.location == null || this.location == null) {
+                return false;
+            }
+            if(p.id == this.id 
+            && p.location.equals(this.location) && p.isPlaced == this.isPlaced 
+            && this.containsAll(p) && p.containsAll(this)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    //test the equals method
+    public static void main(String[] args) {
+        Joueur j1 = new Joueur("j1");
+        Joueur j2 = new Joueur("j2");
+        Pion p1 = new Pion(j1);
+        Pion p2 = new Pion(j1);
+        p1.add(Couleurs.ROUGE);
+        p1.add(Couleurs.ROUGE);
+        p2.add(Couleurs.ROUGE);
+        p2.add(Couleurs.ORANGE);
+        p1.setLocation(new Coordonnee(0, 0));
+        p2.setLocation(new Coordonnee(0, 1));
+
+        System.out.println(p1.equals(p2));
+    }
+
+    //getID
+    public int getID() {
+        return id;
     }
 }

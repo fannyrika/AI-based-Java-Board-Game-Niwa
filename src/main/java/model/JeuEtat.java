@@ -12,5 +12,7 @@ public enum JeuEtat {
     
     CONTINUE,
 
+    GAME_OVER,
+
     CHANGING_VIEW;
 }

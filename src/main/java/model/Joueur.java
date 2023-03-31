@@ -5,7 +5,7 @@ import java.util.ArrayList;
 /**
  * Classe qui va représenter un joueur
  */
-public class Joueur {
+public class Joueur implements Cloneable{
 
     /**
      * MAX_PIONS : le nombre de pions maximal qu'un joueur peut avoir (il ne faut pas dépasser 6 parce qu'il n'y a que 6 emplacements autour d'un temple)
@@ -93,5 +93,15 @@ public class Joueur {
             }
         }
         return true;
+    }
+
+    //test all the functions
+    public static void main(String[] args) {
+        Joueur j0 = new Joueur("j0");
+        Joueur j1 = new Joueur("j1");
+        Joueur j2 = new Joueur("j2");
+        System.out.println(j0);
+        System.out.println(j1);
+        System.out.println(j2);
     }
 }

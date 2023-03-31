@@ -18,6 +18,14 @@ public class Coordonnee {
         this.x = x;
         this.y = y;
     }
+    
+    /**
+     * deep copy constructor
+     */
+    public Coordonnee(Coordonnee c){
+        this.x = c.x;
+        this.y = c.y;
+    }
 
     public int getX(){return x;}
     public int getY(){return y;}

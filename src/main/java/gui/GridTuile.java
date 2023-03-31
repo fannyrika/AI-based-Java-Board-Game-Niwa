@@ -160,68 +160,77 @@ public class GridTuile extends JPanel implements KeyListener, MouseInputListener
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        Point clic = e.getPoint();
-        for (TuileGraphique t : tuilesGraphique) {  
-            for (Circle c : t.cercles) {
-                if(c.contains(clic)){
+        if(model.getJoueurCourant() instanceof JoueurHumain){
+            Point clic = e.getPoint();
+            for (TuileGraphique t : tuilesGraphique) {  
+                for (Circle c : t.cercles) {
+                    if(c.contains(clic)){
 
-                    System.out.println(c.getLocationInGridHexagone());
-                    Pion pionChoisi=model.getPlateau().getGridPion().get(c.getLocationInGridHexagone());
+                        System.out.println(c.getLocationInGridHexagone());
+                        Pion pionChoisi=model.getPlateau().getGridPion().get(c.getLocationInGridHexagone());
 
-                    if(model.getJeuEtat()==JeuEtat.PLACING_START_PION){
-                        if(circlesToDraw.stream().anyMatch(v -> {return v.locationInGridHexagone.equals(c.locationInGridHexagone);})){
-                            for(Coordonnee coordonnee : HexagoneAutour.get(c.locationInGridHexagone)){
-                                Hexagone h = model.getPlateau().getGridHexagone().get(coordonnee);
-                                if(h instanceof HexagoneCentral){
-                                    Tuile temple = model.getPlateau().getGridTuile().get(((HexagoneCentral) h).getLocationInGridTuile());
-                                    if(temple instanceof TuileTemple){
-                                        Joueur j = ((TuileTemple) temple).getProprietaire();
-                                        for (Pion p : j.getPions()){
-                                            if (!p.isPlaced()) {
-                                                model.getPlateau().placeStartPion(p, c.locationInGridHexagone);
-                                                showStartPionLocations();
-                                                return;
+                        if(model.getJeuEtat()==JeuEtat.PLACING_START_PION){
+                            if(circlesToDraw.stream().anyMatch(v -> {return v.locationInGridHexagone.equals(c.locationInGridHexagone);})){
+                                for(Coordonnee coordonnee : HexagoneAutour.get(c.locationInGridHexagone)){
+                                    Hexagone h = model.getPlateau().getGridHexagone().get(coordonnee);
+                                    if(h instanceof HexagoneCentral){
+                                        Tuile temple = model.getPlateau().getGridTuile().get(((HexagoneCentral) h).getLocationInGridTuile());
+                                        if(temple instanceof TuileTemple){
+                                            Joueur j = ((TuileTemple) temple).getProprietaire();
+                                            for (Pion p : j.getPions()){
+                                                if (!p.isPlaced()) {
+                                                    model.getPlateau().placeStartPion(p, c.locationInGridHexagone);
+                                                    showStartPionLocations();
+                                                    return;
+                                                }
                                             }
                                         }
                                     }
                                 }
                             }
                         }
-                    }
-                    
-                    if(model.getJeuEtat()==JeuEtat.CHOOSING_PION){
-                        if(pionChoisi!=null){
-                            model.setPionCourant(pionChoisi);
-                            circlesToDraw.clear();
-                            ArrayList<Coordonnee> locationsPossible = model.getPlateau().canMoveLocations(model.getPionCourant());
-                            // si il y a des locations possibles a placer
-                            if(locationsPossible.size()>0){
-                                for (Coordonnee coordonnee : locationsPossible) {
-                                    circlesToDraw.add(allCircles.get(coordonnee));
+                        
+                        if(model.getJeuEtat()==JeuEtat.CHOOSING_PION){
+                            if(pionChoisi!=null){
+                                model.setPionCourant(pionChoisi);
+                                circlesToDraw.clear();
+                                ArrayList<Coordonnee> locationsPossible = model.getPlateau().canMoveLocations(model.getPionCourant());
+                                // si il y a des locations possibles a placer
+                                if(locationsPossible.size()>0){
+                                    for (Coordonnee coordonnee : locationsPossible) {
+                                        circlesToDraw.add(allCircles.get(coordonnee));
+                                    }
+                                    repaint();
+                                    model.setJeuEtat(JeuEtat.CONTINUE);
                                 }
+                            }
+                        }
+                        else if(model.getJeuEtat()==JeuEtat.PLACING_PION){
+                            //TODO:programmez ici pour effacer tous les cercles
+                            Coordonnee depart = model.getPionCourant().getLocation();
+                            ArrayList<Coordonnee> locationsPossible = model.getPlateau().canMoveLocations(model.getPionCourant());
+                            if(locationsPossible.contains(c.getLocationInGridHexagone())){
+                                model.getPlateau().getGridPion().remove(depart);
+                                model.getPlateau().placerPionForce(model.getPionCourant(), c.getLocationInGridHexagone());
+                                model.getPionCourant().setLocation(c.getLocationInGridHexagone());
+                                circlesToDraw.clear();
                                 repaint();
+
+                            }
+                            //si le joueur courant a gagne
+                            System.out.println("checking if player won");
+                            if(model.aGagne(model.getJoueurCourant())){
+                                model.setGagneur(model.getJoueurCourant());
+                            }
+                            else{
                                 model.setJeuEtat(JeuEtat.CONTINUE);
                             }
                         }
-                    }
-                    else if(model.getJeuEtat()==JeuEtat.PLACING_PION){
-                        //TODO:programmez ici pour effacer tous les cercles
-                        Coordonnee depart = model.getPionCourant().getLocation();
-                        ArrayList<Coordonnee> locationsPossible = model.getPlateau().canMoveLocations(model.getPionCourant());
-                        if(locationsPossible.contains(c.getLocationInGridHexagone())){
-                            model.getPlateau().getGridPion().remove(depart);
-                            model.getPlateau().placerPionForce(model.getPionCourant(), c.getLocationInGridHexagone());
-                            model.getPionCourant().setLocation(c.getLocationInGridHexagone());
-                            circlesToDraw.clear();
-                            repaint();
-                            model.setJeuEtat(JeuEtat.CONTINUE);
-                        }
-                    }
-                    else if(model.getJeuEtat()==JeuEtat.CHOOSING_PEARL_DESTINATION){
-                        //TODO:programmez ici pour effacer tous les cercles
-                        if(pionChoisi!=null){
-                            if(pionChoisi.size()<Jeu.NB_PEARL_MAX){
-                                if(model.getPionCourant().passPerleTo(pionChoisi)){
+                        else if(model.getJeuEtat()==JeuEtat.CHOOSING_PEARL_DESTINATION){
+                            //TODO:programmez ici pour effacer tous les cercles
+                            if(pionChoisi!=null){
+                                if(pionChoisi.size()<3){//car le nombre maximal de perle c'est 3
+                                    model.getPionCourant().passPerleTo(pionChoisi);
                                     //renouveler la vue des 2 pions
                                     model.getPlateau().getGridPion().remove(pionChoisi.getLocation());
                                     model.getPlateau().placerPionForce(pionChoisi,pionChoisi.getLocation());
@@ -234,16 +243,16 @@ public class GridTuile extends JPanel implements KeyListener, MouseInputListener
                                 }
                             }
                         }
+                        return;
                     }
-                    return;
                 }
             }
         }
     }
 
-    /**
-     * Méthode qui montrera les endroits où on peut poser les pions de départ (c'est-à-dire les emplacements autour des temples)
-     */
+        /**
+         * Méthode qui montrera les endroits où on peut poser les pions de départ (c'est-à-dire les emplacements autour des temples)
+         */
     public void showStartPionLocations(){
         circlesToDraw.clear();
         ArrayList<Coordonnee> autourTemples = new ArrayList<Coordonnee>();
@@ -259,6 +268,7 @@ public class GridTuile extends JPanel implements KeyListener, MouseInputListener
         }
         repaint();
     }
+    
 
     @Override
     public void mousePressed(MouseEvent e) {}

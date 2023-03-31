@@ -126,6 +126,7 @@ public class Plateau implements DeplacementPion {
             gridPion.remove(p.getLocation());
             p.setLocation(c);
             gridPion.put(c, p);
+            p.isPlaced=true;
             return true;
         }
         return false;
@@ -265,6 +266,18 @@ public class Plateau implements DeplacementPion {
 
     public ArrayList<Coordonnee> canPlaceLocations(int x, int y){
         return canPlaceLocations(new Coordonnee(x, y));
+    }
+
+    /**
+     * method to remove a pion from the board
+     * @param c
+     * @return
+     */
+    public boolean removePion(Coordonnee c){
+        if(!gridPion.containsKey(c)){return false;}
+        gridPion.get(c).isPlaced=false;
+        gridPion.remove(c);
+        return true;
     }
 
     /**

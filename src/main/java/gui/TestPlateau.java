@@ -16,6 +16,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 import main.java.model.*;
+import main.java.model.Action;
 
 //TODO:
 //
@@ -58,12 +59,10 @@ public class TestPlateau extends JFrame implements KeyListener{
         //setVisible(true);
     }
 
-
     /**
-     * TODO: dessiner les tuiles avec temples;
+     * create the plateau
      */
-     
-     public void creerPlateau() {
+    public void creerPlateau() {
         while(true){
             //for(int i=0; i<model.getJoueurs().size(); i++) System.out.println("affiche joueurs:"+model.getJoueurs().get(i));
             for(int i=0; i<model.getJoueurs().size(); i++){
@@ -116,15 +115,24 @@ public class TestPlateau extends JFrame implements KeyListener{
         }
     }
 
+    /**
+     * dealing the loop of the game
+     */
     public void jouer() {
-
-        model.setJeuEtat(JeuEtat.PLACING_START_PION);
-        // waiting
-        while (!model.allPionsPlaced()){
-            System.out.println("");
+        //2 ai players trains each other
+        if(model.isAiTraining()){
+            model.setJeuEtat(JeuEtat.CONTINUE);
+        }
+        else{
+            model.setJeuEtat(JeuEtat.PLACING_START_PION);
+            // waiting
+            while (!model.allPionsPlaced()){
+                System.out.println("");
+            }
         }
 
-        while(true){
+
+        while(model.getJeuEtat()!=JeuEtat.GAME_OVER){
             //for(int i=0; i<model.getJoueurs().size(); i++) System.out.println("affiche joueurs:"+model.getJoueurs().get(i));
             for(int i=0; i<model.getJoueurs().size(); i++){
                 //controleur.rotationTmp=0;
@@ -139,45 +147,64 @@ public class TestPlateau extends JFrame implements KeyListener{
                 //if(model.joueurCourant instanceof JoueurIA){
                 //    controleur.controlIA();
                 //}
-                model.setJeuEtat(JeuEtat.CHOOSING_PION);
-                //afficherPossiblePionPosition();
-                indexChoisi=0;
-                //waiting
-                while(model.getJeuEtat()!=JeuEtat.CONTINUE){
-                    System.out.print("");
+                if(model.getJoueurCourant() instanceof JoueurIA){
+                    System.out.println("Current player is JoueurIA");
+                    // create a mapping of the current state
+                    State currentState = new State(model);
+                    // get the reward for the current state
+                    double reward = model.getReward();
+                    // AI player chooses an action
+                    Action action = ((JoueurIA) model.getJoueurCourant()).chooseAction(model, currentState);
+                    System.out.println("Chosen action: " + action);
+                    // apply the action
+                    State nextState = currentState.getNextState(action);
+                    //update the model
+                    nextState.updateGame(model);
+                    // If the current player is an AI player, learn from the experience
+                    ((JoueurIA) model.getJoueurCourant()).learn(model, currentState, action, nextState, reward);
+                    //update the view
+                    repaint();
                 }
-
-                System.out.println("ready to place the pion");//debug
-                model.setJeuEtat(JeuEtat.PLACING_PION);
-                //locationsPossibles = afficherPossibleDestination();
-                //indexChoisi=0;
-                //waiting
-                while(model.getJeuEtat()!=JeuEtat.CONTINUE){
-                    System.out.print("");
-                }
-
                 
-                if(model.getPionCourant().size()>0){
-                //si le pion saute, on n'a pas besoins de cette etape
-                    System.out.println("ready to choose the destination for the pearl");//debug
-                    model.setJeuEtat(JeuEtat.CHOOSING_PEARL_DESTINATION);
+                else{
+                    model.setJeuEtat(JeuEtat.CHOOSING_PION);
                     //afficherPossiblePionPosition();
+                    indexChoisi=0;
+                    //waiting
+                    while(model.getJeuEtat()!=JeuEtat.CONTINUE){
+                        System.out.print("");
+                    }
+    
+                    System.out.println("ready to place the pion");//debug
+                    model.setJeuEtat(JeuEtat.PLACING_PION);
+                    //locationsPossibles = afficherPossibleDestination();
                     //indexChoisi=0;
                     //waiting
                     while(model.getJeuEtat()!=JeuEtat.CONTINUE){
                         System.out.print("");
                     }
+                       
+                    if(model.getPionCourant().size()>0){//car si le pion peut sauter, on n'a pas besoins de cette etape
+                        System.out.println("ready to choose the destination for the pearl");//debug
+                        model.setJeuEtat(JeuEtat.CHOOSING_PEARL_DESTINATION);
+                        //afficherPossiblePionPosition();
+                        //indexChoisi=0;
+                        //waiting
+                        while(model.getJeuEtat()!=JeuEtat.CONTINUE){
+                            System.out.print("");
+                        }
+                    }
                 }
             }
             if(model.getGagneurs().size()==model.getJoueurs().size()-1){
                 //game over
-                break;
+                model.setJeuEtat(JeuEtat.GAME_OVER);
             }
         }
     }
       
     public void lancer() throws IOException{
-        if(mapSettings == MapEtat.MANUEL){
+        if(mapSettings.equals(MapEtat.MANUEL)){
             creerPlateau();
         }
         jouer();
@@ -191,41 +218,12 @@ public class TestPlateau extends JFrame implements KeyListener{
     
     public ArrayList<Coordonnee> afficherPossibleTuilePosition() {
         ArrayList<Coordonnee> locationsPossibles = model.getPlateau().canPlaceLocations(model.getTuileCourant().getLocationInGridTuile());
-        for(int i=0; i<locationsPossibles.size(); i++) {
-            dessinerCercleRouge(locationsPossibles.get(i));
-        }
         return locationsPossibles;
-    }
-
-    public void afficherPossiblePionPosition() {
-        ArrayList<Pion> pionsPossibles=model.getJoueurCourant().getPions();
-        for(int i=0; i<pionsPossibles.size();i++){
-            dessinerCercleRouge(pionsPossibles.get(i).getLocation());
-        }
     }
 
     public ArrayList<Coordonnee> afficherPossibleDestination() {
         ArrayList<Coordonnee> locationsPossibles = model.getPlateau().canMoveLocations(model.getPionCourant());
-        for(int i=0; i<locationsPossibles.size(); i++) {
-            dessinerCercleRouge(locationsPossibles.get(i));
-        }
         return locationsPossibles;
-    }
-
-    /**
-     * TODO: dessiner un cercle rouge (indiquant la locations possible) dont le centre est sur la coordonn茅 donn茅
-     * taille du cercle: un peu plus grand que la taille du cercle dans le centre des certaines tuiles
-     */
-    public void dessinerCercleRouge(Coordonnee location){
-
-    }
-
-    /**
-     * TODO: dessiner un cercle blanc (indiquant la location choisie) dont le centre est sur la coordonn茅 donn茅
-     * taille du cercle: un peu plus grand que la taille du cercle dans le centre des certaines tuiles
-     */
-    public void dessinerCercleBlanc(Coordonnee location){
-        
     }
 
     private void glisserTuile(Tuile tuile, int dx, int dy){
@@ -242,147 +240,146 @@ public class TestPlateau extends JFrame implements KeyListener{
 
     @Override
     public void keyTyped(KeyEvent e) {
-        switch (e.getKeyChar()) {
-            case 'r'://placer l'autre tuile avec temple
-                if(model.getJeuEtat()==JeuEtat.CHOOSING_TUILE_LOCATION && model.getSacTemples().size()>0){
-                    Coordonnee coordonnee = model.getTuileCourant().getLocationInGridTuile();
-                    model.getPlateau().removeTuileBrutForce(coordonnee);
-                    repaint();
-                    
-                    model.setTuileCourante(model.popTemple());
-                    model.getPlateau().placeTuileBrutForce( model.getTuileCourant(), coordonnee );
-                    repaint();
-                }
-                break;
-            case 's':   // gauche
-                //if(model.getJeuEtat()==JeuEtat.CHOOSING_PION){
-                //    indexChoisi=(indexChoisi - 1) % model.getJoueurCourant().getPions().size();
-                //    dessinerCercleBlanc(model.getJoueurCourant().getPions().get(indexChoisi).getLocation());
-                //}
-                //else 
-                if(model.getJeuEtat()==JeuEtat.ROTATING_TUILE){
-                    Coordonnee coordonnee = model.getTuileCourant().getLocationInGridTuile();
-                    model.getPlateau().removeTuileBrutForce(coordonnee);
-                    repaint();
-                    
-                    Tuile tuileTmp = model.getTuileCourant();
-                    //sens horaire inverse
-                    //-1 mod 3 = 2 (fois)
-                    tuileTmp.rotate();
-                    tuileTmp.rotate();
-                    model.setTuileCourante(tuileTmp);
-                    model.getPlateau().placeTuileBrutForce( model.getTuileCourant(), coordonnee );
-                    repaint();
-                }
-                else if(model.getJeuEtat()==JeuEtat.CHOOSING_TUILE_LOCATION){
-                    glisserTuile(model.getTuileCourant(), -1, 0);
-                    repaint();
-                }
-                //else if(model.getJeuEtat()==JeuEtat.PLACING_PION || 
-                //model.getJeuEtat()==JeuEtat.CHOOSING_PEARL_DESTINATION){
-                //    indexChoisi = (indexChoisi + 1) % locationsPossibles.size();
-                //    dessinerCercleBlanc(locationsPossibles.get(indexChoisi));
-                //}
-                break;
-            case 'f':   // droite
-                if(model.getJeuEtat()==JeuEtat.CHOOSING_PION){
-                    indexChoisi=(indexChoisi + 1) % model.getJoueurCourant().getPions().size();
-                    dessinerCercleBlanc(model.getJoueurCourant().getPions().get(indexChoisi).getLocation());
-                }
-                else if(model.getJeuEtat()==JeuEtat.ROTATING_TUILE){
-                    Coordonnee coordonnee = model.getTuileCourant().getLocationInGridTuile();
-                    model.getPlateau().removeTuileBrutForce(coordonnee);
-                    
-                    Tuile tuileTmp = model.getTuileCourant();
-                    tuileTmp.rotate();
-                    model.setTuileCourante(tuileTmp);
-                    model.getPlateau().placeTuileBrutForce( model.getTuileCourant(), coordonnee );
-                    repaint();
-                }
-                else if(model.getJeuEtat()==JeuEtat.CHOOSING_TUILE_LOCATION){
-                    glisserTuile(model.getTuileCourant(), 1, 0);
-                    repaint();
-                }
-                else if(model.getJeuEtat()==JeuEtat.PLACING_PION || 
-                model.getJeuEtat()==JeuEtat.CHOOSING_PEARL_DESTINATION){
-                    indexChoisi = (indexChoisi + 1) % locationsPossibles.size();
-                    dessinerCercleBlanc(locationsPossibles.get(indexChoisi));
-                }
-                break;
-            case 'd':   // bas
-                if(model.getJeuEtat()==JeuEtat.CHOOSING_TUILE_LOCATION){
-                    glisserTuile(model.getTuileCourant(), 0, -1);
-                    repaint();
-                }
-                break;
-            case 'e':   // haut
-                if(model.getJeuEtat()==JeuEtat.CHOOSING_TUILE_LOCATION){
-                    glisserTuile(model.getTuileCourant(), 0, 1);
-                    repaint();
-                }
-                break;
-            case ' ':   // verifier le choix
-                if(model.getJeuEtat()==JeuEtat.CHOOSING_TUILE_LOCATION){
-                    //TODO:programmez ici pour effacer tous les cercles
-                    //TODO: renouveler la vue des pions
-                    model.getPlateau().removeTuileBrutForce(model.getTuileCourant().getLocationInGridTuile());      // On enlève la tuile courante du plateau
-                    if(model.getPlateau().placeTuileContraint(model.getTuileCourant(), model.getTuileCourant().getLocationInGridTuile())){  // Et on tente de la replacer, mais avec les contraintes
-                        model.setJeuEtat(JeuEtat.ROTATING_TUILE);                                                                           // Si la tuile se place, on passe à la rotation
-                        afficherInstruction("Tappez 鈫鈫pour tourner la tuile. Tappez SPACE pour v茅rifier la choix.");
+        if(model.getJoueurCourant() instanceof JoueurHumain){
+            switch (e.getKeyChar()) {
+                case 'r'://placer l'autre tuile avec temple
+                    if(model.getJeuEtat()==JeuEtat.CHOOSING_TUILE_LOCATION && model.getSacTemples().size()>0){
+                        Coordonnee coordonnee = model.getTuileCourant().getLocationInGridTuile();
+                        model.getPlateau().removeTuileBrutForce(coordonnee);
+                        repaint();
+                        
+                        model.setTuileCourante(model.popTemple());
+                        model.getPlateau().placeTuileBrutForce( model.getTuileCourant(), coordonnee );
+                        repaint();
                     }
-                    else{                                                                                                                   // Sinon, on reste sur le deplacement de tuile
-                        model.getPlateau().placeTuileForce(model.getTuileCourant(),model.getTuileCourant().getLocationInGridTuile());
-                    }
-                }
-                else if(model.getJeuEtat()==JeuEtat.ROTATING_TUILE){
-                    //TODO:programmez ici pour effacer tous les cercles
-                    model.setJeuEtat(JeuEtat.CONTINUE);
-                    afficherInstruction("Tappez 鈫鈫pour chosir un pion 脿 d茅placer. Tappez SPACE pour v茅rifier la choix ou passer votre tour.");
-                }
-                //else if(model.getJeuEtat()==JeuEtat.CHOOSING_PION){
-                //    //TODO:programmez ici pour effacer tous les cercles
-                //    //TODO: renouveler la vue des pions
-                //    model.setPionCourant(model.getJoueurCourant().getPions().get(indexChoisi));
-                //    model.setJeuEtat(JeuEtat.CONTINUE);
-                //    afficherInstruction("Tappez 鈫鈫pour chosir la location. Tappez SPACE pour v茅rifier la choix ou passer votre tour.");
-                //}
-                //else if(model.getJeuEtat()==JeuEtat.PLACING_PION){
-                //    //TODO:programmez ici pour effacer tous les cercles
-                //    //TODO: renouveler la vue des pions
-                //    model.getPlateau().placerPionForce(model.getPionCourant(), locationsPossibles.get(indexChoisi));
-                //    model.setJeuEtat(JeuEtat.CONTINUE);
-                //    afficherInstruction("Tappez 鈫鈫pour chosir un pion 脿 passer la perle. Tappez SPACE pour v茅rifier la choix ou passer votre tour.");
-                //}
-                //else if(model.getJeuEtat()==JeuEtat.CHOOSING_PEARL_DESTINATION){
-                //    //TODO:programmez ici pour effacer tous les cercles
-                //    //TODO: renouveler la vue des pions
-                //    model.getPionCourant().passPerleTo(
-                //        model.getJoueurCourant().getPions().get(indexChoisi)
-                //    );
-                //    model.setJeuEtat(JeuEtat.CONTINUE);
-                //}
-                break;
-            case 'p':   // commencer a faire des operations sur la vue generale de la plateau
-                if(model.getJeuEtat()==JeuEtat.CHANGING_VIEW){
-                    //sortir la mode
-                    model.setJeuEtat(model.getDernierEtat());
                     break;
-                }
-                //sinon entrer la mode
-                model.setDernierEtat(model.getJeuEtat());
-                model.setJeuEtat(JeuEtat.CHANGING_VIEW);
-                break;
-            case 'n':   // next step
-                if( model.getJeuEtat()==JeuEtat.CHOOSING_TUILE_LOCATION ||
-                model.getJeuEtat()==JeuEtat.ROTATING_TUILE){
-                    //terminer la construction des tuiles et commencer a deplacer les pions
-                    model.setJeuEtat(JeuEtat.CHOOSING_PION);
-                }
-                break;
-            default:
-                break;
+                case 's':   // gauche
+                    //if(model.getJeuEtat()==JeuEtat.CHOOSING_PION){
+                    //    indexChoisi=(indexChoisi - 1) % model.getJoueurCourant().getPions().size();
+                    //    dessinerCercleBlanc(model.getJoueurCourant().getPions().get(indexChoisi).getLocation());
+                    //}
+                    //else 
+                    if(model.getJeuEtat()==JeuEtat.ROTATING_TUILE){
+                        Coordonnee coordonnee = model.getTuileCourant().getLocationInGridTuile();
+                        model.getPlateau().removeTuileBrutForce(coordonnee);
+                        repaint();
+                        
+                        Tuile tuileTmp = model.getTuileCourant();
+                        //sens horaire inverse
+                        //-1 mod 3 = 2 (fois)
+                        tuileTmp.rotate();
+                        tuileTmp.rotate();
+                        model.setTuileCourante(tuileTmp);
+                        model.getPlateau().placeTuileBrutForce( model.getTuileCourant(), coordonnee );
+                        repaint();
+                    }
+                    else if(model.getJeuEtat()==JeuEtat.CHOOSING_TUILE_LOCATION){
+                        glisserTuile(model.getTuileCourant(), -1, 0);
+                        repaint();
+                    }
+                    //else if(model.getJeuEtat()==JeuEtat.PLACING_PION || 
+                    //model.getJeuEtat()==JeuEtat.CHOOSING_PEARL_DESTINATION){
+                    //    indexChoisi = (indexChoisi + 1) % locationsPossibles.size();
+                    //    dessinerCercleBlanc(locationsPossibles.get(indexChoisi));
+                    //}
+                    break;
+                case 'f':   // droite
+                    if(model.getJeuEtat()==JeuEtat.CHOOSING_PION){
+                        indexChoisi=(indexChoisi + 1) % model.getJoueurCourant().getPions().size();
+                    }
+                    else if(model.getJeuEtat()==JeuEtat.ROTATING_TUILE){
+                        Coordonnee coordonnee = model.getTuileCourant().getLocationInGridTuile();
+                        model.getPlateau().removeTuileBrutForce(coordonnee);
+                        
+                        Tuile tuileTmp = model.getTuileCourant();
+                        tuileTmp.rotate();
+                        model.setTuileCourante(tuileTmp);
+                        model.getPlateau().placeTuileBrutForce( model.getTuileCourant(), coordonnee );
+                        repaint();
+                    }
+                    else if(model.getJeuEtat()==JeuEtat.CHOOSING_TUILE_LOCATION){
+                        glisserTuile(model.getTuileCourant(), 1, 0);
+                        repaint();
+                    }
+                    else if(model.getJeuEtat()==JeuEtat.PLACING_PION || 
+                    model.getJeuEtat()==JeuEtat.CHOOSING_PEARL_DESTINATION){
+                        indexChoisi = (indexChoisi + 1) % locationsPossibles.size();
+                    }
+                    break;
+                case 'd':   // bas
+                    if(model.getJeuEtat()==JeuEtat.CHOOSING_TUILE_LOCATION){
+                        glisserTuile(model.getTuileCourant(), 0, -1);
+                        repaint();
+                    }
+                    break;
+                case 'e':   // haut
+                    if(model.getJeuEtat()==JeuEtat.CHOOSING_TUILE_LOCATION){
+                        glisserTuile(model.getTuileCourant(), 0, 1);
+                        repaint();
+                    }
+                    break;
+                case ' ':   // verifier le choix
+                    if(model.getJeuEtat()==JeuEtat.CHOOSING_TUILE_LOCATION){
+                        //TODO:programmez ici pour effacer tous les cercles
+                        //TODO: renouveler la vue des pions
+                        model.getPlateau().removeTuileBrutForce(model.getTuileCourant().getLocationInGridTuile());      // On enlève la tuile courante du plateau
+                        if(model.getPlateau().placeTuileContraint(model.getTuileCourant(), model.getTuileCourant().getLocationInGridTuile())){  // Et on tente de la replacer, mais avec les contraintes
+                            model.setJeuEtat(JeuEtat.ROTATING_TUILE);                                                                           // Si la tuile se place, on passe à la rotation
+                            afficherInstruction("Tappez 鈫鈫pour tourner la tuile. Tappez SPACE pour v茅rifier la choix.");
+                        }
+                        else{                                                                                                                   // Sinon, on reste sur le deplacement de tuile
+                            model.getPlateau().placeTuileForce(model.getTuileCourant(),model.getTuileCourant().getLocationInGridTuile());
+                        }
+                    }
+                    else if(model.getJeuEtat()==JeuEtat.ROTATING_TUILE){
+                        //TODO:programmez ici pour effacer tous les cercles
+                        model.setJeuEtat(JeuEtat.CONTINUE);
+                        afficherInstruction("Tappez 鈫鈫pour chosir un pion 脿 d茅placer. Tappez SPACE pour v茅rifier la choix ou passer votre tour.");
+                    }
+                    //else if(model.getJeuEtat()==JeuEtat.CHOOSING_PION){
+                    //    //TODO:programmez ici pour effacer tous les cercles
+                    //    //TODO: renouveler la vue des pions
+                    //    model.setPionCourant(model.getJoueurCourant().getPions().get(indexChoisi));
+                    //    model.setJeuEtat(JeuEtat.CONTINUE);
+                    //    afficherInstruction("Tappez 鈫鈫pour chosir la location. Tappez SPACE pour v茅rifier la choix ou passer votre tour.");
+                    //}
+                    //else if(model.getJeuEtat()==JeuEtat.PLACING_PION){
+                    //    //TODO:programmez ici pour effacer tous les cercles
+                    //    //TODO: renouveler la vue des pions
+                    //    model.getPlateau().placerPionForce(model.getPionCourant(), locationsPossibles.get(indexChoisi));
+                    //    model.setJeuEtat(JeuEtat.CONTINUE);
+                    //    afficherInstruction("Tappez 鈫鈫pour chosir un pion 脿 passer la perle. Tappez SPACE pour v茅rifier la choix ou passer votre tour.");
+                    //}
+                    //else if(model.getJeuEtat()==JeuEtat.CHOOSING_PEARL_DESTINATION){
+                    //    //TODO:programmez ici pour effacer tous les cercles
+                    //    //TODO: renouveler la vue des pions
+                    //    model.getPionCourant().passPerleTo(
+                    //        model.getJoueurCourant().getPions().get(indexChoisi)
+                    //    );
+                    //    model.setJeuEtat(JeuEtat.CONTINUE);
+                    //}
+                    break;
+                case 'p':   // commencer a faire des operations sur la vue generale de la plateau
+                    if(model.getJeuEtat()==JeuEtat.CHANGING_VIEW){
+                        //sortir la mode
+                        model.setJeuEtat(model.getDernierEtat());
+                        break;
+                    }
+                    //sinon entrer la mode
+                    model.setDernierEtat(model.getJeuEtat());
+                    model.setJeuEtat(JeuEtat.CHANGING_VIEW);
+                    break;
+                case 'n':   // next step
+                    if( model.getJeuEtat()==JeuEtat.CHOOSING_TUILE_LOCATION ||
+                    model.getJeuEtat()==JeuEtat.ROTATING_TUILE){
+                        //terminer la construction des tuiles et commencer a deplacer les pions
+                        model.setJeuEtat(JeuEtat.CHOOSING_PION);
+                    }
+                    break;
+                default:
+                    break;
+            }
         }
-        
         //if( e.getKeyCode() == KeyEvent.VK_ENTER){}
         //else if ( e.getKeyCode()==KeyEvent.VK_RIGHT ){}
         //else if ( e.getKeyCode()==KeyEvent.VK_LEFT ){}
@@ -412,7 +409,7 @@ public class TestPlateau extends JFrame implements KeyListener{
     }
 
     public static void main(String[] args) throws IOException {
-        Jeu model =  new Jeu(nbJoueurs,mapSettings);
+        Jeu model =  new Jeu(0, 2, MapEtat.MAP1_2P);
         TestPlateau jeuVue = new TestPlateau(model);
         jeuVue.lancer();
     }
