@@ -165,12 +165,16 @@ public class InterfaceDeJeu extends JFrame implements KeyListener{
                 //}
                 if(model.getJoueurCourant() instanceof JoueurIA){
                     System.out.println("Current player is JoueurIA");
+                    repaint();
                     // create a mapping of the current state
                     State currentState = new State(model);
-                    // get the reward for the current state
-                    double reward = model.getReward();
                     // get the legal actions for the current state
-                    ArrayList<Action> legalActions = ((JoueurIA) model.getJoueurCourant()).getLegalActions(model, currentState);
+                    ArrayList<Action> legalActions = ((JoueurIA) model.getJoueurCourant()).getLegalActions(model);
+                    if(legalActions.isEmpty()){
+                        System.out.println("No legal actions for the current state, the current player loses the game.");
+                        model.setGagneur(model.getJoueurs().get((i+1)%2));//must be 2 players
+                        break;
+                    }
                     // draw circle around the possible destinations of the legal actions
                     drawPossibleActionDestinations(legalActions);
                     // AI player chooses an action
@@ -178,10 +182,11 @@ public class InterfaceDeJeu extends JFrame implements KeyListener{
                     System.out.println("Chosen action: " + action);
                     // apply the action
                     State nextState = currentState.getNextState(action);
+                    // If the current player is an AI player, learn from the experience
+                    ((JoueurIA) model.getJoueurCourant()).learn(model, currentState, action, nextState);
+
                     //update the model
                     nextState.updateGame(model);
-                    // If the current player is an AI player, learn from the experience
-                    ((JoueurIA) model.getJoueurCourant()).learn(model, currentState, action, nextState, reward);
                     //update the view
                     repaint();
                 }
@@ -219,6 +224,7 @@ public class InterfaceDeJeu extends JFrame implements KeyListener{
             if(model.getGagneurs().size()==model.getJoueurs().size()-1){
                 //game over
                 model.setJeuEtat(JeuEtat.GAME_OVER);
+                System.out.println("Game over!");//debug
             }
         }
     }
@@ -444,8 +450,8 @@ public class InterfaceDeJeu extends JFrame implements KeyListener{
     }
 
     public static void main(String[] args) throws IOException {
-        //Jeu model =  new Jeu(0, 2, MapEtat.MAP1_2P);
-        Jeu model =  new Jeu(2, 0, MapEtat.MAP1_2P);
+        Jeu model =  new Jeu(0, 2, MapEtat.MAP1_2P);
+        //Jeu model =  new Jeu(2, 0, MapEtat.MAP1_2P);
         InterfaceDeJeu jeuVue = new InterfaceDeJeu(model);
         System.out.println("from main: mapsetting: "+model.getMapEtat());
         jeuVue.lancer();

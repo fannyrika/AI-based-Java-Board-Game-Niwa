@@ -63,6 +63,8 @@ public class GridTuile extends JPanel implements KeyListener, MouseInputListener
                 repaint();
             }
         });
+        //pour voir le plateau entier
+        TuileGraphique.zoom((int)(-1.5*DISTANCE_ZOOM));
     }
 
     @Override

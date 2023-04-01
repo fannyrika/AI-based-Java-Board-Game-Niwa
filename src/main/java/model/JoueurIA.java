@@ -3,8 +3,6 @@ package main.java.model;
 import java.util.ArrayList;
 import java.util.Random;
 
-import main.java.model.interfaces.HexagoneAutour;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -59,9 +57,26 @@ public class JoueurIA extends Joueur {
      * @param nextState
      * @param reward
      */
-    public void learn(Jeu jeu, State currentState, Action action, State nextState, double reward) {
+    public void learn(Jeu jeu, State currentState, Action action, State nextState) {
+        double reward=0;
+        double maxNextQValue=0;
         double currentQValue = getQValue(currentState, action);
-        double maxNextQValue = getMaxQValue(jeu, nextState);
+
+        //set the game to the next state in order to get the max next Q-value
+        nextState.updateGame(jeu);
+        ArrayList<Action> legalActions = getLegalActions(jeu);
+        if(legalActions.isEmpty()) {
+            System.out.println("No legal actions");
+            reward = -100;
+        }
+        else{
+            maxNextQValue = getMaxQValue(jeu, nextState, legalActions);
+        }
+        // get the reward from the next state
+        reward = jeu.getReward();
+        
+        //reset the game to the current state
+        currentState.updateGame(jeu);
     
         System.out.println("Current Q-value: " + currentQValue);
         System.out.println("Max next Q-value: " + maxNextQValue);
@@ -98,7 +113,7 @@ public class JoueurIA extends Joueur {
      * @param state the current state of the game
      * @return an ArrayList of legal actions
      */
-    public ArrayList<Action> getLegalActions(Jeu jeu, State state){
+    public ArrayList<Action> getLegalActions(Jeu jeu){
         ArrayList<Action> legalActions = new ArrayList<>();
         int nbBlockedPion = 0;
 
@@ -106,6 +121,7 @@ public class JoueurIA extends Joueur {
         // refer to the methods and properties of the Jeu class to implement this method
 
         for (Pion pionReal : jeu.getJoueurCourant().getPions()) {
+            jeu.setPionCourant(pionReal);
             //case 1: pion is blocked
             if (jeu.getPlateau().canMoveLocations(jeu.getPionCourant())==null){
                 System.out.println("Pion is blocked");
@@ -165,8 +181,8 @@ public class JoueurIA extends Joueur {
      * @param state the current state of the game
      * @return the maximum Q-value
      */
-    private double getMaxQValue(Jeu jeu, State state) {
-        ArrayList<Action> legalActions = getLegalActions(jeu, state);
+    private double getMaxQValue(Jeu jeu, State state, ArrayList<Action> legalActions) {
+        
         double maxQValue = Double.NEGATIVE_INFINITY;
     
         for (Action action : legalActions) {
