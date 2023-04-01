@@ -191,7 +191,7 @@ public class GridTuile extends JPanel implements KeyListener, MouseInputListener
                         }
                         
                         if(model.getJeuEtat()==JeuEtat.CHOOSING_PION){
-                            if(pionChoisi!=null){
+                            if(pionChoisi!=null && pionChoisi.getProprietaire()==model.getJoueurCourant()){
                                 model.setPionCourant(pionChoisi);
                                 circlesToDraw.clear();
                                 ArrayList<Coordonnee> locationsPossible = model.getPlateau().canMoveLocations(model.getPionCourant());
