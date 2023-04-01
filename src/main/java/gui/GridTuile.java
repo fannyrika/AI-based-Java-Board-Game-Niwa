@@ -324,4 +324,12 @@ public class GridTuile extends JPanel implements KeyListener, MouseInputListener
         }
         this.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
     }
+
+    /**
+     * Méthode qui dessine les cercles
+     * @param moveDirection
+     */
+	public void addCircle(Coordonnee moveDirection) {
+        circlesToDraw.add(allCircles.get(moveDirection));
+	}
 }

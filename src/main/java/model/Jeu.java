@@ -43,6 +43,10 @@ public class Jeu implements MapCreation {
 
     protected JeuEtat jeuEtat;
     protected JeuEtat dernierEtat;
+    /**
+     * Représente la map sur laquelle le jeu se déroule
+     */
+    protected MapEtat mapEtat;
     
     //remplac�� par l'attribut id de joueur
     /**
@@ -67,6 +71,7 @@ public class Jeu implements MapCreation {
      * @param nb_joueurs -> Le nombre de joueurs que le jeu pourra acueillir
      */
     public Jeu(int nb_joueurs_humain, int nb_joueurs_ia, MapEtat map){
+        mapEtat = map;
         if(map == MapEtat.MAP1_2P || map == MapEtat.MAP2_2P){initJoueurs(nb_joueurs_humain, 2-nb_joueurs_humain);}
         else if(map == MapEtat.MAP1_4P || map == MapEtat.MAP2_4P){initJoueurs(nb_joueurs_humain, 4-nb_joueurs_humain);}
         else{initJoueurs(nb_joueurs_humain, nb_joueurs_ia);}
@@ -93,6 +98,7 @@ public class Jeu implements MapCreation {
         }
     }
 
+    //to modify
     public Jeu(ArrayList<Joueur> j, ArrayList<TuileTemple> s){
         joueurs=j;
         sacTemples=s;
@@ -104,6 +110,7 @@ public class Jeu implements MapCreation {
         sacTemples.remove(0);
         plateau.placeTuileForce(tuileCourante, 0, 0);
     }
+    
     public void initJoueurs(int nb_joueurs_humain, int nb_joueurs_ia){
         for (int i = 0; i < nb_joueurs_humain; i++) {
             JoueurHumain j = new JoueurHumain("Joueur "+(i));
@@ -269,6 +276,7 @@ public class Jeu implements MapCreation {
     public void setDernierEtat(JeuEtat d){ dernierEtat = d;}
     //getters
     public JeuEtat getJeuEtat(){ return jeuEtat; }
+    public MapEtat getMapEtat(){ return mapEtat; }
     public JeuEtat getDernierEtat(){ return dernierEtat;}
     // Méthodes nécessaires pour un jeu de plateau
     public ArrayList<Joueur> getJoueurs(){return joueurs;}

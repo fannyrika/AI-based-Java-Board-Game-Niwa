@@ -15,14 +15,10 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+import javax.swing.plaf.ScrollBarUI;
+import javax.swing.plaf.basic.BasicScrollBarUI;
 import main.java.model.*;
 import main.java.model.Action;
-
-//TODO:
-//
-/**
- * l'interface graphique du jeu
- */
 public class InterfaceDeJeu extends JFrame implements KeyListener{
     protected Jeu model;
     //protected Controleur controleur;
@@ -32,17 +28,30 @@ public class InterfaceDeJeu extends JFrame implements KeyListener{
     protected int indexChoisi=0;
     protected ArrayList<Coordonnee> locationsPossibles;
 
-    protected GridTuile gridTuile;
-
-    //protected static MapEtat mapSettings = MapEtat.MANUEL;
     protected static int nbJoueurs = 2;
-    protected static MapEtat mapSettings = MapEtat.MAP1_4P;
-
+    protected static int nb_joueurs_ia = 1;
+    protected GridTuile gridTuile;
+    protected TableauDeBord tableauDeBord;
     public InterfaceDeJeu(Jeu m) throws IOException{
         setVisible(true);
-        setTitle("Plateau Tuiles");
+        setLayout(new BorderLayout());
+        setTitle("NIWA");
         model=m;
         gridTuile = new GridTuile(model);
+        JScrollPane plateau=new JScrollPane(gridTuile);
+        gridTuile.setBackground(Color.WHITE);
+        plateau.getVerticalScrollBar().setUI(new CustomScrollBarUI());
+        plateau.getHorizontalScrollBar().setUI(new CustomScrollBarUI());
+        tableauDeBord=new TableauDeBord(model);
+        tableauDeBord.boutonQuitter.addActionListener(e->{
+            this.dispose();
+        });
+        JPanel vueComplete=new JPanel(new BorderLayout());
+        vueComplete.add(plateau, BorderLayout.CENTER);
+        vueComplete.add(tableauDeBord,BorderLayout.LINE_END);
+        Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
+        size.width /= 4; // divide the width by 3
+        tableauDeBord.setPreferredSize(size);
         //controleur=new Controleur(model, this);
         //TODO: construire l'interface graphique (avec la tuileTemple du joueur0 comme la tuile initiale)
         addKeyListener(gridTuile);
@@ -53,15 +62,17 @@ public class InterfaceDeJeu extends JFrame implements KeyListener{
             }
         });
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        add(gridTuile);
+        add(vueComplete, BorderLayout.CENTER);
         pack();
         setLocationRelativeTo(null);
         //setVisible(true);
     }
 
+
     /**
-     * create the plateau
+     * creer plateau
      */
+     
     public void creerPlateau() {
         while(true){
             //for(int i=0; i<model.getJoueurs().size(); i++) System.out.println("affiche joueurs:"+model.getJoueurs().get(i));
@@ -70,6 +81,7 @@ public class InterfaceDeJeu extends JFrame implements KeyListener{
                 model.setJoueurCourant(model.getJoueurs().get(i));
                 System.out.println("joueur courant:"+model.getJoueurCourant());//debug
                 //TODO: afficher l'information du joueur courant
+               
                 //validate();
                 //repaint();
                 
@@ -77,18 +89,20 @@ public class InterfaceDeJeu extends JFrame implements KeyListener{
                 //    controleur.controlIA();
                 //}
                 
-                afficherInstruction("Tappez S/F pour chosir la location pour cette tuile.\n Tappez R pour placer une temple.\n Tappez SPACE pour verifier la choix.");
+                afficherInstruction("<html> S/F pour chosir la location de cette tuile.<br> R pour placer un temple.<br> ESPACE pour confirmer</html>");
                 locationsPossibles = afficherPossibleTuilePosition();
                 indexChoisi=0;
 
                 Coordonnee ancienneTuileCoordonnee = model.getTuileCourant().getLocationInGridTuile();
                 ArrayList<Coordonnee> emplacementsPossibles = model.getPlateau().canPlaceLocations(ancienneTuileCoordonnee);
                 System.out.println("il y a "+model.getSac().size()+" tuiles dans le sac.");
+                tableauDeBord.pioche.setText("<html>il y a "+model.getSac().size()+" tuiles dans le sac.</html>");
                 if(model.getSac().size()>0){
                     model.setTuileCourante(model.piocher());
                 }
                 else if(model.getSacTemples().size()>0){
                     System.out.println("Il faut placer des camps.");
+                    tableauDeBord.pioche.setText("Placez les temples");
                     model.setTuileCourante(model.popTemple());
                 }
                 else break;
@@ -110,11 +124,12 @@ public class InterfaceDeJeu extends JFrame implements KeyListener{
                 model.setJeuEtat(JeuEtat.CHOOSING_TUILE_LOCATION);
             }
             if(model.getSac().size()==0 && model.getSacTemples().size()==0){
+                tableauDeBord.pioche.setText("");
                 break;
             }
         }
     }
-
+                                   
     /**
      * dealing the loop of the game
      */
@@ -139,6 +154,7 @@ public class InterfaceDeJeu extends JFrame implements KeyListener{
                 System.out.println("current player changed!");//debug
                 model.setJoueurCourant(model.getJoueurs().get(i));
                 System.out.println(model.getJoueurCourant());//debug
+                tableauDeBord.setJoueurCourant("<html>joueur courant:<br>"+model.getJoueurCourant()+"</html>");
                 repaint();
                 //TODO: afficher l'information du joueur courant
                 //validate();
@@ -153,8 +169,12 @@ public class InterfaceDeJeu extends JFrame implements KeyListener{
                     State currentState = new State(model);
                     // get the reward for the current state
                     double reward = model.getReward();
+                    // get the legal actions for the current state
+                    ArrayList<Action> legalActions = ((JoueurIA) model.getJoueurCourant()).getLegalActions(model, currentState);
+                    // draw circle around the possible destinations of the legal actions
+                    drawPossibleActionDestinations(legalActions);
                     // AI player chooses an action
-                    Action action = ((JoueurIA) model.getJoueurCourant()).chooseAction(model, currentState);
+                    Action action = ((JoueurIA) model.getJoueurCourant()).chooseAction(model, currentState, legalActions);
                     System.out.println("Chosen action: " + action);
                     // apply the action
                     State nextState = currentState.getNextState(action);
@@ -202,9 +222,23 @@ public class InterfaceDeJeu extends JFrame implements KeyListener{
             }
         }
     }
-      
+    
+    /**
+     * draw circle around the possible destinations of the legal actions
+     * @param legalActions
+     */
+    private void drawPossibleActionDestinations(ArrayList<Action> legalActions) {
+        gridTuile.circlesToDraw.clear();
+        for (Action action : legalActions) {
+            gridTuile.addCircle(action.getMoveDirection());
+        }
+        repaint();
+    }
+
+
     public void lancer() throws IOException{
-        if(mapSettings.equals(MapEtat.MANUEL)){
+        if(model.getMapEtat().equals(MapEtat.MANUEL)){
+            System.out.println("mapSettings: "+model.getMapEtat());
             creerPlateau();
         }
         jouer();
@@ -214,6 +248,7 @@ public class InterfaceDeJeu extends JFrame implements KeyListener{
     public void afficherInstruction(String str){
         System.out.println(str);//debug
         //TODO
+        tableauDeBord.setEtapeCourante(str);
     }
     
     public ArrayList<Coordonnee> afficherPossibleTuilePosition() {
@@ -409,9 +444,49 @@ public class InterfaceDeJeu extends JFrame implements KeyListener{
     }
 
     public static void main(String[] args) throws IOException {
-        Jeu model =  new Jeu(0, 2, MapEtat.MAP1_2P);
-        TestPlateau jeuVue = new TestPlateau(model);
+        //Jeu model =  new Jeu(0, 2, MapEtat.MAP1_2P);
+        Jeu model =  new Jeu(2, 0, MapEtat.MAP1_2P);
+        InterfaceDeJeu jeuVue = new InterfaceDeJeu(model);
+        System.out.println("from main: mapsetting: "+model.getMapEtat());
         jeuVue.lancer();
     }
 
+
+///scrollbar du plateau
+class CustomScrollBarUI extends BasicScrollBarUI{
+    CustomScrollBarUI(){
+      
 }
+@Override
+protected void configureScrollBarColors() {
+ 
+    super.thumbColor = Color.black;
+    super.trackColor = Color.WHITE;
+
+}
+@Override
+protected JButton createDecreaseButton(int orientation) {
+   
+    return new JButton() {
+        @Override
+        public Dimension getPreferredSize() {
+            return new Dimension(0, 0);
+        }
+    };
+}
+
+@Override
+protected JButton createIncreaseButton(int orientation) {
+    // Remove the increase button
+    return new JButton() {
+        @Override
+        public Dimension getPreferredSize() {
+            return new Dimension(0, 0);
+        }
+    };
+}
+
+   }
+
+}
+

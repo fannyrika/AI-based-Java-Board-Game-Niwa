@@ -35,9 +35,7 @@ public class JoueurIA extends Joueur {
      * @param currentState the current state of the game
      * @return an action
      */
-    public Action chooseAction(Jeu jeu, State currentState) {
-        ArrayList<Action> legalActions = getLegalActions(jeu, currentState);
-    
+    public Action chooseAction(Jeu jeu, State currentState, ArrayList<Action> legalActions) {
         System.out.println("Legal actions: " + legalActions);
     
         if (Math.random() < epsilon) {
@@ -100,7 +98,7 @@ public class JoueurIA extends Joueur {
      * @param state the current state of the game
      * @return an ArrayList of legal actions
      */
-    private ArrayList<Action> getLegalActions(Jeu jeu, State state){
+    public ArrayList<Action> getLegalActions(Jeu jeu, State state){
         ArrayList<Action> legalActions = new ArrayList<>();
         int nbBlockedPion = 0;
 
@@ -110,15 +108,18 @@ public class JoueurIA extends Joueur {
         for (Pion pionReal : jeu.getJoueurCourant().getPions()) {
             //case 1: pion is blocked
             if (jeu.getPlateau().canMoveLocations(jeu.getPionCourant())==null){
+                System.out.println("Pion is blocked");
                 nbBlockedPion++;
             }
             else{
                 for (Coordonnee direction : jeu.getPlateau().canMoveLocations(jeu.getPionCourant())) {
                     //case 2: pion with no pearl
                     if (pionReal.size()==0){
+                        System.out.println("Pion with no pearl");
                         legalActions.add(new Action(new Pion(pionReal), direction, null));
                     }
                     else{
+                        System.out.println("Pion with pearl");
                         for (Pion targetPion : jeu.getJoueurCourant().getPions()){
                             if (targetPion != null && !targetPion.equals(pionReal) && targetPion.size()<3) {
                                 legalActions.add(new Action(new Pion(pionReal), direction, new Pion(targetPion)));
