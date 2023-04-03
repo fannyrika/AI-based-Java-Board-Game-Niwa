@@ -229,8 +229,10 @@ public class TuileGraphique extends Polygon {
      * Méthode pour tracer la tuile dans son intégralité
      * @param g -> Le graphique sur lequel on dessine
      */
-    public void drawTile(Graphics g){
+    public void drawTile(Graphics gr){
         // On trace chaque face de la tuile
+        Graphics2D g=(Graphics2D)gr;
+        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);
         Point[] bas = givePoints(centreBas);
         for (int i = 1; i < 6; i++){
             this.addPoint(bas[i].x,bas[i].y);
