@@ -1,6 +1,7 @@
 package main.java.gui;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 
 import javax.swing.JFrame;
@@ -22,7 +23,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 
-public class JouerFrame extends JFrame {
+public class JouerFrame extends JFrame implements Runnable {
+
+    public Thread t;
+    public static final String threadName = "Thread_JF";
 
     protected JButton jouerButton, validerButton, quitterButton, optionButton;
 
@@ -32,27 +36,17 @@ public class JouerFrame extends JFrame {
      * @param imageFile
      * @throws IOException
      */
-    public JouerFrame(File imageFile) throws UnsupportedAudioFileException, IOException, LineUnavailableException {
+    public JouerFrame() throws IOException {
     	
     	//Fonctions permettant l'affichage correcte de la fenetre 
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setExtendedState(JFrame.MAXIMIZED_BOTH);
         setTitle("MENU NIWA");
-        pack();
         setLocationRelativeTo(null); // Pour centrer la fenetre
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setVisible(true);
-
-        // PARTIE AUDIO permettant le lancenment de la musique
-        File file = new File("C:\\Users\\33668\\Desktop\\Projet\\2022-ed2-g2--niwa\\niwaAudio.wav");
-        AudioInputStream ais = AudioSystem.getAudioInputStream(file);
-        Clip clip = AudioSystem.getClip();
-        clip.open(ais);
-        clip.start();
-
 
         setLayout(new BorderLayout());
-        JLabel background = new JLabel(new ImageIcon(imageFile.getAbsolutePath()));
+        JLabel background = new JLabel(new ImageIcon(new File(StockageSettings.bg_photo6).getAbsolutePath()));
         background.setLayout(new FlowLayout(FlowLayout.CENTER, 100, 350));
 
         // CREATION DES BOUTONS JOUER OPTIONS QUITTER
@@ -63,15 +57,14 @@ public class JouerFrame extends JFrame {
         jouerButton.setForeground(Color.ORANGE);
         jouerButton.setBackground(Color.WHITE);
         jouerButton.setBorder(new LineBorder(Color.CYAN));
-        jouerButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent event) {
-                File imageFile = new File("C:\\Users\\33668\\Desktop\\Projet\\2022-ed2-g2--niwa\\src\\parametreNiwa.png");
-                //Passage a la page suivante pour que le joueur effectue les choix du mode de jeux
-                JouerButton jouerButton = new JouerButton(imageFile);
-            }
+        jouerButton.addActionListener(e -> {
+            this.dispose();
+            //Passage a la page suivante pour que le joueur effectue les choix du mode de jeux
+            JouerButton jouerButton = new JouerButton();
+            jouerButton.start();
         });
          
-        //Permettant à l'utilisateur de garder ou d'enlever la musique en arriere plan
+        //Permettant ï¿½ l'utilisateur de garder ou d'enlever la musique en arriere plan
         optionButton = new JButton("O P T I O N S ");
         optionButton.setFont(new Font("Congenial Black", Font.BOLD, 15));
         optionButton.setPreferredSize(new Dimension(120, 50));
@@ -100,27 +93,36 @@ public class JouerFrame extends JFrame {
 
     } 
 
-    public static void main(String args[]) throws IOException {
+    @Override
+    public void run() {
+        this.pack();
+        this.setVisible(true);
 
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                File imageFile = new File("C:\\Users\\33668\\Desktop\\Projet\\2022-ed2-g2--niwa\\src\\photo6.png");
+        // PARTIE AUDIO permettant le lancenment de la musique
+        InputStream inputStream = getClass().getClassLoader().getResourceAsStream(StockageSettings.niwaAudio);
+        AudioInputStream ais;
+        try {
+            ais = AudioSystem.getAudioInputStream(inputStream);
+            Clip clip = AudioSystem.getClip();
+            clip.open(ais);
+            clip.start();
+        } catch (Exception e) {
+            System.err.println("ProblÃ¨me au niveau du lancement du son...");
+            e.printStackTrace();
+        }
+    }
 
-                if (imageFile != null) {
-                    JouerFrame frame;
-                    try {
-                        frame = new JouerFrame(imageFile);
-                        frame.setVisible(true);
-                    } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    }
-                    // frame.setVisible(true);
-                }
+    public void start(){
+        if(t == null){
+            t = new Thread(this,threadName);
+            t.start();
+        }
+    }
 
-            }
-        });
+    public static void main(String args[]) throws IOException{
+
+        JouerFrame frame = new JouerFrame();
+        frame.start();
 
     }
 

@@ -17,8 +17,8 @@ public class ModelTest {
     
     @BeforeEach
     public void init() {
-        joueurIA = new JoueurIA("IA", 0.1, 0.2, 0.9);
-        jeu = new Jeu(0,2,MapEtat.MAP1_2P);
+        joueurIA = new JoueurIA(0.1, 0.2, 0.9);
+        jeu = new Jeu(0,2,MapEtat.MAP1_2P,5);
         state = new State(jeu);
         pion = new Pion(joueurIA);
         pion.setLocation(new Coordonnee(0, 0));

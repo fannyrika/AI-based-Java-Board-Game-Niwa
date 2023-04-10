@@ -105,8 +105,8 @@ public class Pion extends Stack<Couleurs> {
 
     //test the equals method
     public static void main(String[] args) {
-        Joueur j1 = new Joueur("j1");
-        Joueur j2 = new Joueur("j2");
+        Joueur j1 = new Joueur();
+        Joueur j2 = new Joueur();
         Pion p1 = new Pion(j1);
         Pion p2 = new Pion(j1);
         p1.add(Couleurs.ROUGE);

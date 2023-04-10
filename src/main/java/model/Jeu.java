@@ -48,18 +48,6 @@ public class Jeu implements MapCreation {
      */
     protected MapEtat mapEtat;
     
-    //remplac�� par l'attribut id de joueur
-    /**
-     * Entier qui permettra de savoir à qui est le tour
-     * 
-     * @Exemple : 
-     * - tour = 0 -> joueur numéro 1 qui joue
-     * - tour = 1 -> joueur numéro 2 qui joue
-     * etc...
-     */
-    //protected int tour = 0;
-    
-    public static final int NB_TUILES = 3;
     /**
      * Représente le nombre de perles qu'un pion peut garder sur sa tête
      */
@@ -70,7 +58,8 @@ public class Jeu implements MapCreation {
      * 
      * @param nb_joueurs -> Le nombre de joueurs que le jeu pourra acueillir
      */
-    public Jeu(int nb_joueurs_humain, int nb_joueurs_ia, MapEtat map){
+    public Jeu(int nb_joueurs_humain, int nb_joueurs_ia, MapEtat map, int NB_TUILES){
+        Joueur.ID_STATIC = 0;
         mapEtat = map;
         if(map == MapEtat.MAP1_2P || map == MapEtat.MAP2_2P){initJoueurs(nb_joueurs_humain, 2-nb_joueurs_humain);}
         else if(map == MapEtat.MAP1_4P || map == MapEtat.MAP2_4P){initJoueurs(nb_joueurs_humain, 4-nb_joueurs_humain);}
@@ -78,7 +67,7 @@ public class Jeu implements MapCreation {
 
         joueurCourant = joueurs.get(0);
         pionCourant = joueurCourant.pions.get(0);
-        initSac(map);
+        initSac(map, NB_TUILES);
         initMap(this, map);
         //if there is 2 ai player training each other
         if(map==MapEtat.MAP1_2P && nb_joueurs_humain==0 && nb_joueurs_ia==2){
@@ -97,28 +86,15 @@ public class Jeu implements MapCreation {
             plateau.placerPionForce(joueurs.get(1).pions.get(2), new Coordonnee(-5,-1));
         }
     }
-
-    //to modify
-    public Jeu(ArrayList<Joueur> j, ArrayList<TuileTemple> s){
-        joueurs=j;
-        sacTemples=s;
-
-        joueurCourant = joueurs.get(0);
-        pionCourant = joueurCourant.pions.get(0);
-        initSac();
-        tuileCourante=sacTemples.get(0);
-        sacTemples.remove(0);
-        plateau.placeTuileForce(tuileCourante, 0, 0);
-    }
     
     public void initJoueurs(int nb_joueurs_humain, int nb_joueurs_ia){
         for (int i = 0; i < nb_joueurs_humain; i++) {
-            JoueurHumain j = new JoueurHumain("Joueur "+(i));
+            JoueurHumain j = new JoueurHumain();
             joueurs.add(j);             // On ajoute les joueurs dans la liste de joueurs
             sacTemples.add(j.temple);   // On ajoute chaque temple dans la liste des temples
         }
         for (int i = 0; i < nb_joueurs_ia; i++) {
-            JoueurIA j = new JoueurIA("Joueur "+(i+nb_joueurs_humain), 0.1, 0.5, 0.9);
+            JoueurIA j = new JoueurIA(0.1, 0.5, 0.9);
             joueurs.add(j);             // On ajoute les joueurs dans la liste de joueurs
             sacTemples.add(j.temple);   // On ajoute chaque temple dans la liste des temples
         }
@@ -143,19 +119,12 @@ public class Jeu implements MapCreation {
      * Permet d'initialiser le sac de tuile
      * @param map -> permet de savoir combien de tuile il y a à créer (par rapport à une map par défaut, ou bien dans le cas ou la map est crée manuellement)
      */
-    public void initSac(MapEtat map){
+    public void initSac(MapEtat map, int NB_TUILES){
         if(map == MapEtat.MANUEL){
             for (int i = 0; i < NB_TUILES; i++) {
                 sac.add(new Tuile());
             }
         }
-    }
-
-    /**
-     * Permet d'initialiser le sac dans le cas ou le plateau doit être créer manuellement
-     */
-    public void initSac(){
-        initSac(MapEtat.MANUEL);
     }
       
     /**

@@ -19,7 +19,11 @@ import javax.swing.plaf.ScrollBarUI;
 import javax.swing.plaf.basic.BasicScrollBarUI;
 import main.java.model.*;
 import main.java.model.Action;
-public class InterfaceDeJeu extends JFrame implements KeyListener{
+public class InterfaceDeJeu extends JFrame implements KeyListener, Runnable {
+
+    public Thread t;
+    public static final String threadName = "Thread_IDJ";
+
     protected Jeu model;
     //protected Controleur controleur;
     /**
@@ -32,7 +36,8 @@ public class InterfaceDeJeu extends JFrame implements KeyListener{
     protected static int nb_joueurs_ia = 1;
     protected GridTuile gridTuile;
     protected TableauDeBord tableauDeBord;
-    public InterfaceDeJeu(Jeu m) throws IOException{
+    
+    public InterfaceDeJeu(Jeu m){
         setVisible(true);
         setLayout(new BorderLayout());
         setTitle("NIWA");
@@ -242,7 +247,7 @@ public class InterfaceDeJeu extends JFrame implements KeyListener{
     }
 
 
-    public void lancer() throws IOException{
+    public void lancer(){
         if(model.getMapEtat().equals(MapEtat.MANUEL)){
             System.out.println("mapSettings: "+model.getMapEtat());
             creerPlateau();
@@ -449,50 +454,65 @@ public class InterfaceDeJeu extends JFrame implements KeyListener{
         
     }
 
-    public static void main(String[] args) throws IOException {
-        Jeu model =  new Jeu(0, 2, MapEtat.MAP1_2P);
-        //Jeu model =  new Jeu(2, 0, MapEtat.MAP1_2P);
-        InterfaceDeJeu jeuVue = new InterfaceDeJeu(model);
-        System.out.println("from main: mapsetting: "+model.getMapEtat());
-        jeuVue.lancer();
+    @Override
+    public void run() {
+        this.lancer();
+    }
+
+    public void start(){
+        if(t == null){
+            t = new Thread(this, threadName);
+            t.start();
+        }
+    }
+
+    public static InterfaceDeJeu defautStart(){
+        Jeu model =  new Jeu(2, 0, MapEtat.MANUEL,10);
+        InterfaceDeJeu jeu = new InterfaceDeJeu(model);
+        jeu.start();
+        return jeu;
+    }
+
+    public static void main(String[] args){
+        Jeu model =  new Jeu(2, 0, MapEtat.MAP1_2P,10);
+        InterfaceDeJeu jeu = new InterfaceDeJeu(model);
+        jeu.start();
     }
 
 
 ///scrollbar du plateau
 class CustomScrollBarUI extends BasicScrollBarUI{
-    CustomScrollBarUI(){
-      
-}
-@Override
-protected void configureScrollBarColors() {
- 
-    super.thumbColor = Color.black;
-    super.trackColor = Color.WHITE;
+    CustomScrollBarUI(){}
 
-}
-@Override
-protected JButton createDecreaseButton(int orientation) {
-   
-    return new JButton() {
-        @Override
-        public Dimension getPreferredSize() {
-            return new Dimension(0, 0);
-        }
-    };
-}
+    @Override
+    protected void configureScrollBarColors() {
+    
+        super.thumbColor = Color.black;
+        super.trackColor = Color.WHITE;
 
-@Override
-protected JButton createIncreaseButton(int orientation) {
-    // Remove the increase button
-    return new JButton() {
-        @Override
-        public Dimension getPreferredSize() {
-            return new Dimension(0, 0);
-        }
-    };
-}
+    }
+    @Override
+    protected JButton createDecreaseButton(int orientation) {
+    
+        return new JButton() {
+            @Override
+            public Dimension getPreferredSize() {
+                return new Dimension(0, 0);
+            }
+        };
+    }
 
-   }
-
+    @Override
+    protected JButton createIncreaseButton(int orientation) {
+        // Remove the increase button
+        return new JButton() {
+            @Override
+            public Dimension getPreferredSize() {
+                return new Dimension(0, 0);
+            }
+        };
+    }
 }
 
+
+}

@@ -3,6 +3,9 @@ package main.java.gui;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 
+import main.java.model.JeuEtat;
+import main.java.model.MapEtat;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -12,25 +15,25 @@ import java.awt.GridLayout;
 import java.awt.event.*;
 import java.io.File;
 
-public class JouerButton extends JFrame implements ActionListener {
+public class JouerButton extends JFrame implements ActionListener, Runnable {
+
+    public Thread t;
+    public static final String threadName = "Thread_JB";
 
     JPanel conteneur;
     JButton btn;
     JRadioButton manuelButton, autoButton, j2, j4;
     JTextField nmbJoueur;
     JLabel background;
-    static File imageFile = new File("C:\\Users\\33668\\Desktop\\Projet\\2022-ed2-g2--niwa\\src\\parametreNiwa.png");
+    static File imageFile = new File(StockageSettings.bg_parametreNiwa);
 
-    JouerButton(File imageFile) {
+    JouerButton() {
     	
         //Fonctions permettant l'affichage correcte de la fenetre 
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setExtendedState(JFrame.MAXIMIZED_BOTH);
         setTitle("MENU NIWA JOUERFRAME");
-        pack();
         setLocationRelativeTo(null); // Pour centrer la fenetre
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setVisible(true);
         setLayout(new BorderLayout());
         JLabel background = new JLabel(new ImageIcon(imageFile.getAbsolutePath()));
         background.setLayout(new FlowLayout(FlowLayout.CENTER, 100, 150));
@@ -44,7 +47,7 @@ public class JouerButton extends JFrame implements ActionListener {
         JPanel conteneur3 = new JPanel();
         JPanel conteneur4 = new JPanel();   
         
-        //Permet de selectionner un seul choix(JRadioButton) à la foix
+        //Permet de selectionner un seul choix(JRadioButton) ï¿½ la foix
         ButtonGroup buttonGroup = new ButtonGroup();
         ButtonGroup buttonGroup2 = new ButtonGroup();
        
@@ -59,7 +62,7 @@ public class JouerButton extends JFrame implements ActionListener {
         conteneur1.add(j2);
         conteneur1.add(j4);
         
-        //Choisir le mode de création du plateau AUTO ou MANUEL
+        //Choisir le mode de crï¿½ation du plateau AUTO ou MANUEL
         JLabel label1 = new JLabel("  C R E A T I O N   D U   P L A T E A U  : ", JLabel.CENTER);
         label1.setFont(new Font("Congenial Black", Font.BOLD, 15));
         manuelButton = new JRadioButton(" M A N U E L ");
@@ -71,7 +74,7 @@ public class JouerButton extends JFrame implements ActionListener {
         conteneur2.add(autoButton);
 
         
-        //Bouton permettant le passage à la fenetre d'apres apres verification de la validite des choix du joueur
+        //Bouton permettant le passage ï¿½ la fenetre d'apres apres verification de la validite des choix du joueur
         JButton suivant = new JButton("S U I V A N T ");
         suivant.setFont(new Font("Congenial Black", Font.BOLD, 15));
         suivant.setPreferredSize(new Dimension(120, 50));
@@ -80,31 +83,25 @@ public class JouerButton extends JFrame implements ActionListener {
         suivant.setBackground(Color.WHITE);
         suivant.setBorder(new LineBorder(Color.CYAN));
         suivant.addActionListener(e -> {
-        	// Creation d'une chaine de caractere contenant le choix du joueur pour le mode du plateau
-        	//La Chaine de caractere sera envoyer dans le constructeur de la page suivante (Class ValiderButton)
-            String r = "";
-            if (manuelButton.isSelected()) {
-                r = "manuel";
-            } else {
-                r = "auto";
-            }
-
-            //Message d'erreur s'affichant si aucun choix pour le nombre de joueur ou le mode du plateau n'est selctionné
+            //Message d'erreur s'affichant si aucun choix pour le nombre de joueur ou le mode du plateau n'est selctionnï¿½
             if (!(j2.isSelected()) && !(j4.isSelected()) || !(manuelButton.isSelected()) && !(autoButton.isSelected())) {
                 JOptionPane.showMessageDialog(this, "Veuillez Completer Vos Choix : ");
   
             //Sinon si le joueur a bien fait ses choix on  affiche la page suivante
             //A laquelle on envoie dans son constructeur le nombre de joueur ainsi que le mode du plateau defini avec la chaine de caractere r
-            } else if (j2.isSelected()) {
-                ValiderButton pageSuivante = new ValiderButton(imageFile, Integer.valueOf(j2.getText()), r);
-            } else {
-                ValiderButton pageSuivante = new ValiderButton(imageFile, Integer.valueOf(j4.getText()), r);
             }
 
+            else{
+                this.dispose();
+                StockageSettings.NB_JOUEURS = j2.isSelected() ? 2 : 4;
+                StockageSettings.MAP_ETAT = manuelButton.isSelected() ? MapEtat.MANUEL : null;
+                ValiderButton pageSuivante = new ValiderButton();
+                pageSuivante.start();
+            }
         });
         conteneur3.add(suivant);
 
-      //On ajoute tous les conteneur à la fenetre
+      //On ajoute tous les conteneur ï¿½ la fenetre
         conteneur0.add(conteneur1);
         conteneur0.add(conteneur2);
         conteneur0.add(conteneur3);
@@ -114,11 +111,23 @@ public class JouerButton extends JFrame implements ActionListener {
        
     }
 
-    public void actionPerformed(ActionEvent e) {
+    @Override
+    public void actionPerformed(ActionEvent e) {}
 
+    @Override
+    public void run() {
+        this.pack();
+        this.setVisible(true);
+    }
+
+    public void start(){
+        if(t == null){
+            t = new Thread(this,threadName);
+            t.start();
+        }
     }
 
     public static void main(String[] args) {
-        new JouerButton(imageFile);
+        new JouerButton();
     }
 }

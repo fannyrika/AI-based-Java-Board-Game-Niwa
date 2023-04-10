@@ -20,8 +20,7 @@ public class JoueurIA extends Joueur {
      * @param alpha
      * @param gamma
      */
-    public JoueurIA(String name, double epsilon, double alpha, double gamma) {
-        super(name);
+    public JoueurIA(double epsilon, double alpha, double gamma) {
         this.epsilon = epsilon;
         this.alpha = alpha;
         this.gamma = gamma;
