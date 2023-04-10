@@ -199,9 +199,10 @@ public class Plateau implements DeplacementPion {
                 }
                 else{       // CAS 1.1.2 : Il y a au moins un des emplacements derrière non-occupées
                     ArrayList<Coordonnee> arrives = new ArrayList<Coordonnee>();
-                    if(!gridPion.containsKey(c1)){arrives.add(c1);}
-                    if(!gridPion.containsKey(c2)){arrives.add(c2);}
-                    if(!gridPion.containsKey(c3)){arrives.add(c3);}
+                    Coordonnee templeCoordonnee = p.getProprietaire().getTemple().getLocationInGridHexagone();  // PS : on fait bien attention à ce qu'on arrive pas sur son propre temple
+                    if(!gridPion.containsKey(c1) && !c1.equals(templeCoordonnee)){arrives.add(c1);}
+                    if(!gridPion.containsKey(c2) && !c2.equals(templeCoordonnee)){arrives.add(c2);}
+                    if(!gridPion.containsKey(c3) && !c3.equals(templeCoordonnee)){arrives.add(c3);}
                     return arrives;
                 }
             }
