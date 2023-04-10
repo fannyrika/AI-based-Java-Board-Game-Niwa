@@ -16,8 +16,8 @@ public class Joueur implements Cloneable{
      */
     protected static final int NB_PEARLS_AT_START = 2;
 
-    protected static int ID_STATIC = 0;
-    protected int id;
+    //protected static int ID_STATIC = 0;
+    protected int id=0;
     protected String nom="";
 
     /**
@@ -33,14 +33,15 @@ public class Joueur implements Cloneable{
     protected Couleurs perleOrphelin;
 
     public int getID(){return id;}
+    public void setID(int i){id=i;}
 
     /**
      * Constructeur sans argument, permettant d'initialiser un joueur
      */
     public Joueur(String n){
         nom=n;
-        this.id = ID_STATIC;
-        ID_STATIC++;
+        //this.id = ID_STATIC;
+        //ID_STATIC++;
         this.temple = new TuileTemple(this);
         initalisePions();
         if(id==0){
@@ -54,6 +55,7 @@ public class Joueur implements Cloneable{
     private void initalisePions(){
         for (int i = 0; i < MAX_PIONS; i++) {
             Pion p = new Pion(this);
+            p.setID(i);
             for (int j = 0; j < NB_PEARLS_AT_START; j++) {
                 p.add(Couleurs.values()[i%Couleurs.values().length]);   
             }
@@ -82,6 +84,8 @@ public class Joueur implements Cloneable{
 
     public TuileTemple getTemple(){ return temple; }
 
+    public String getNom(){ return nom; }
+
     /**
      * Méthode pour savoir si un joueur a placé tous ses pions ou non
      * @return true si oui, false sinon
@@ -104,4 +108,5 @@ public class Joueur implements Cloneable{
         System.out.println(j1);
         System.out.println(j2);
     }
+
 }

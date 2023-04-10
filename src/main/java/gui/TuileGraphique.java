@@ -84,7 +84,7 @@ public class TuileGraphique extends Polygon {
     /**
      * Le rayon minimal autorisé
      */
-    protected static final int RADIUS_MIN = 20;
+    protected static final int RADIUS_MIN = 35;
 
     /**
      * Le rayon maximal autorisé

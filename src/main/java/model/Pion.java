@@ -17,7 +17,7 @@ public class Pion extends Stack<Couleurs> {
     protected Coordonnee location;
     protected boolean isPlaced;
     private int id=0;
-    protected static int ID_STATIC = 0;
+    //protected static int ID_STATIC = 0;
 
     /**
      * Constructeur permettant d'initialiser le pion
@@ -25,8 +25,8 @@ public class Pion extends Stack<Couleurs> {
      */
     public Pion(Joueur j){
         this.proprietaire = j;
-        this.id = ID_STATIC;
-        ID_STATIC++;
+        //this.id = ID_STATIC;
+        //ID_STATIC++;
     }
 
     
@@ -122,5 +122,10 @@ public class Pion extends Stack<Couleurs> {
     //getID
     public int getID() {
         return id;
+    }
+
+    //setID
+    public void setID(int id) {
+        this.id = id;
     }
 }

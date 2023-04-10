@@ -64,7 +64,10 @@ public class JouerFrame extends JFrame{
         
         valider.addActionListener(e->{
             this.validate();
-            this.repaint();
+            SwingUtilities.invokeLater(() -> {
+                this.repaint();
+            });
+            
             if(!nom1.getText().equals("")){
                 Joueur j = new Joueur(nom1.getText());
                 joueurs.add(j);
