@@ -118,7 +118,10 @@ public class InterfaceDeJeu extends JFrame implements KeyListener, Runnable {
                 }
                 model.getPlateau().placeTuileForce(model.getTuileCourant(), emplacementsPossibles.get(0));
 
-                repaint();
+                SwingUtilities.invokeLater(() -> {
+                    repaint();
+                });
+                
                 //waiting
                 while(model.getJeuEtat()!=JeuEtat.CONTINUE){
                     System.out.print("");
@@ -153,14 +156,18 @@ public class InterfaceDeJeu extends JFrame implements KeyListener, Runnable {
 
 
         while(model.getJeuEtat()!=JeuEtat.GAME_OVER){
+            
             //for(int i=0; i<model.getJoueurs().size(); i++) System.out.println("affiche joueurs:"+model.getJoueurs().get(i));
             for(int i=0; i<model.getJoueurs().size(); i++){
                 //controleur.rotationTmp=0;
                 System.out.println("current player changed!");//debug
                 model.setJoueurCourant(model.getJoueurs().get(i));
                 System.out.println(model.getJoueurCourant());//debug
-                tableauDeBord.setJoueurCourant("<html>joueur courant:<br>"+model.getJoueurCourant()+"</html>");
-                repaint();
+                tableauDeBord.setJoueurCourant("<html>joueur courant:<br>"+model.getJoueurCourant().getID()+"</html>");
+                SwingUtilities.invokeLater(() -> {
+                    repaint();
+                });
+                
                 //TODO: afficher l'information du joueur courant
                 //validate();
                 //repaint();
@@ -169,8 +176,18 @@ public class InterfaceDeJeu extends JFrame implements KeyListener, Runnable {
                 //    controleur.controlIA();
                 //}
                 if(model.getJoueurCourant() instanceof JoueurIA){
+                    //slow down the speed of the AI player
+                    try {
+                        Thread.sleep(100); 
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    
                     System.out.println("Current player is JoueurIA");
-                    repaint();
+                    SwingUtilities.invokeLater(() -> {
+                        repaint();
+                    });
+                    
                     // create a mapping of the current state
                     State currentState = new State(model);
                     // get the legal actions for the current state
@@ -193,7 +210,10 @@ public class InterfaceDeJeu extends JFrame implements KeyListener, Runnable {
                     //update the model
                     nextState.updateGame(model);
                     //update the view
-                    repaint();
+                    SwingUtilities.invokeLater(() -> {
+                        repaint();
+                    });
+                    
                 }
                 
                 else{
@@ -228,10 +248,22 @@ public class InterfaceDeJeu extends JFrame implements KeyListener, Runnable {
             }
             if(model.getGagneurs().size()==model.getJoueurs().size()-1){
                 //game over
-                model.setJeuEtat(JeuEtat.GAME_OVER);
-                System.out.println("Game over!");//debug
+                gameOver();
+                //System.out.print(((JoueurIA) (model.getJoueurCourant())).getQTable());
+                
+                ////eliminate all the players on the board
+                //for(Joueur joueur : model.getJoueurs()){
+                //    model.eliminerJoueur(joueur);
+                //}
             }
         }
+    }
+
+    public void gameOver(){
+        model.gameOver();
+        System.out.println("Game over!");//debug
+        gridTuile.clearAllCircles();
+        dispose();
     }
     
     /**
@@ -243,7 +275,10 @@ public class InterfaceDeJeu extends JFrame implements KeyListener, Runnable {
         for (Action action : legalActions) {
             gridTuile.addCircle(action.getMoveDirection());
         }
-        repaint();
+        SwingUtilities.invokeLater(() -> {
+            repaint();
+        });
+        
     }
 
 
@@ -292,11 +327,17 @@ public class InterfaceDeJeu extends JFrame implements KeyListener, Runnable {
                     if(model.getJeuEtat()==JeuEtat.CHOOSING_TUILE_LOCATION && model.getSacTemples().size()>0){
                         Coordonnee coordonnee = model.getTuileCourant().getLocationInGridTuile();
                         model.getPlateau().removeTuileBrutForce(coordonnee);
-                        repaint();
+                        SwingUtilities.invokeLater(() -> {
+                            repaint();
+                        });
+                        
                         
                         model.setTuileCourante(model.popTemple());
                         model.getPlateau().placeTuileBrutForce( model.getTuileCourant(), coordonnee );
-                        repaint();
+                        SwingUtilities.invokeLater(() -> {
+                            repaint();
+                        });
+                        
                     }
                     break;
                 case 's':   // gauche
@@ -308,7 +349,10 @@ public class InterfaceDeJeu extends JFrame implements KeyListener, Runnable {
                     if(model.getJeuEtat()==JeuEtat.ROTATING_TUILE){
                         Coordonnee coordonnee = model.getTuileCourant().getLocationInGridTuile();
                         model.getPlateau().removeTuileBrutForce(coordonnee);
-                        repaint();
+                        SwingUtilities.invokeLater(() -> {
+                            repaint();
+                        });
+                        
                         
                         Tuile tuileTmp = model.getTuileCourant();
                         //sens horaire inverse
@@ -317,11 +361,17 @@ public class InterfaceDeJeu extends JFrame implements KeyListener, Runnable {
                         tuileTmp.rotate();
                         model.setTuileCourante(tuileTmp);
                         model.getPlateau().placeTuileBrutForce( model.getTuileCourant(), coordonnee );
-                        repaint();
+                        SwingUtilities.invokeLater(() -> {
+                            repaint();
+                        });
+                        
                     }
                     else if(model.getJeuEtat()==JeuEtat.CHOOSING_TUILE_LOCATION){
                         glisserTuile(model.getTuileCourant(), -1, 0);
-                        repaint();
+                        SwingUtilities.invokeLater(() -> {
+                            repaint();
+                        });
+                        
                     }
                     //else if(model.getJeuEtat()==JeuEtat.PLACING_PION || 
                     //model.getJeuEtat()==JeuEtat.CHOOSING_PEARL_DESTINATION){
@@ -341,11 +391,17 @@ public class InterfaceDeJeu extends JFrame implements KeyListener, Runnable {
                         tuileTmp.rotate();
                         model.setTuileCourante(tuileTmp);
                         model.getPlateau().placeTuileBrutForce( model.getTuileCourant(), coordonnee );
-                        repaint();
+                        SwingUtilities.invokeLater(() -> {
+                            repaint();
+                        });
+                        
                     }
                     else if(model.getJeuEtat()==JeuEtat.CHOOSING_TUILE_LOCATION){
                         glisserTuile(model.getTuileCourant(), 1, 0);
-                        repaint();
+                        SwingUtilities.invokeLater(() -> {
+                            repaint();
+                        });
+                        
                     }
                     else if(model.getJeuEtat()==JeuEtat.PLACING_PION || 
                     model.getJeuEtat()==JeuEtat.CHOOSING_PEARL_DESTINATION){
@@ -355,13 +411,19 @@ public class InterfaceDeJeu extends JFrame implements KeyListener, Runnable {
                 case 'd':   // bas
                     if(model.getJeuEtat()==JeuEtat.CHOOSING_TUILE_LOCATION){
                         glisserTuile(model.getTuileCourant(), 0, -1);
-                        repaint();
+                        SwingUtilities.invokeLater(() -> {
+                            repaint();
+                        });
+                        
                     }
                     break;
                 case 'e':   // haut
                     if(model.getJeuEtat()==JeuEtat.CHOOSING_TUILE_LOCATION){
                         glisserTuile(model.getTuileCourant(), 0, 1);
-                        repaint();
+                        SwingUtilities.invokeLater(() -> {
+                            repaint();
+                        });
+                        
                     }
                     break;
                 case ' ':   // verifier le choix
@@ -473,46 +535,74 @@ public class InterfaceDeJeu extends JFrame implements KeyListener, Runnable {
         return jeu;
     }
 
-    public static void main(String[] args){
-        Jeu model =  new Jeu(2, 0, MapEtat.MAP1_2P,10);
-        InterfaceDeJeu jeu = new InterfaceDeJeu(model);
-        jeu.start();
-    }
 
-
-///scrollbar du plateau
-class CustomScrollBarUI extends BasicScrollBarUI{
-    CustomScrollBarUI(){}
-
-    @Override
-    protected void configureScrollBarColors() {
-    
-        super.thumbColor = Color.black;
-        super.trackColor = Color.WHITE;
-
-    }
-    @Override
-    protected JButton createDecreaseButton(int orientation) {
-    
-        return new JButton() {
-            @Override
-            public Dimension getPreferredSize() {
-                return new Dimension(0, 0);
+    ///scrollbar du plateau
+    class CustomScrollBarUI extends BasicScrollBarUI{
+        CustomScrollBarUI(){
+        
             }
-        };
-    }
-
-    @Override
-    protected JButton createIncreaseButton(int orientation) {
-        // Remove the increase button
-        return new JButton() {
             @Override
-            public Dimension getPreferredSize() {
-                return new Dimension(0, 0);
-            }
-        };
-    }
-}
+            protected void configureScrollBarColors() {
+            
+                super.thumbColor = Color.black;
+                super.trackColor = Color.WHITE;
 
+            }
+            @Override
+            protected JButton createDecreaseButton(int orientation) {
+            
+                return new JButton() {
+                    @Override
+                    public Dimension getPreferredSize() {
+                        return new Dimension(0, 0);
+                    }
+                };
+            }
+
+            @Override
+            protected JButton createIncreaseButton(int orientation) {
+                // Remove the increase button
+                return new JButton() {
+                    @Override
+                    public Dimension getPreferredSize() {
+                        return new Dimension(0, 0);
+                    }
+                };
+            }
+
+    }
+
+    public static void main(String[] args) throws IOException {
+
+        //System.out.println("from main: mapsetting: "+model.getMapEtat());
+
+        //test 1: 10000 rounds of 2 AI players
+        for(int i=0; i<10000; i++){
+            System.out.println("-------------round "+i+"----------------");
+            Jeu model =  new Jeu(0, 2, MapEtat.MAP1_2P,10);
+            //Jeu model =  new Jeu(2, 0, MapEtat.MAP1_2P);
+            InterfaceDeJeu jeuVue = new InterfaceDeJeu(model);
+            if(model.getMapEtat().equals(MapEtat.MANUEL)){
+                System.out.println("mapSettings: "+model.getMapEtat());
+                jeuVue.creerPlateau();
+            }
+            jeuVue.jouer();
+        }
+        
+
+        /*
+        //test 2: 1 joueur humain vs 1 joueur IA
+        Jeu model =  new Jeu(1, 1, MapEtat.MAP1_2P);
+        InterfaceDeJeu jeuVue = new InterfaceDeJeu(model);
+        jeuVue.lancer();
+        */
+
+        /*
+        //test 3: 2 joueurs humains
+        Jeu model =  new Jeu(2, 0, MapEtat.MAP1_2P);
+        InterfaceDeJeu jeuVue = new InterfaceDeJeu(model);
+        jeuVue.lancer();
+        */
+    }
 
 }

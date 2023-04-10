@@ -1,9 +1,11 @@
 package main.java.model;
 
+import java.io.Serializable;
+
 /**
  * La classe Coordonnee va servir pour définir le plateau
  */
-public class Coordonnee {
+public class Coordonnee implements Serializable{
 
     /**
      * Attributs permettant de définir une coordonnee
@@ -51,6 +53,7 @@ public class Coordonnee {
         if(o == null || getClass() != o.getClass()){
             return false;
         }
+        //System.out.println("equals() called");
         if(this == o){
             return true;
         }

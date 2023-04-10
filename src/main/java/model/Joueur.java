@@ -32,6 +32,7 @@ public class Joueur implements Cloneable{
     protected Couleurs perleOrphelin;
 
     public int getID(){return id;}
+    public void setID(int i){id=i;}
 
     /**
      * Constructeur sans argument, permettant d'initialiser un joueur
@@ -52,6 +53,7 @@ public class Joueur implements Cloneable{
     private void initalisePions(){
         for (int i = 0; i < MAX_PIONS; i++) {
             Pion p = new Pion(this);
+            p.setID(i);
             for (int j = 0; j < NB_PEARLS_AT_START; j++) {
                 p.add(Couleurs.values()[i%Couleurs.values().length]);   
             }
@@ -101,4 +103,5 @@ public class Joueur implements Cloneable{
         System.out.println(j1);
         System.out.println(j2);
     }
+
 }
