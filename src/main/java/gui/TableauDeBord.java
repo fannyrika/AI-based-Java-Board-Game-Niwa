@@ -7,6 +7,9 @@ import java.awt.event.*;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import javax.swing.WindowConstants;
+import javax.swing.plaf.basic.BasicHTML;
+import javax.swing.text.html.*;
+
 import main.java.model.Jeu;
 
 public class TableauDeBord extends JPanel {
@@ -17,29 +20,66 @@ public class TableauDeBord extends JPanel {
     protected PionGraphique pionSelectione;
     protected JButton boutonQuitter;
     protected JButton boutonRegles;
+    protected JButton boutonRotationHoraire;
+    protected JButton boutonRotationAntiHoraire;
+    protected JButton boutonZoom;
+    protected JButton boutonDezoom;
     TableauDeBord(Jeu model){
         setLayout(new GridLayout(2,1));
+        this.setBackground(new Color(61, 58, 58));
         this.model=model;
-        this.setBackground(new Color(255, 137, 83, 1));
         this.etapeCourante=new JLabel("");
+        etapeCourante.setHorizontalAlignment(JLabel.CENTER);
+        etapeCourante.setForeground(Color.WHITE);
         this.joueurCourant=new JLabel();
+        joueurCourant.setForeground(Color.WHITE);
+        joueurCourant.setHorizontalAlignment(JLabel.CENTER);
         pioche=new JLabel();
+        pioche.setHorizontalAlignment(JLabel.CENTER);
+        pioche.setForeground(Color.WHITE);
         JPanel boutonPanel=new JPanel();
         boutonPanel.setBackground(Color.WHITE);
         this.setupBoutons();
-        boutonPanel.setLayout(new FlowLayout());
+        boutonPanel.setLayout(new GridLayout(3,1));
+        JPanel gestionPartiePanel=new JPanel();
+        gestionPartiePanel.setBackground(new Color(61, 58, 58));
+        gestionPartiePanel.setLayout(new FlowLayout());
+        gestionPartiePanel.add(boutonQuitter);
+        gestionPartiePanel.add(boutonRegles);
 
-        boutonPanel.add(boutonQuitter);
-        boutonPanel.add(boutonRegles);
+        JPanel gestionTuilePanel=new JPanel();
+        gestionTuilePanel.setBackground(new Color(61, 58, 58));
+        gestionTuilePanel.setLayout(new FlowLayout());
+        gestionTuilePanel.add(boutonRotationHoraire);
+        gestionTuilePanel.add(boutonRotationAntiHoraire);
+        
+        JPanel gestionPlateauPanel=new JPanel();
+        gestionPlateauPanel.setBackground(new Color(61, 58, 58));
+        gestionPlateauPanel.setLayout(new FlowLayout());
+        gestionPlateauPanel.add(boutonDezoom);
+        gestionPlateauPanel.add(boutonZoom);
+        
+        boutonPanel.add(gestionPlateauPanel);
+        boutonPanel.add(gestionTuilePanel);
+        boutonPanel.add(gestionPartiePanel);
+        
+        //rends instructionPanel joli et lisible car maintenant le texte déborde
+
         JPanel instructionPanel=new JPanel();
-        instructionPanel.setLayout(new GridLayout(5,1));
-        instructionPanel.setBackground(Color.WHITE);
-        instructionPanel.add(joueurCourant);
-        joueurCourant.setFont(new Font("Arial", Font.PLAIN, 13));
+        instructionPanel.setLayout(new GridLayout(3,1));
+        instructionPanel.setBackground(new Color(61, 58, 58));
         etapeCourante.setLayout(new BorderLayout());
-        etapeCourante.setFont(new Font("Arial", Font.PLAIN, 13));
+        etapeCourante.setFont(new Font("SansSerif", Font.BOLD, 13));
+        joueurCourant.setFont(new Font("SansSerif", Font.BOLD, 13));
+
+        instructionPanel.add(joueurCourant);
         instructionPanel.add(etapeCourante);
         instructionPanel.add(pioche);
+      
+        
+        
+
+        //this.add(joueurPanel);
         this.add(instructionPanel);
         this.add(boutonPanel);
 
@@ -69,12 +109,48 @@ public class TableauDeBord extends JPanel {
         boutonRegles.setBackground(Color.BLACK); 
         boutonRegles.setBorder(BorderFactory.createRaisedBevelBorder()); 
         boutonRegles.setPreferredSize(new Dimension(120, 30));
+        boutonRegles.setFocusable(false);
+
         boutonQuitter=new JButton("Quitter");
         boutonQuitter.setFont(new Font("Arial", Font.BOLD, 16)); 
         boutonQuitter.setForeground(Color.WHITE); 
         boutonQuitter.setBackground(Color.BLACK);
         boutonQuitter.setBorder(BorderFactory.createRaisedBevelBorder()); 
         boutonQuitter.setPreferredSize(new Dimension(120, 30));
+        boutonQuitter.setFocusable(false);
+
+        boutonRotationHoraire=new JButton("⟳");
+        boutonRotationHoraire.setFont(new Font("Calibri", Font.BOLD, 20)); 
+        boutonRotationHoraire.setForeground(Color.WHITE);
+        boutonRotationHoraire.setBackground(Color.BLACK); 
+        boutonRotationHoraire.setBorder(BorderFactory.createRaisedBevelBorder()); 
+        boutonRotationHoraire.setPreferredSize(new Dimension(60, 30));
+        boutonRotationHoraire.setFocusable(false);
+
+        boutonRotationAntiHoraire=new JButton("⟲");
+        boutonRotationAntiHoraire.setFont(new Font("Calibri", Font.BOLD, 20)); 
+        boutonRotationAntiHoraire.setForeground(Color.WHITE);
+        boutonRotationAntiHoraire.setBackground(Color.BLACK); 
+        boutonRotationAntiHoraire.setBorder(BorderFactory.createLoweredSoftBevelBorder()); 
+        boutonRotationAntiHoraire.setPreferredSize(new Dimension(60, 30));
+        boutonRotationAntiHoraire.setFocusable(false);
+
+        boutonZoom=new JButton("+");
+        boutonZoom.setFont(new Font("Calibri", Font.BOLD, 20)); 
+        boutonZoom.setForeground(Color.WHITE);
+        boutonZoom.setBackground(Color.BLACK); 
+        boutonZoom.setBorder(BorderFactory.createRaisedBevelBorder()); 
+        boutonZoom.setPreferredSize(new Dimension(60, 30));
+        boutonZoom.setFocusable(false);
+
+        boutonDezoom=new JButton("-");
+        boutonDezoom.setFont(new Font("Calibri", Font.BOLD, 20)); 
+        boutonDezoom.setForeground(Color.WHITE);
+        boutonDezoom.setBackground(Color.BLACK); 
+        boutonDezoom.setBorder(BorderFactory.createRaisedBevelBorder()); 
+        boutonDezoom.setPreferredSize(new Dimension(60, 30));
+        boutonDezoom.setFocusable(false);
+
     }
     protected void setEtapeCourante(String instruction){
         etapeCourante.setText(instruction);

@@ -76,7 +76,14 @@ public class GridTuile extends JPanel implements KeyListener, MouseInputListener
 
         tuilesGraphique.clear();
         allCircles.clear();
-
+        super.paintComponent(g);
+    
+    Graphics2D g2d = (Graphics2D) g.create();
+    GradientPaint gradient = new GradientPaint(0, 0,new Color(74, 174, 255), 
+                                               getWidth(), 0,new Color(255, 143, 169));
+    g2d.setPaint(gradient);
+    g2d.fillRect(0, 0, getWidth(), getHeight());
+    g2d.dispose();
         // On parcours toutes les tuiles sur le plateau, pour ainsi les dessiner
         HashMap<Coordonnee,Tuile> tuileMapCopy = (HashMap<Coordonnee, Tuile>) model.getPlateau().getGridTuile().clone();
         for(Tuile t : tuileMapCopy.values()){

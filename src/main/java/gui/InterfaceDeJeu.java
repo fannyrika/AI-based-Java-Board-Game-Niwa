@@ -16,6 +16,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 import javax.swing.plaf.ScrollBarUI;
+import javax.swing.plaf.basic.BasicHTML;
 import javax.swing.plaf.basic.BasicScrollBarUI;
 import main.java.model.*;
 import main.java.model.Action;
@@ -36,17 +37,59 @@ public class InterfaceDeJeu extends JFrame implements KeyListener{
         setVisible(true);
         setLayout(new BorderLayout());
         setTitle("NIWA");
+        
         model=m;
         gridTuile = new GridTuile(model);
         JScrollPane plateau=new JScrollPane(gridTuile);
         gridTuile.setBackground(Color.WHITE);
         plateau.getVerticalScrollBar().setUI(new CustomScrollBarUI());
+        plateau.setBackground(new Color(61, 58, 58));
         plateau.getHorizontalScrollBar().setUI(new CustomScrollBarUI());
         tableauDeBord=new TableauDeBord(model);
         tableauDeBord.boutonQuitter.addActionListener(e->{
             this.dispose();
         });
+        tableauDeBord.boutonZoom.addActionListener(e->{
+            TuileGraphique.zoom(GridTuile.DISTANCE_ZOOM);
+            //gridTuile.setPreferredSize(new Dimension(10*GridTuile.DISTANCE_ZOOM+gridTuile.getSize().width,10*GridTuile.DISTANCE_ZOOM+gridTuile.getSize().height));
+            plateau.repaint();
+            
+        });
+        tableauDeBord.boutonDezoom.addActionListener(e->{
+            TuileGraphique.zoom(-GridTuile.DISTANCE_ZOOM);
+            //gridTuile.setPreferredSize(new Dimension(-10*GridTuile.DISTANCE_ZOOM+gridTuile.getSize().width,-10*GridTuile.DISTANCE_ZOOM+gridTuile.getSize().height));
+            plateau.repaint();
+        });
+        tableauDeBord.boutonRotationHoraire.addActionListener(e->{
+            if(model.getJeuEtat()==JeuEtat.ROTATING_TUILE){
+                Coordonnee coordonnee = model.getTuileCourant().getLocationInGridTuile();
+                model.getPlateau().removeTuileBrutForce(coordonnee);
+                        
+                Tuile tuileTmp = model.getTuileCourant();
+                tuileTmp.rotate();
+                model.setTuileCourante(tuileTmp);
+                model.getPlateau().placeTuileBrutForce( model.getTuileCourant(), coordonnee );
+                repaint();
+            }
+        });
+        tableauDeBord.boutonRotationAntiHoraire.addActionListener(e->{
+            if(model.getJeuEtat()==JeuEtat.ROTATING_TUILE){
+                Coordonnee coordonnee = model.getTuileCourant().getLocationInGridTuile();
+                model.getPlateau().removeTuileBrutForce(coordonnee);
+                repaint();
+                        
+                Tuile tuileTmp = model.getTuileCourant();
+                //sens horaire inverse
+                        //-1 mod 3 = 2 (fois)
+                        tuileTmp.rotate();
+                tuileTmp.rotate();
+                model.setTuileCourante(tuileTmp);
+                 model.getPlateau().placeTuileBrutForce( model.getTuileCourant(), coordonnee );
+                repaint();
+            }
+        });
         JPanel vueComplete=new JPanel(new BorderLayout());
+        vueComplete.setBackground(new Color(61, 58, 58));
         vueComplete.add(plateau, BorderLayout.CENTER);
         vueComplete.add(tableauDeBord,BorderLayout.LINE_END);
         Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
@@ -74,11 +117,13 @@ public class InterfaceDeJeu extends JFrame implements KeyListener{
      */
      
     public void creerPlateau() {
+        
         while(true){
             //for(int i=0; i<model.getJoueurs().size(); i++) System.out.println("affiche joueurs:"+model.getJoueurs().get(i));
             for(int i=0; i<model.getJoueurs().size(); i++){
                 //controleur.rotationTmp=0;
                 model.setJoueurCourant(model.getJoueurs().get(i));
+                tableauDeBord.setJoueurCourant("<html><h2>Création du plateau</h2></html>");
                 System.out.println("joueur courant:"+model.getJoueurCourant());//debug
                 //TODO: afficher l'information du joueur courant
                
@@ -89,14 +134,14 @@ public class InterfaceDeJeu extends JFrame implements KeyListener{
                 //    controleur.controlIA();
                 //}
                 
-                afficherInstruction("<html> S/F pour chosir la location de cette tuile.<br> R pour placer un temple.<br> ESPACE pour confirmer</html>");
+                afficherInstruction("S/F pour chosir la location de cette tuile.<br>   R pour placer un temple.<br>   ESPACE pour confirmer");
                 locationsPossibles = afficherPossibleTuilePosition();
                 indexChoisi=0;
 
                 Coordonnee ancienneTuileCoordonnee = model.getTuileCourant().getLocationInGridTuile();
                 ArrayList<Coordonnee> emplacementsPossibles = model.getPlateau().canPlaceLocations(ancienneTuileCoordonnee);
                 System.out.println("il y a "+model.getSac().size()+" tuiles dans le sac.");
-                tableauDeBord.pioche.setText("<html>il y a "+model.getSac().size()+" tuiles dans le sac.</html>");
+                tableauDeBord.pioche.setText("il y a "+model.getSac().size()+" tuiles dans le sac.");
                 if(model.getSac().size()>0){
                     model.setTuileCourante(model.piocher());
                 }
@@ -116,18 +161,23 @@ public class InterfaceDeJeu extends JFrame implements KeyListener{
                 repaint();
                 //waiting
                 while(model.getJeuEtat()!=JeuEtat.CONTINUE){
+                    
                     System.out.print("");
                 }
 
                 System.out.println("ready to update the info of player");//debug
                 
                 model.setJeuEtat(JeuEtat.CHOOSING_TUILE_LOCATION);
+                
             }
             if(model.getSac().size()==0 && model.getSacTemples().size()==0){
                 tableauDeBord.pioche.setText("");
                 break;
             }
         }
+        tableauDeBord.boutonRotationAntiHoraire.setVisible(false);
+        tableauDeBord.boutonRotationHoraire.setVisible(false);
+        
     }
                                    
     /**
@@ -142,8 +192,16 @@ public class InterfaceDeJeu extends JFrame implements KeyListener{
             model.setJeuEtat(JeuEtat.PLACING_START_PION);
             // waiting
             while (!model.allPionsPlaced()){
+                //on désactive le zoom et le dézoom car sinon les cerlces ne sont pas centrés
+                tableauDeBord.boutonZoom.setEnabled(false);
+                tableauDeBord.boutonDezoom.setEnabled(false);
+                tableauDeBord.setJoueurCourant("<html><h2>Placement des pions</h2></html>");
+                afficherInstruction("Placez vos pions sur le plateau en cliquant sur les cercles noirs.");
                 System.out.println("");
             }
+            //on reactive zoom et dezoom
+            tableauDeBord.boutonZoom.setEnabled(true);
+            tableauDeBord.boutonDezoom.setEnabled(true);
         }
 
 
@@ -154,7 +212,7 @@ public class InterfaceDeJeu extends JFrame implements KeyListener{
                 System.out.println("current player changed!");//debug
                 model.setJoueurCourant(model.getJoueurs().get(i));
                 System.out.println(model.getJoueurCourant());//debug
-                tableauDeBord.setJoueurCourant("<html>joueur courant:<br>"+model.getJoueurCourant()+"</html>");
+                tableauDeBord.setJoueurCourant("<html>"+model.getJoueurCourant()+"</html>");
                 repaint();
                 //TODO: afficher l'information du joueur courant
                 //validate();
@@ -254,6 +312,7 @@ public class InterfaceDeJeu extends JFrame implements KeyListener{
     public void afficherInstruction(String str){
         System.out.println(str);//debug
         //TODO
+        str="<html> <div>"+str+"</div></html>";
         tableauDeBord.setEtapeCourante(str);
     }
     
@@ -366,16 +425,20 @@ public class InterfaceDeJeu extends JFrame implements KeyListener{
                         model.getPlateau().removeTuileBrutForce(model.getTuileCourant().getLocationInGridTuile());      // On enlève la tuile courante du plateau
                         if(model.getPlateau().placeTuileContraint(model.getTuileCourant(), model.getTuileCourant().getLocationInGridTuile())){  // Et on tente de la replacer, mais avec les contraintes
                             model.setJeuEtat(JeuEtat.ROTATING_TUILE);                                                                           // Si la tuile se place, on passe à la rotation
-                            afficherInstruction("Tappez 鈫鈫pour tourner la tuile. Tappez SPACE pour v茅rifier la choix.");
+                            afficherInstruction("utilisez les boutons pour la rotation de la tuile<br>Tappez SPACE pour confirmer");
+                            tableauDeBord.boutonRotationAntiHoraire.setEnabled(true);
+                            tableauDeBord.boutonRotationHoraire.setEnabled(true);
                         }
                         else{                                                                                                                   // Sinon, on reste sur le deplacement de tuile
                             model.getPlateau().placeTuileForce(model.getTuileCourant(),model.getTuileCourant().getLocationInGridTuile());
+                            tableauDeBord.boutonRotationAntiHoraire.setEnabled(false);
+                            tableauDeBord.boutonRotationHoraire.setEnabled(false);
                         }
                     }
                     else if(model.getJeuEtat()==JeuEtat.ROTATING_TUILE){
                         //TODO:programmez ici pour effacer tous les cercles
                         model.setJeuEtat(JeuEtat.CONTINUE);
-                        afficherInstruction("Tappez 鈫鈫pour chosir un pion 脿 d茅placer. Tappez SPACE pour v茅rifier la choix ou passer votre tour.");
+                        //afficherInstruction("Tappez 鈫鈫pour chosir un pion à déplacer. Tappez SPACE pour confirmer.");
                     }
                     //else if(model.getJeuEtat()==JeuEtat.CHOOSING_PION){
                     //    //TODO:programmez ici pour effacer tous les cercles
@@ -421,6 +484,7 @@ public class InterfaceDeJeu extends JFrame implements KeyListener{
                     break;
             }
         }
+        
         //if( e.getKeyCode() == KeyEvent.VK_ENTER){}
         //else if ( e.getKeyCode()==KeyEvent.VK_RIGHT ){}
         //else if ( e.getKeyCode()==KeyEvent.VK_LEFT ){}
@@ -450,8 +514,8 @@ public class InterfaceDeJeu extends JFrame implements KeyListener{
     }
 
     public static void main(String[] args) throws IOException {
-        Jeu model =  new Jeu(0, 2, MapEtat.MAP1_2P);
-        //Jeu model =  new Jeu(2, 0, MapEtat.MAP1_2P);
+       // Jeu model =  new Jeu(2, 0, MapEtat.MANUEL);
+        Jeu model =  new Jeu(2, 0, MapEtat.MAP1_2P);
         InterfaceDeJeu jeuVue = new InterfaceDeJeu(model);
         System.out.println("from main: mapsetting: "+model.getMapEtat());
         jeuVue.lancer();
@@ -466,8 +530,8 @@ class CustomScrollBarUI extends BasicScrollBarUI{
 @Override
 protected void configureScrollBarColors() {
  
-    super.thumbColor = Color.black;
-    super.trackColor = Color.WHITE;
+    super.thumbColor = Color.BLACK;
+    super.trackColor = new Color(61, 58, 58);
 
 }
 @Override

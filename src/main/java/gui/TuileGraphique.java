@@ -209,19 +209,19 @@ public class TuileGraphique extends Polygon {
     private void drawLineColor(Graphics g, Couleurs c, int x1, int y1, int x2, int y2){
         g.setColor(Color.BLACK);
         ((Graphics2D) g).setStroke(new BasicStroke(radius/6));
-        g.drawLine(x1, y1, x2, y2);
+        //g.drawLine(x1, y1, x2, y2);
         switch (c) {
             case ROUGE:
                 g.setColor(Color.RED);
                 break;
             case ORANGE:
-                g.setColor(Color.ORANGE);
+                g.setColor(new Color(255, 166, 77));
                 break;
             case VERT:
-                g.setColor(Color.GREEN);
+                g.setColor(new Color(147, 255, 84));
                 break;
         }
-        ((Graphics2D) g).setStroke(new BasicStroke(radius/8));
+        ((Graphics2D) g).setStroke(new BasicStroke(radius/10));
         g.drawLine(x1, y1, x2, y2);
     }
 
@@ -250,9 +250,10 @@ public class TuileGraphique extends Polygon {
         for (int i = 0; i < 3; i++){
             this.addPoint(droite[i].x,droite[i].y);
         }
-        g.setColor(color);
+        GradientPaint gradient = new GradientPaint(this.getBounds().x,this.getBounds().y,color,this.getBounds().x+5*radius,this.getBounds().y,new Color(166, 172, 173));
+        g.setPaint(gradient);
+        //g.setColor(color);
         g.fillPolygon(this);
-
         // On trace les portes
         drawLineColor(g, tuile.getHexagoneCentral().getPortes()[2], this.xpoints[0], this.ypoints[0], centreBas.x, centreBas.y);
         drawLineColor(g, tuile.getHexagoneCentral().getPortes()[3], this.xpoints[5], this.ypoints[5], centreBas.x, centreBas.y);
@@ -268,14 +269,15 @@ public class TuileGraphique extends Polygon {
 
         // On trace les bordures noires ici
         g.setColor(Color.BLACK);
-        for (int i = 0; i < this.npoints; i++) {
+        
+       /* for (int i = 0; i < this.npoints; i++) {
             if(i == this.npoints - 1){
                 g.drawLine(this.xpoints[i], this.ypoints[i], this.xpoints[0], this.ypoints[0]);
             }
             else{
                 g.drawLine(this.xpoints[i], this.ypoints[i], this.xpoints[i+1], this.ypoints[i+1]);
             }
-        }
+        }*/
 
         ((Graphics2D) g).setStroke(new BasicStroke());  // On remet l'épaisseur des traits à sa valeur d'origine
 
