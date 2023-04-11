@@ -160,6 +160,7 @@ public class Jeu implements MapCreation {
      * @return -> true s'il a atteint un temple adverse, false sinon
      */
     public boolean aGagne(Joueur j){
+        System.out.println("inside aGagne");
         for (Pion p : j.getPions()){            // On regarde chaque pion du joueur
             if(p.getLocation() != null){        // On vérifie que le pion est placé
                 Hexagone emplacement = plateau.getGridHexagone().get(p.getLocation());        // On regarde sur quel hexagone le pion est posé

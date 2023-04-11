@@ -89,7 +89,8 @@ public class State implements Serializable{
             
             //check if is game over
             if(jeu.aGagne(jeu.getJoueurCourant())){
-                jeu.setJeuEtat(JeuEtat.GAME_OVER);
+                System.out.println("joueur IA"+jeu.getJoueurCourant()+" a gagne");
+                jeu.gameOver();
             }
         }
     }
