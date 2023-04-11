@@ -53,6 +53,7 @@ public class InterfaceDeJeu extends JFrame implements KeyListener, Runnable {
         tableauDeBord=new TableauDeBord(model);
         tableauDeBord.boutonQuitter.addActionListener(e->{
             this.dispose();
+            model.setJeuEtat(JeuEtat.GAME_INTERRUPT);
         });
         tableauDeBord.boutonZoom.addActionListener(e->{
             TuileGraphique.zoom(GridTuile.DISTANCE_ZOOM);
@@ -123,7 +124,7 @@ public class InterfaceDeJeu extends JFrame implements KeyListener, Runnable {
      
     public void creerPlateau() {
         
-        while(true){
+        while(model.getJeuEtat() != JeuEtat.GAME_INTERRUPT){
             //for(int i=0; i<model.getJoueurs().size(); i++) System.out.println("affiche joueurs:"+model.getJoueurs().get(i));
             for(int i=0; i<model.getJoueurs().size(); i++){
                 //controleur.rotationTmp=0;
@@ -169,7 +170,9 @@ public class InterfaceDeJeu extends JFrame implements KeyListener, Runnable {
                 
                 //waiting
                 while(model.getJeuEtat()!=JeuEtat.CONTINUE){
-                    
+                    if(model.getJeuEtat() == JeuEtat.GAME_INTERRUPT){
+                        return;
+                    }
                     System.out.print("");
                 }
 
@@ -200,6 +203,7 @@ public class InterfaceDeJeu extends JFrame implements KeyListener, Runnable {
             model.setJeuEtat(JeuEtat.PLACING_START_PION);
             // waiting
             while (!model.allPionsPlaced()){
+                if(model.getJeuEtat() == JeuEtat.GAME_INTERRUPT){return;}
                 //on désactive le zoom et le dézoom car sinon les cerlces ne sont pas centrés
                 tableauDeBord.boutonZoom.setEnabled(false);
                 tableauDeBord.boutonDezoom.setEnabled(false);
@@ -213,7 +217,7 @@ public class InterfaceDeJeu extends JFrame implements KeyListener, Runnable {
         }
 
 
-        while(model.getJeuEtat()!=JeuEtat.GAME_OVER){
+        while(model.getJeuEtat()!=JeuEtat.GAME_OVER && model.getJeuEtat() != JeuEtat.GAME_INTERRUPT){
             
             //for(int i=0; i<model.getJoueurs().size(); i++) System.out.println("affiche joueurs:"+model.getJoueurs().get(i));
             for(int i=0; i<model.getJoueurs().size(); i++){
@@ -221,7 +225,7 @@ public class InterfaceDeJeu extends JFrame implements KeyListener, Runnable {
                 System.out.println("current player changed!");//debug
                 model.setJoueurCourant(model.getJoueurs().get(i));
                 System.out.println(model.getJoueurCourant());//debug
-                tableauDeBord.setJoueurCourant("<html>"+model.getJoueurCourant().getID()+"</html>");
+                tableauDeBord.setJoueurCourant("<html> Joueur "+(model.getJoueurCourant().getID()+1)+"</html>");
                 SwingUtilities.invokeLater(() -> {
                     repaint();
                 });
@@ -280,6 +284,7 @@ public class InterfaceDeJeu extends JFrame implements KeyListener, Runnable {
                     indexChoisi=0;
                     //waiting
                     while(model.getJeuEtat()!=JeuEtat.CONTINUE){
+                        if(model.getJeuEtat() == JeuEtat.GAME_INTERRUPT){return;}
                         System.out.print("");
                     }
     
@@ -289,6 +294,7 @@ public class InterfaceDeJeu extends JFrame implements KeyListener, Runnable {
                     //indexChoisi=0;
                     //waiting
                     while(model.getJeuEtat()!=JeuEtat.CONTINUE){
+                        if(model.getJeuEtat() == JeuEtat.GAME_INTERRUPT){return;}
                         System.out.print("");
                     }
                        
@@ -299,6 +305,7 @@ public class InterfaceDeJeu extends JFrame implements KeyListener, Runnable {
                         //indexChoisi=0;
                         //waiting
                         while(model.getJeuEtat()!=JeuEtat.CONTINUE){
+                            if(model.getJeuEtat() == JeuEtat.GAME_INTERRUPT){return;}
                             System.out.print("");
                         }
                     }
