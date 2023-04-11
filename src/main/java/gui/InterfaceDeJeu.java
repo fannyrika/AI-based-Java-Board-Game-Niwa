@@ -661,16 +661,16 @@ protected void configureScrollBarColors() {
         }
         
 
-        /*
+        
         //test 2: 1 joueur humain vs 1 joueur IA
-        Jeu model =  new Jeu(1, 1, MapEtat.MAP1_2P);
-        InterfaceDeJeu jeuVue = new InterfaceDeJeu(model);
-        jeuVue.lancer();
-        */
+        //Jeu model =  new Jeu(1, 1, MapEtat.MAP1_2P, 10);
+        //InterfaceDeJeu jeuVue = new InterfaceDeJeu(model);
+        //jeuVue.lancer();
+        
 
         /*
         //test 3: 2 joueurs humains
-        Jeu model =  new Jeu(2, 0, MapEtat.MAP1_2P);
+        Jeu model =  new Jeu(2, 0, MapEtat.MAP1_2P, 10);
         InterfaceDeJeu jeuVue = new InterfaceDeJeu(model);
         jeuVue.lancer();
         */

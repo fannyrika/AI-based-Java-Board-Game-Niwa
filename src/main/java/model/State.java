@@ -84,8 +84,13 @@ public class State implements Serializable{
             pionReal.clear();
             pionReal.addAll(pionVirtual);
             //verify if the update is correct
-            System.out.println("pionReal: "+pionReal);
-            System.out.println("pionVirtual: "+pionVirtual);
+            //System.out.println("pionReal: "+pionReal);
+            //System.out.println("pionVirtual: "+pionVirtual);
+            
+            //check if is game over
+            if(jeu.aGagne(jeu.getJoueurCourant())){
+                jeu.setJeuEtat(JeuEtat.GAME_OVER);
+            }
         }
     }
 
