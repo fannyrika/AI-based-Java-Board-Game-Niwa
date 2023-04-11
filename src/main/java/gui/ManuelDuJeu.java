@@ -30,7 +30,7 @@ public class ManuelDuJeu extends JFrame{
         
         editorPane.setOpaque(false);
         editorPane.setEditable(false);
-        try (BufferedReader reader = new BufferedReader(new FileReader("2022-ed2-g2--niwa/src/ManuelDuJeuFR.html"))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader("src/ManuelDuJeuFR.html"))) {
             editorPane.read(reader, null);
             reader.close();
         } catch (IOException e) {
