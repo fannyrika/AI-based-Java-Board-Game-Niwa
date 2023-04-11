@@ -4,8 +4,9 @@ import main.java.model.MapEtat;
 
 public class StockageSettings {
     
-    public static int NB_JOUEURS;
-    public static int NB_IA = 0;
+    public static int NB_JOUEURS_TOTAL;
+    public static int NB_HUMAIN;
+    public static int NB_IA;
     public static int NB_TUILES;
     public static MapEtat MAP_ETAT;
 

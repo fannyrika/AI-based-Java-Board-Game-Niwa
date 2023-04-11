@@ -213,7 +213,7 @@ public class Jeu implements MapCreation {
                 }
             }
         }
-        if(joueurs.size()==2){
+        if(joueurs.size()==1){
             jeuEtat=JeuEtat.GAME_OVER;
         }
     }

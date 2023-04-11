@@ -23,6 +23,7 @@ public class JouerButton extends JFrame implements ActionListener, Runnable {
     JPanel conteneur;
     JButton btn;
     JRadioButton manuelButton, autoButton, j2, j4;
+    JCheckBox p1, p2, p3, p4;
     JTextField nmbJoueur;
     JLabel background;
     static File imageFile = new File(StockageSettings.bg_parametreNiwa);
@@ -50,12 +51,52 @@ public class JouerButton extends JFrame implements ActionListener, Runnable {
         //Permet de selectionner un seul choix(JRadioButton) � la foix
         ButtonGroup buttonGroup = new ButtonGroup();
         ButtonGroup buttonGroup2 = new ButtonGroup();
+        ButtonGroup buttonGroup3 = new ButtonGroup();
        
         //Choisir le nombre de joueurs 2 ou 4
         JLabel label0 = new JLabel("  N O M B R E   J O U E U R S    : ", JLabel.CENTER);
         label0.setFont(new Font("Congenial Black", Font.BOLD, 15));
         j2 = new JRadioButton("2");
         j4 = new JRadioButton("4");
+
+        JLabel labelBot = new JLabel(" N O M B R E   D E   B O T S    : ",JLabel.CENTER);
+        labelBot.setFont(new Font("Congenial Black", Font.BOLD, 15));
+        p1 = new JCheckBox("J1");
+        p2 = new JCheckBox("J2");
+        p3 = new JCheckBox("J3");
+        p4 = new JCheckBox("J4");
+
+        conteneur3.add(labelBot);
+        conteneur3.add(p1);
+        conteneur3.add(p2);
+        conteneur3.add(p3);
+        conteneur3.add(p4);
+
+        labelBot.setVisible(false);
+        p1.setVisible(false);
+        p2.setVisible(false);
+        p3.setVisible(false);
+        p4.setVisible(false);
+
+        j2.addActionListener(e -> {
+            labelBot.setVisible(true);
+            p1.setVisible(true);
+            p2.setVisible(true);
+            p3.setVisible(false);
+            p4.setVisible(false);
+
+            p3.setSelected(false);
+            p4.setSelected(false);
+        });
+
+        j4.addActionListener(e -> {
+            labelBot.setVisible(true);
+            p1.setVisible(true);
+            p2.setVisible(true);
+            p3.setVisible(true);
+            p4.setVisible(true);
+        });
+
         buttonGroup.add(j2);
         buttonGroup.add(j4);
         conteneur1.add(label0);
@@ -93,18 +134,25 @@ public class JouerButton extends JFrame implements ActionListener, Runnable {
 
             else{
                 this.dispose();
-                StockageSettings.NB_JOUEURS = j2.isSelected() ? 2 : 4;
+                StockageSettings.NB_JOUEURS_TOTAL = j2.isSelected() ? 2 : 4;
+                StockageSettings.NB_IA = 0;
+                if(p1.isSelected()){StockageSettings.NB_IA += 1;}
+                if(p2.isSelected()){StockageSettings.NB_IA += 1;}
+                if(p3.isSelected()){StockageSettings.NB_IA += 1;}
+                if(p4.isSelected()){StockageSettings.NB_IA += 1;}
+                StockageSettings.NB_HUMAIN = StockageSettings.NB_JOUEURS_TOTAL-StockageSettings.NB_IA;
                 StockageSettings.MAP_ETAT = manuelButton.isSelected() ? MapEtat.MANUEL : null;
                 ValiderButton pageSuivante = new ValiderButton();
                 pageSuivante.start();
             }
         });
-        conteneur3.add(suivant);
+        conteneur4.add(suivant);
 
       //On ajoute tous les conteneur � la fenetre
         conteneur0.add(conteneur1);
         conteneur0.add(conteneur2);
         conteneur0.add(conteneur3);
+        conteneur0.add(conteneur4);
         background.add(conteneur0);
         add(background);
 
@@ -128,6 +176,6 @@ public class JouerButton extends JFrame implements ActionListener, Runnable {
     }
 
     public static void main(String[] args) {
-        new JouerButton();
+        new JouerButton().start();;
     }
 }

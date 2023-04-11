@@ -86,7 +86,7 @@ public class ValiderButton extends JFrame implements ActionListener, Runnable {
                     JOptionPane.showMessageDialog(this, "Veuillez chosir une map : ");
                 } 
                 else {
-                    if(StockageSettings.NB_JOUEURS + StockageSettings.NB_IA == 2){
+                    if(StockageSettings.NB_JOUEURS_TOTAL == 2){
                         StockageSettings.MAP_ETAT = map1.isSelected() ? MapEtat.MAP1_2P : MapEtat.MAP2_2P;
                     }
                     else{
@@ -115,7 +115,7 @@ public class ValiderButton extends JFrame implements ActionListener, Runnable {
     }
 
     private static void lancerPartie() {
-        Jeu model = new Jeu(StockageSettings.NB_JOUEURS, StockageSettings.NB_IA, StockageSettings.MAP_ETAT, StockageSettings.NB_TUILES);
+        Jeu model = new Jeu(StockageSettings.NB_HUMAIN, StockageSettings.NB_IA, StockageSettings.MAP_ETAT, StockageSettings.NB_TUILES);
         InterfaceDeJeu interfaceDeJeu = new InterfaceDeJeu(model);
         interfaceDeJeu.start();
     }
@@ -131,9 +131,5 @@ public class ValiderButton extends JFrame implements ActionListener, Runnable {
             t = new Thread(this,threadName);
             t.start();
         }
-    }
-
-    public static void main(String[] args) {
-        new JouerButton();
     }
 }
