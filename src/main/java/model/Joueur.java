@@ -18,7 +18,6 @@ public class Joueur implements Cloneable{
 
     protected static int ID_STATIC = 0;
     protected int id;
-    protected String nom="";
 
     /**
      * Attributs permettant de définir un joueur
@@ -33,12 +32,12 @@ public class Joueur implements Cloneable{
     protected Couleurs perleOrphelin;
 
     public int getID(){return id;}
+    public void setID(int i){id=i;}
 
     /**
      * Constructeur sans argument, permettant d'initialiser un joueur
      */
-    public Joueur(String n){
-        nom=n;
+    public Joueur(){
         this.id = ID_STATIC;
         ID_STATIC++;
         this.temple = new TuileTemple(this);
@@ -54,6 +53,7 @@ public class Joueur implements Cloneable{
     private void initalisePions(){
         for (int i = 0; i < MAX_PIONS; i++) {
             Pion p = new Pion(this);
+            p.setID(i);
             for (int j = 0; j < NB_PEARLS_AT_START; j++) {
                 p.add(Couleurs.values()[i%Couleurs.values().length]);   
             }
@@ -66,6 +66,9 @@ public class Joueur implements Cloneable{
         str+="nom:"+nom+" ";
         str+="id="+id+" ";*/
        /* for(int i=0; i<pions.size(); i++){
+        String str="";
+        str+="id="+id+" ";
+        for(int i=0; i<pions.size(); i++){
             str+=pions.get(i).toString();
             str+=" ";
         }*/
@@ -97,11 +100,12 @@ public class Joueur implements Cloneable{
 
     //test all the functions
     public static void main(String[] args) {
-        Joueur j0 = new Joueur("j0");
-        Joueur j1 = new Joueur("j1");
-        Joueur j2 = new Joueur("j2");
+        Joueur j0 = new Joueur();
+        Joueur j1 = new Joueur();
+        Joueur j2 = new Joueur();
         System.out.println(j0);
         System.out.println(j1);
         System.out.println(j2);
     }
+
 }

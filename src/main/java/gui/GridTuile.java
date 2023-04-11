@@ -47,6 +47,12 @@ public class GridTuile extends JPanel implements KeyListener, MouseInputListener
     protected ArrayList<Circle> circlesToDraw = new ArrayList<Circle>(); 
 
     /**
+     * Pour le debogage, sert à montrer les coordonnées des hexagones en direct
+     */
+    protected static final boolean showCoord = false;
+
+
+    /**
      * Constructeur
      * @param m
      */
@@ -60,7 +66,10 @@ public class GridTuile extends JPanel implements KeyListener, MouseInputListener
                 GridTuile.dx = 0;
                 GridTuile.dy = 0;
                 screen = GridTuile.this.getSize();
-                repaint();
+                SwingUtilities.invokeLater(() -> {
+                    repaint();
+                });
+                
             }
         });
         //pour voir le plateau entier
@@ -109,6 +118,10 @@ public class GridTuile extends JPanel implements KeyListener, MouseInputListener
         // On parcours tous les pions sur le plateau, pour ainsi les dessiner
         HashMap<Coordonnee,Pion> pionMapCopy = (HashMap<Coordonnee, Pion>) model.getPlateau().getGridPion().clone();
         for (Pion p : pionMapCopy.values()){
+            if(p == null){
+                System.out.println("Pion null");
+                continue;
+            }
             PionGraphique pionG = new PionGraphique(p);
             pionG.draw(mainGraphics);
         }
@@ -116,6 +129,13 @@ public class GridTuile extends JPanel implements KeyListener, MouseInputListener
         for (Circle c : circlesToDraw) {
             if(c != null){
                 c.draw(mainGraphics);
+            }
+        }
+
+        // Pour le debogage
+        if(showCoord){
+            for (Circle c : allCircles.values()) {
+                mainGraphics.drawString("("+c.locationInGridHexagone.getX()+","+c.locationInGridHexagone.getY()+")", c.x, c.y);
             }
         }
     }
@@ -158,7 +178,10 @@ public class GridTuile extends JPanel implements KeyListener, MouseInputListener
             default:
                 break;
         }}
-        repaint();
+        SwingUtilities.invokeLater(() -> {
+            repaint();
+        });
+        
     }
 
     @Override
@@ -209,7 +232,10 @@ public class GridTuile extends JPanel implements KeyListener, MouseInputListener
                                     for (Coordonnee coordonnee : locationsPossible) {
                                         circlesToDraw.add(allCircles.get(coordonnee));
                                     }
-                                    repaint();
+                                    SwingUtilities.invokeLater(() -> {
+                                        repaint();
+                                    });
+                                    
                                     model.setJeuEtat(JeuEtat.CONTINUE);
                                 }
                             }
@@ -222,7 +248,11 @@ public class GridTuile extends JPanel implements KeyListener, MouseInputListener
                                 model.getPlateau().placerPionForce(model.getPionCourant(), c.getLocationInGridHexagone());
                                 model.getPionCourant().setLocation(c.getLocationInGridHexagone());
                                 circlesToDraw.clear();
-                                repaint();
+                                model.verifyIfPlayerBlocked();
+                                SwingUtilities.invokeLater(() -> {
+                                    repaint();
+                                });
+                                
 
                                 //Après que le pion a été déplacer, on check si le joueur courant a gagne
                                 System.out.println("checking if player won");
@@ -244,7 +274,10 @@ public class GridTuile extends JPanel implements KeyListener, MouseInputListener
             
                                         model.getPlateau().getGridPion().remove(model.getPionCourant().getLocation());
                                         model.getPlateau().placerPionForce(model.getPionCourant(), model.getPionCourant().getLocation());
-                                        repaint();
+                                        SwingUtilities.invokeLater(() -> {
+                                            repaint();
+                                        });
+                                        
             
                                         model.setJeuEtat(JeuEtat.CONTINUE);
                                     }
@@ -275,7 +308,10 @@ public class GridTuile extends JPanel implements KeyListener, MouseInputListener
         for (Coordonnee coordonnee : autourTemples) {
             circlesToDraw.add(allCircles.get(coordonnee));
         }
-        repaint();
+        SwingUtilities.invokeLater(() -> {
+            repaint();
+        });
+        
     }
     
 
@@ -343,4 +379,11 @@ public class GridTuile extends JPanel implements KeyListener, MouseInputListener
 	public void addCircle(Coordonnee moveDirection) {
         circlesToDraw.add(allCircles.get(moveDirection));
 	}
+
+    /**
+     * method: clear the arraylist :allCircles
+     */
+    public void clearAllCircles(){
+        allCircles.clear();
+    }
 }

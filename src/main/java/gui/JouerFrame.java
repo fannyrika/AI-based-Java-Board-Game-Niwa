@@ -1,104 +1,129 @@
 package main.java.gui;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 
 import javax.swing.JFrame;
 
 import main.java.model.*;
 
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.*;
+import javax.swing.*;
+import javax.swing.border.LineBorder;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
-public class JouerFrame extends JFrame{
-    boolean isWaitingToClick=true;
-    //private JTextField nomJeu, nom1, nom2, nom3, nom4, type1, type2, type3, type4;
-    protected JLabel nomJeu=new JLabel("NIWA");
-    protected JTextField nom1, nom2, nom3, nom4;
-    protected ArrayList<TuileTemple> sacTemples = new ArrayList<TuileTemple>();
-    public JouerFrame() throws IOException{
-        //this.setSize(1800, 800);
-        this.setDefaultCloseOperation(EXIT_ON_CLOSE);
-        this.setExtendedState(JFrame.MAXIMIZED_BOTH);
-        ArrayList<Joueur> joueurs=new ArrayList<Joueur>();
-        JPanel panel0 = new JPanel();
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
 
-        //nomJeu = new JTextField("CARCASSONNE");
-        nom1 = new JTextField("JOUEUR1");
-        nom2 = new JTextField("JOUEUR2");
-        nom3 = new JTextField("JOUEUR3");
-        nom4 = new JTextField("JOUEUR4");
-        //type1 = new JTextField("HUMAIN");
-        //type2 = new JTextField("HUMAIN");
-        //type3 = new JTextField("HUMAIN");
-        //type4 = new JTextField("HUMAIN");
+public class JouerFrame extends JFrame implements Runnable {
 
-        panel0.add(nomJeu);
-        this.add(panel0);
+    public Thread t;
+    public static final String threadName = "Thread_JF";
 
-        JPanel panel1=new JPanel();
-        panel1.add(nom1);
+    protected JButton jouerButton, validerButton, quitterButton, optionButton;
 
-        JPanel panel2=new JPanel();
-        panel2.add(nom2);
 
-        JPanel panel3=new JPanel();
-        panel3.add(nom3);
+    /**
+     * 
+     * @param imageFile
+     * @throws IOException
+     */
+    public JouerFrame() throws IOException {
+    	
+    	//Fonctions permettant l'affichage correcte de la fenetre 
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
+        setTitle("MENU NIWA");
+        setLocationRelativeTo(null); // Pour centrer la fenetre
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
 
-        JPanel panel4=new JPanel();
-        panel4.add(nom4);
+        setLayout(new BorderLayout());
+        JLabel background = new JLabel(new ImageIcon(new File(StockageSettings.bg_photo6).getAbsolutePath()));
+        background.setLayout(new FlowLayout(FlowLayout.CENTER, 100, 350));
 
-        JButton valider=new JButton("VALIDER");
-
-        JPanel mainContainer=new JPanel();
-        mainContainer.setLayout(new BoxLayout(mainContainer, BoxLayout.Y_AXIS));
-        mainContainer.add(panel0);
-        mainContainer.add(panel1);
-        mainContainer.add(panel2);
-        mainContainer.add(panel3);
-        mainContainer.add(panel4);
-        mainContainer.add(valider);
-
-        this.add(mainContainer);
-        this.setVisible ( true );
-
-        
-        valider.addActionListener(e->{
-            this.validate();
-            this.repaint();
-            if(!nom1.getText().equals("")){
-                Joueur j = new Joueur(nom1.getText());
-                joueurs.add(j);
-                sacTemples.add(j.getTemple());   // On ajoute chaque temple dans la liste des temples
-            }
-            if(!nom2.getText().equals("")){
-                Joueur j = new Joueur(nom2.getText());
-                joueurs.add(j);
-                sacTemples.add(j.getTemple());   // On ajoute chaque temple dans la liste des temples
-            }
-            if(!nom3.getText().equals("")){
-                Joueur j = new Joueur(nom3.getText());
-                joueurs.add(j);
-                sacTemples.add(j.getTemple());   // On ajoute chaque temple dans la liste des temples
-            }
-            if(!nom4.getText().equals("")){
-                Joueur j = new Joueur(nom4.getText());
-                joueurs.add(j);
-                sacTemples.add(j.getTemple());   // On ajoute chaque temple dans la liste des temples
-            }
-            isWaitingToClick=false;
-            
-        });
-        while(isWaitingToClick){
-            System.out.print("");
-        }
-        if(joueurs.size() != 0){
+        // CREATION DES BOUTONS JOUER OPTIONS QUITTER
+        jouerButton = new JButton("J O U E R ");
+        jouerButton.setFont(new Font("Congenial Black", Font.BOLD, 15));
+        jouerButton.setPreferredSize(new Dimension(120, 50));
+        jouerButton.setFocusable(false);
+        jouerButton.setForeground(Color.ORANGE);
+        jouerButton.setBackground(Color.WHITE);
+        jouerButton.setBorder(new LineBorder(Color.CYAN));
+        jouerButton.addActionListener(e -> {
             this.dispose();
-            Jeu model=new Jeu(joueurs, sacTemples);
-            new Launcher(model);
+            //Passage a la page suivante pour que le joueur effectue les choix du mode de jeux
+            JouerButton jouerButton = new JouerButton();
+            jouerButton.start();
+        });
+         
+        //Permettant � l'utilisateur de garder ou d'enlever la musique en arriere plan
+        optionButton = new JButton("O P T I O N S ");
+        optionButton.setFont(new Font("Congenial Black", Font.BOLD, 15));
+        optionButton.setPreferredSize(new Dimension(120, 50));
+        optionButton.setFocusable(false);
+        optionButton.setForeground(Color.ORANGE);
+        optionButton.setBackground(Color.WHITE);
+        optionButton.setBorder(new LineBorder(Color.CYAN));
+     
+        quitterButton = new JButton("Q U I T T E R");
+        quitterButton.setFont(new Font("Congenial Black", Font.BOLD, 15));
+        quitterButton.setPreferredSize(new Dimension(120, 50));
+        quitterButton.setFocusable(false);
+        quitterButton.setForeground(Color.ORANGE);
+        quitterButton.setBackground(Color.WHITE);
+        quitterButton.setBorder(new LineBorder(Color.CYAN));
+        quitterButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent event) {
+                System.exit(0);
+            }
+        });
+
+        background.add(jouerButton);
+        background.add(optionButton);
+        background.add(quitterButton);
+        add(background);
+
+    } 
+
+    @Override
+    public void run() {
+        this.pack();
+        this.setVisible(true);
+
+        // PARTIE AUDIO permettant le lancenment de la musique
+        InputStream inputStream = getClass().getClassLoader().getResourceAsStream(StockageSettings.niwaAudio);
+        AudioInputStream ais;
+        try {
+            ais = AudioSystem.getAudioInputStream(inputStream);
+            Clip clip = AudioSystem.getClip();
+            clip.open(ais);
+            clip.start();
+        } catch (Exception e) {
+            System.err.println("Problème au niveau du lancement du son...");
+            e.printStackTrace();
         }
     }
-    public static void main(String[] args) throws IOException {
-        new JouerFrame();
+
+    public void start(){
+        if(t == null){
+            t = new Thread(this,threadName);
+            t.start();
+        }
+    }
+
+    public static void main(String args[]) throws IOException{
+
+        JouerFrame frame = new JouerFrame();
+        frame.start();
+
     }
 
 }

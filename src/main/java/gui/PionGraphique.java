@@ -26,16 +26,27 @@ public class PionGraphique {
      * @param rayonTete la taille du rayon de la tete
      */
     public PionGraphique(Pion pion) {
+        if (pion == null) {
+            throw new IllegalArgumentException("Pion object cannot be null.");
+        }        
         int px = pion.getLocation().getX();
         int py = pion.getLocation().getY();
         Circle c = GridTuile.allCircles.get(new Coordonnee(px, py));
         //print px and py
         //System.out.println("px: " + px + " py: " + py);
-        this.x = c.getX()-TuileGraphique.radius/6;
-        this.y = c.getY()-TuileGraphique.radius/3;
-        this.pion = pion;
-        this.color = this.colorByID(pion.getProprietaire());
-        this.centre = new Point(x-rayonTete/2,y+rayonTete/2);
+        if(c==null){
+            System.out.println("c is null");
+            System.out.println("invalid position---px: " + px + " py: " + py);
+            throw new IllegalArgumentException("coordonnee cannot be null.");
+        }
+        else{
+            this.x = c.getX()-TuileGraphique.radius/6;
+            this.y = c.getY()-TuileGraphique.radius/3;
+            this.pion = pion;
+            this.color = this.colorByID(pion.getProprietaire());
+            this.centre = new Point(x-rayonTete/2,y+rayonTete/2);
+        }
+
         
     }
     
@@ -81,6 +92,10 @@ public class PionGraphique {
         g2.drawLine(x+rayonTete,y, x+rayonTete,y-2*rayonTete);
         g2.setStroke(new BasicStroke(rayonTete/10));
         //on récupère le nombre de perles puis on les dessine sur le baton
+        //if(pion == null){
+        //    System.out.println("pion is null");
+        //    return;
+        //}
         int numPerles=pion.size();
         for (int i = 0; i < numPerles; i++) {
             Color couleurPerle;

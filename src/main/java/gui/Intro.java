@@ -9,6 +9,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
+import javax.swing.SwingUtilities;
 
 import main.java.model.Joueur;
 import main.java.model.Pion;
@@ -58,7 +59,10 @@ public class Intro extends JPanel{
     thread.start();
 
     
-       repaint();
+    SwingUtilities.invokeLater(() -> {
+        repaint();
+    });
+    
     }   
     @Override
     protected void paintComponent(Graphics g) {

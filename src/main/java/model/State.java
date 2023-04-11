@@ -1,11 +1,12 @@
 package main.java.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  * Represents the state of the game: store all the info of the pions
  */
-public class State {
+public class State implements Serializable{
     //representes the state of the game: store all the info of the pions
     protected ArrayList<Pion> pions= new ArrayList<Pion>();
 
@@ -62,11 +63,13 @@ public class State {
         for (int i = 0; i < jeu.getJoueurCourant().getPions().size(); i++) {
             //print the 2 index
             //System.out.println("index in jeu: "+i);
-            System.out.println("index in state: "+(i+3*jeu.getJoueurCourant().getID()));
+            System.out.println("jeu.getJoueurCourant().getID():"+jeu.getJoueurCourant().getID());
+            System.out.println("jeu.getJoueurCourant().getPions().size():"+jeu.getJoueurCourant().getPions().size());
+            System.out.println("index in state: "+(i+jeu.getJoueurCourant().getPions().size()*jeu.getJoueurCourant().getID()));
             Pion pionReal=jeu.getJoueurCourant().getPions().get(i);
-            Pion pionVirtual=pions.get(i+3*jeu.getJoueurCourant().getID());
-            System.out.println("pionReal: "+pionReal);
-            System.out.println("pionVirtual: "+pionVirtual);
+            Pion pionVirtual=pions.get(i+jeu.getJoueurCourant().getPions().size()*jeu.getJoueurCourant().getID());
+            
+
             //throw exception if pionReal and pionVirtual are not the same
             if(pionReal.getID()!=pionVirtual.getID()){
                 //print the 2 id
@@ -80,6 +83,9 @@ public class State {
             //update the pearls
             pionReal.clear();
             pionReal.addAll(pionVirtual);
+            //verify if the update is correct
+            System.out.println("pionReal: "+pionReal);
+            System.out.println("pionVirtual: "+pionVirtual);
         }
     }
 

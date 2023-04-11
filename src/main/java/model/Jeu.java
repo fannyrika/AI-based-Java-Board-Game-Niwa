@@ -48,18 +48,6 @@ public class Jeu implements MapCreation {
      */
     protected MapEtat mapEtat;
     
-    //remplac�� par l'attribut id de joueur
-    /**
-     * Entier qui permettra de savoir à qui est le tour
-     * 
-     * @Exemple : 
-     * - tour = 0 -> joueur numéro 1 qui joue
-     * - tour = 1 -> joueur numéro 2 qui joue
-     * etc...
-     */
-    //protected int tour = 0;
-    
-    public static final int NB_TUILES = 3;
     /**
      * Représente le nombre de perles qu'un pion peut garder sur sa tête
      */
@@ -70,7 +58,8 @@ public class Jeu implements MapCreation {
      * 
      * @param nb_joueurs -> Le nombre de joueurs que le jeu pourra acueillir
      */
-    public Jeu(int nb_joueurs_humain, int nb_joueurs_ia, MapEtat map){
+    public Jeu(int nb_joueurs_humain, int nb_joueurs_ia, MapEtat map, int NB_TUILES){
+        Joueur.ID_STATIC = 0;
         mapEtat = map;
         if(map == MapEtat.MAP1_2P || map == MapEtat.MAP2_2P){initJoueurs(nb_joueurs_humain, 2-nb_joueurs_humain);}
         else if(map == MapEtat.MAP1_4P || map == MapEtat.MAP2_4P){initJoueurs(nb_joueurs_humain, 4-nb_joueurs_humain);}
@@ -78,7 +67,7 @@ public class Jeu implements MapCreation {
 
         joueurCourant = joueurs.get(0);
         pionCourant = joueurCourant.pions.get(0);
-        initSac(map);
+        initSac(map, NB_TUILES);
         initMap(this, map);
         //if there is 2 ai player training each other
         if(map==MapEtat.MAP1_2P && nb_joueurs_humain==0 && nb_joueurs_ia==2){
@@ -97,31 +86,19 @@ public class Jeu implements MapCreation {
             plateau.placerPionForce(joueurs.get(1).pions.get(2), new Coordonnee(-5,-1));
         }
     }
-
-    //to modify
-    public Jeu(ArrayList<Joueur> j, ArrayList<TuileTemple> s){
-        joueurs=j;
-        sacTemples=s;
-
-        joueurCourant = joueurs.get(0);
-        pionCourant = joueurCourant.pions.get(0);
-        initSac();
-        tuileCourante=sacTemples.get(0);
-        sacTemples.remove(0);
-        plateau.placeTuileForce(tuileCourante, 0, 0);
-    }
     
     public void initJoueurs(int nb_joueurs_humain, int nb_joueurs_ia){
         for (int i = 0; i < nb_joueurs_humain; i++) {
-            JoueurHumain j = new JoueurHumain("Joueur "+(i));
+            JoueurHumain j = new JoueurHumain();
             joueurs.add(j);             // On ajoute les joueurs dans la liste de joueurs
             sacTemples.add(j.temple);   // On ajoute chaque temple dans la liste des temples
         }
         for (int i = 0; i < nb_joueurs_ia; i++) {
-            JoueurIA j = new JoueurIA("Joueur "+(i+nb_joueurs_humain), 0.1, 0.5, 0.9);
+            JoueurIA j = new JoueurIA(0.1, 0.5, 0.9);
             joueurs.add(j);             // On ajoute les joueurs dans la liste de joueurs
             sacTemples.add(j.temple);   // On ajoute chaque temple dans la liste des temples
         }
+
     }
 
     /**
@@ -143,19 +120,12 @@ public class Jeu implements MapCreation {
      * Permet d'initialiser le sac de tuile
      * @param map -> permet de savoir combien de tuile il y a à créer (par rapport à une map par défaut, ou bien dans le cas ou la map est crée manuellement)
      */
-    public void initSac(MapEtat map){
+    public void initSac(MapEtat map, int NB_TUILES){
         if(map == MapEtat.MANUEL){
             for (int i = 0; i < NB_TUILES; i++) {
                 sac.add(new Tuile());
             }
         }
-    }
-
-    /**
-     * Permet d'initialiser le sac dans le cas ou le plateau doit être créer manuellement
-     */
-    public void initSac(){
-        initSac(MapEtat.MANUEL);
     }
       
     /**
@@ -195,6 +165,8 @@ public class Jeu implements MapCreation {
                 Hexagone emplacement = plateau.getGridHexagone().get(p.getLocation());        // On regarde sur quel hexagone le pion est posé
                 if(emplacement instanceof HexagoneCentral){                     // On vérifie qu'il est bien sur un hexagone central
                     if(((HexagoneCentral) emplacement).isTemple()){             // On vérifie que c'est un temple
+                        System.out.println("p.getLocation() = "+p.getLocation());
+                        System.out.println("j.temple.getLocationInGridHexagone() = "+j.temple.getLocationInGridHexagone());
                         if(!p.getLocation().equals(j.temple.getLocationInGridHexagone())){    // On exclue le cas où le pion est dans sa propre base
                             System.out.println("Le joueur "+j.id+" a gagné");
                             return true;
@@ -206,6 +178,27 @@ public class Jeu implements MapCreation {
         return false;
     }
 
+    public void verifyIfPlayerBlocked(){
+        System.out.println("------------------------");
+        System.out.println("verifyIfPlayerBlocked");
+        System.out.println("------------------------");
+        int nbBlockedPion = 0;
+        Pion pionCourant = getPionCourant();
+        for (Pion pionReal : getJoueurCourant().getPions()) {
+            setPionCourant(pionReal);
+            //case 1: pion is blocked
+            if (getPlateau().canMoveLocations(getPionCourant())==null){
+                System.out.println("Pion is blocked");
+                nbBlockedPion++;
+            }
+        }
+        //all pions are blocked
+        if (nbBlockedPion==getJoueurCourant().getPions().size()){
+            eliminerJoueur(getJoueurCourant());
+        }
+        setPionCourant(pionCourant);
+    }
+
     /**
      * method for eliminating a player
      * @return
@@ -214,8 +207,10 @@ public class Jeu implements MapCreation {
         joueurs.remove(loser);
         //eliminate the loser's pions on the board
         for (Pion p : loser.getPions()) {
-            if(p.getLocation()!=null){
-                plateau.removePion(p.getLocation());
+            if(p!= null){
+                if(p.getLocation()!=null){
+                    plateau.removePion(p.getLocation());
+                }
             }
         }
         if(joueurs.size()==2){
@@ -229,7 +224,7 @@ public class Jeu implements MapCreation {
      */
     public Coordonnee getOpponentBase(){
         //in the case of 2 players, just return the base of a different player
-        return joueurs.get(joueurCourant.id+1%2).getTemple().getLocationInGridHexagone();
+        return joueurs.get((joueurCourant.id+1)%2).getTemple().getLocationInGridHexagone();
     }
 
     public double getReward() {
@@ -240,23 +235,26 @@ public class Jeu implements MapCreation {
                 return -100.0; // If the current player loses, the reward is -100
             }
         } 
-        else return 0.0;
-        //else {
-        //    // Calculate the Manhattan distance between the current player's closest character and the opponent's base
-        //    double minDistance = Double.MAX_VALUE;
-        //    Coordonnee opponentBase = state.getOpponentBase();
-        //    for (Pion pion : state.getJoueurCourant().getPions()) {
-        //        if (pion.isPlaced()) {
-        //            Coordonnee pionLocation = pion.getLocation();
-        //            double distance = Math.abs(pionLocation.getX() - opponentBase.getX()) + Math.abs(pionLocation.getY() - opponentBase.getY());
-        //            minDistance = Math.min(minDistance, distance);
-        //        }
-        //    }
-        //
-        //    // Calculate the reward based on the distance
-        //    double reward = -0.01 * minDistance;
-        //    return reward;
-        //}
+        //else return 0.0;
+        else {
+            // Calculate the Manhattan distance between the current player's closest character and the opponent's base
+            double minDistance = Double.MAX_VALUE;
+            Coordonnee opponentBase = getOpponentBase();
+            //System.out.println("opponent base: " + opponentBase);
+            for (Pion pion : getJoueurCourant().getPions()) {
+                if (pion.isPlaced()) {
+                    Coordonnee pionLocation = pion.getLocation();
+                    double distance = Math.abs(pionLocation.getX() - opponentBase.getX()) + Math.abs(pionLocation.getY() - opponentBase.getY());
+                    minDistance = Math.min(minDistance, distance);
+                }
+            }
+            System.out.println("minDistance: " + minDistance);
+            System.out.println("distance: " + ((JoueurIA) joueurCourant).getDistance());
+            // Calculate the reward based on the distance
+            double reward = ((JoueurIA) joueurCourant).getDistance() - minDistance;
+            ((JoueurIA) joueurCourant).setDistance(minDistance);
+            return reward;
+        }
     }    
     
     /**
@@ -264,6 +262,18 @@ public class Jeu implements MapCreation {
      */
     public void gameOver(){
         jeuEtat=JeuEtat.GAME_OVER;
+        ////print qtable
+        //for (Joueur j : joueurs) {
+        //    if(j instanceof JoueurIA){
+        //        ((JoueurIA) j).printQTable();
+        //    }
+        //}
+        //save QTable of each player
+        for (Joueur j : joueurs) {
+            if(j instanceof JoueurIA){
+                ((JoueurIA) j).saveQTable();
+            }
+        }
         //to do: afficher les info....
     }
     
