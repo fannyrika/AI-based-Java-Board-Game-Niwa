@@ -28,7 +28,8 @@ public class HexagoneCentral extends Hexagone {
     }
 
     /**
-     * Méthode qui @return la valeur boolean "temple"
+     * Méthode pour savoir si l'hexagone est le centre d'un temple
+     * @return la valeur boolean "temple"
      */
     public boolean isTemple(){
         return temple;
@@ -38,6 +39,7 @@ public class HexagoneCentral extends Hexagone {
     public HexagoneCentral copy(){
         HexagoneCentral copy = new HexagoneCentral(portes[0], portes[1], portes[2], portes[3], portes[4],portes[5]);
         copy.setLocation(location);
+        copy.setTemple(temple);
         return copy;
     }
 
@@ -46,7 +48,10 @@ public class HexagoneCentral extends Hexagone {
      */
     @Override
     public HexagoneCentral getRotation(){
-        return new HexagoneCentral(portes[5], portes[0], portes[1], portes[2], portes[3], portes[4]);
+        HexagoneCentral rotated = new HexagoneCentral(portes[5], portes[0], portes[1], portes[2], portes[3], portes[4]);
+        rotated.location = location;
+        rotated.temple = temple;
+        return rotated;
     }
 
     public void setLocation(Coordonnee c){this.location = c;}

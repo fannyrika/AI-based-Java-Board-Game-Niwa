@@ -675,7 +675,7 @@ protected void configureScrollBarColors() {
         //jeuVue.lancer();
 
         //test 4: 2 joueurs humains  ( map manuel)
-        Jeu model =  new Jeu(2, 0, MapEtat.MANUEL, 10);
+        Jeu model =  new Jeu(2, 0, MapEtat.MAP1_2P, 4);
         InterfaceDeJeu jeuVue = new InterfaceDeJeu(model);
         jeuVue.lancer();
         
