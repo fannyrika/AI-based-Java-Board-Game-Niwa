@@ -14,6 +14,7 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.*;
 import java.io.File;
+import java.net.URISyntaxException;
 
 public class JouerButton extends JFrame implements ActionListener, Runnable {
 
@@ -26,7 +27,6 @@ public class JouerButton extends JFrame implements ActionListener, Runnable {
     JCheckBox p1, p2, p3, p4;
     JTextField nmbJoueur;
     JLabel background;
-    static File imageFile = new File(StockageSettings.bg_parametreNiwa);
 
     JouerButton() {
     	
@@ -34,9 +34,9 @@ public class JouerButton extends JFrame implements ActionListener, Runnable {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setExtendedState(JFrame.MAXIMIZED_BOTH);
         setTitle("MENU NIWA JOUERFRAME");
-        setLocationRelativeTo(null); // Pour centrer la fenetre
+        //setLocationRelativeTo(null); // Pour centrer la fenetre
         setLayout(new BorderLayout());
-        JLabel background = new JLabel(new ImageIcon(imageFile.getAbsolutePath()));
+        JLabel background = new JLabel(new ImageIcon(StockageSettings.file_parametreNiwa.getAbsolutePath()));
         background.setLayout(new FlowLayout(FlowLayout.CENTER, 100, 150));
 
         
@@ -51,7 +51,6 @@ public class JouerButton extends JFrame implements ActionListener, Runnable {
         //Permet de selectionner un seul choix(JRadioButton) � la foix
         ButtonGroup buttonGroup = new ButtonGroup();
         ButtonGroup buttonGroup2 = new ButtonGroup();
-        ButtonGroup buttonGroup3 = new ButtonGroup();
        
         //Choisir le nombre de joueurs 2 ou 4
         JLabel label0 = new JLabel("  N O M B R E   J O U E U R S    : ", JLabel.CENTER);
