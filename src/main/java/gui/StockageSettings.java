@@ -4,7 +4,7 @@ import main.java.model.MapEtat;
 
 public class StockageSettings {
 
-    public static final boolean DEBUG_MODE = true;
+    public static final boolean DEBUG_MODE = false;
     
     public static int NB_JOUEURS_TOTAL;
     public static int NB_HUMAIN;
