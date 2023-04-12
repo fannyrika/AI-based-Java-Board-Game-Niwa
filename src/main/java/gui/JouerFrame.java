@@ -111,7 +111,9 @@ public class JouerFrame extends JFrame implements Runnable {
             clip.start();
         } catch (Exception e) {
             System.err.println("Problème au niveau du lancement du son...");
-            e.printStackTrace();
+            if(!StockageSettings.DEBUG_MODE){
+                e.printStackTrace();
+            }
         }
     }
 

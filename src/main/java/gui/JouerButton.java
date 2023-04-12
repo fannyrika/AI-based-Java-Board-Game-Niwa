@@ -28,6 +28,8 @@ public class JouerButton extends JFrame implements ActionListener, Runnable {
     JTextField nmbJoueur;
     JLabel background;
 
+    int botsChecked;
+
     JouerButton() {
     	
         //Fonctions permettant l'affichage correcte de la fenetre 
@@ -65,17 +67,17 @@ public class JouerButton extends JFrame implements ActionListener, Runnable {
         p3 = new JCheckBox("J3");
         p4 = new JCheckBox("J4");
 
+        JCheckBox[] botsChoices = {p1,p2,p3,p4};
+
         conteneur3.add(labelBot);
-        conteneur3.add(p1);
-        conteneur3.add(p2);
-        conteneur3.add(p3);
-        conteneur3.add(p4);
+        for (JCheckBox btn : botsChoices) {
+            conteneur3.add(btn);
+        }
 
         labelBot.setVisible(false);
-        p1.setVisible(false);
-        p2.setVisible(false);
-        p3.setVisible(false);
-        p4.setVisible(false);
+        for (JCheckBox btn : botsChoices) {
+            btn.setVisible(false);
+        }
 
         j2.addActionListener(e -> {
             labelBot.setVisible(true);
@@ -84,16 +86,27 @@ public class JouerButton extends JFrame implements ActionListener, Runnable {
             p3.setVisible(false);
             p4.setVisible(false);
 
-            p3.setSelected(false);
-            p4.setSelected(false);
+            for (JCheckBox btn : botsChoices) {
+                btn.setSelected(false);
+            }
+            botsChecked = 0;
+
+            p1.setEnabled(true);
+            manuelButton.setEnabled(true);
+            repaint();
         });
 
         j4.addActionListener(e -> {
             labelBot.setVisible(true);
-            p1.setVisible(true);
-            p2.setVisible(true);
-            p3.setVisible(true);
-            p4.setVisible(true);
+            for (JCheckBox btn : botsChoices) {
+                btn.setVisible(true);
+                btn.setSelected(false);
+            }
+            botsChecked = 0;
+
+            p1.setEnabled(false);
+            manuelButton.setEnabled(true);
+            repaint();
         });
 
         buttonGroup.add(j2);
@@ -112,6 +125,24 @@ public class JouerButton extends JFrame implements ActionListener, Runnable {
         conteneur2.add(label1);
         conteneur2.add(manuelButton);
         conteneur2.add(autoButton);
+
+        for (JCheckBox JCB : botsChoices) {
+            JCB.addActionListener(e -> {
+                if(JCB.isSelected()){
+                    botsChecked += 1;
+                    manuelButton.setSelected(false);
+                    manuelButton.setEnabled(false);
+                    autoButton.setSelected(true);
+                }
+                else if(!JCB.isSelected()){
+                    botsChecked -= 1;
+                    if(botsChecked == 0){
+                        manuelButton.setEnabled(true);
+                    }
+                }
+                repaint();
+            });
+        }
 
         
         //Bouton permettant le passage � la fenetre d'apres apres verification de la validite des choix du joueur
