@@ -648,17 +648,17 @@ protected void configureScrollBarColors() {
         //System.out.println("from main: mapsetting: "+model.getMapEtat());
 
         //test 1: 10000 rounds of 2 AI players
-        //for(int i=0; i<10000; i++){
-        //    System.out.println("-------------round "+i+"----------------");
-        //    Jeu model =  new Jeu(0, 2, MapEtat.MAP1_2P,10);
-        //    //Jeu model =  new Jeu(2, 0, MapEtat.MAP1_2P);
-        //    InterfaceDeJeu jeuVue = new InterfaceDeJeu(model);
-        //    if(model.getMapEtat().equals(MapEtat.MANUEL)){
-        //        System.out.println("mapSettings: "+model.getMapEtat());
-        //        jeuVue.creerPlateau();
-        //    }
-        //    jeuVue.jouer();
-        //}
+        for(int i=0; i<10000; i++){
+            System.out.println("-------------round "+i+"----------------");
+            Jeu model =  new Jeu(0, 2, MapEtat.MAP1_2P,10);
+            //Jeu model =  new Jeu(2, 0, MapEtat.MAP1_2P);
+            InterfaceDeJeu jeuVue = new InterfaceDeJeu(model);
+            if(model.getMapEtat().equals(MapEtat.MANUEL)){
+                System.out.println("mapSettings: "+model.getMapEtat());
+                jeuVue.creerPlateau();
+            }
+            jeuVue.jouer();
+        }
         
 
         
@@ -674,10 +674,10 @@ protected void configureScrollBarColors() {
         //InterfaceDeJeu jeuVue = new InterfaceDeJeu(model);
         //jeuVue.lancer();
 
-        //test 4: 2 joueurs humains  ( map manuel)
-        Jeu model =  new Jeu(2, 0, MapEtat.MANUEL, 10);
-        InterfaceDeJeu jeuVue = new InterfaceDeJeu(model);
-        jeuVue.lancer();
+        ////test 4: 2 joueurs humains  ( map manuel)
+        //Jeu model =  new Jeu(2, 0, MapEtat.MANUEL, 10);
+        //InterfaceDeJeu jeuVue = new InterfaceDeJeu(model);
+        //jeuVue.lancer();
         
     }
 

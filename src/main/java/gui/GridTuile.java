@@ -49,7 +49,7 @@ public class GridTuile extends JPanel implements KeyListener, MouseInputListener
     /**
      * Pour le debogage, sert à montrer les coordonnées des hexagones en direct
      */
-    protected static final boolean showCoord = false;
+    protected static final boolean showCoord = true;
 
 
     /**
