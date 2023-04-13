@@ -25,6 +25,8 @@ public class InterfaceDeJeu extends JFrame implements KeyListener, Runnable {
     public Thread t;
     public static final String threadName = "Thread_IDJ";
 
+    protected static final int TABLEAU_DE_BORD_RATIO = 4;
+
     protected Jeu model;
     //protected Controleur controleur;
     /**
@@ -37,19 +39,19 @@ public class InterfaceDeJeu extends JFrame implements KeyListener, Runnable {
     protected static int nb_joueurs_ia = 1;
     protected GridTuile gridTuile;
     protected TableauDeBord tableauDeBord;
+    protected static JScrollPane scrollPane;
     
     public InterfaceDeJeu(Jeu m){
-        setVisible(true);
         setLayout(new BorderLayout());
         setTitle("NIWA");
         
         model=m;
         gridTuile = new GridTuile(model);
-        JScrollPane plateau=new JScrollPane(gridTuile);
         gridTuile.setBackground(Color.WHITE);
-        plateau.getVerticalScrollBar().setUI(new CustomScrollBarUI());
-        plateau.setBackground(new Color(61, 58, 58));
-        plateau.getHorizontalScrollBar().setUI(new CustomScrollBarUI());
+        scrollPane=new JScrollPane(gridTuile);
+        scrollPane.getVerticalScrollBar().setUI(new CustomScrollBarUI());
+        scrollPane.setBackground(new Color(61, 58, 58));
+        scrollPane.getHorizontalScrollBar().setUI(new CustomScrollBarUI());
         tableauDeBord=new TableauDeBord(model);
         tableauDeBord.boutonQuitter.addActionListener(e->{
             this.dispose();
@@ -58,13 +60,13 @@ public class InterfaceDeJeu extends JFrame implements KeyListener, Runnable {
         tableauDeBord.boutonZoom.addActionListener(e->{
             TuileGraphique.zoom(GridTuile.DISTANCE_ZOOM);
             //gridTuile.setPreferredSize(new Dimension(10*GridTuile.DISTANCE_ZOOM+gridTuile.getSize().width,10*GridTuile.DISTANCE_ZOOM+gridTuile.getSize().height));
-            plateau.repaint();
+            scrollPane.repaint();
             
         });
         tableauDeBord.boutonDezoom.addActionListener(e->{
             TuileGraphique.zoom(-GridTuile.DISTANCE_ZOOM);
             //gridTuile.setPreferredSize(new Dimension(-10*GridTuile.DISTANCE_ZOOM+gridTuile.getSize().width,-10*GridTuile.DISTANCE_ZOOM+gridTuile.getSize().height));
-            plateau.repaint();
+            scrollPane.repaint();
         });
         tableauDeBord.boutonRotationHoraire.addActionListener(e->{
             if(model.getJeuEtat()==JeuEtat.ROTATING_TUILE){
@@ -96,10 +98,10 @@ public class InterfaceDeJeu extends JFrame implements KeyListener, Runnable {
         });
         JPanel vueComplete=new JPanel(new BorderLayout());
         vueComplete.setBackground(new Color(61, 58, 58));
-        vueComplete.add(plateau, BorderLayout.CENTER);
+        vueComplete.add(scrollPane, BorderLayout.CENTER);
         vueComplete.add(tableauDeBord,BorderLayout.LINE_END);
         Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
-        size.width /= 4; // divide the width by 3
+        size.width /= TABLEAU_DE_BORD_RATIO; // divide the width by 4
         tableauDeBord.setPreferredSize(size);
         //controleur=new Controleur(model, this);
         //TODO: construire l'interface graphique (avec la tuileTemple du joueur0 comme la tuile initiale)
@@ -112,8 +114,7 @@ public class InterfaceDeJeu extends JFrame implements KeyListener, Runnable {
         });
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         add(vueComplete, BorderLayout.CENTER);
-        pack();
-        setLocationRelativeTo(null);
+        //setLocationRelativeTo(null);
         //setVisible(true);
     }
 
@@ -383,6 +384,20 @@ public class InterfaceDeJeu extends JFrame implements KeyListener, Runnable {
             else if(dy > 0){glisserTuile(tuile, dx, dy+1);}
             else if(dy < 0){glisserTuile(tuile, dx, dy-1);}
         }
+        else{
+            if(dx > 0 && ((x+dx-2) * 2.5*TuileGraphique.radius) + GridTuile.dx > gridTuile.getPreferredSize().getWidth()){
+                gridTuile.glisserVersByCran(-dx, dy);
+            }
+            else if(dx < 0 && ((x+dx+2) * 2.5*TuileGraphique.radius) + gridTuile.getPreferredSize().getWidth() + GridTuile.dx < 0){
+                gridTuile.glisserVersByCran(-dx, dy);
+            }
+            else if(dy < 0 && ((y+dy+2) * 3*TuileGraphique.radius) + gridTuile.getPreferredSize().getHeight() - GridTuile.dy < 0){
+                gridTuile.glisserVersByCran(dx, -dy);
+            }
+            else if(dy > 0 && ((y+dy-2) * 3*TuileGraphique.radius) - GridTuile.dy > gridTuile.getPreferredSize().getHeight()){
+                gridTuile.glisserVersByCran(dx, -dy);
+            }
+        }
     }
 
     @Override
@@ -589,6 +604,10 @@ public class InterfaceDeJeu extends JFrame implements KeyListener, Runnable {
 
     @Override
     public void run() {
+        this.pack();
+        this.setVisible(true);
+        this.setExtendedState(MAXIMIZED_BOTH);
+
         this.lancer();
     }
 
@@ -675,9 +694,9 @@ protected void configureScrollBarColors() {
         //jeuVue.lancer();
 
         //test 4: 2 joueurs humains  ( map manuel)
-        Jeu model =  new Jeu(2, 0, MapEtat.MAP1_2P, 4);
+        Jeu model =  new Jeu(2, 0, MapEtat.MANUEL, 15);
         InterfaceDeJeu jeuVue = new InterfaceDeJeu(model);
-        jeuVue.lancer();
+        jeuVue.start();
         
     }
 
