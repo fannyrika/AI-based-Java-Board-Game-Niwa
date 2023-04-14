@@ -3,7 +3,6 @@ package main.java.gui;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 
-import main.java.model.JeuEtat;
 import main.java.model.MapEtat;
 
 import java.awt.BorderLayout;
@@ -13,8 +12,6 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.*;
-import java.io.File;
-import java.net.URISyntaxException;
 
 public class JouerButton extends JFrame implements ActionListener, Runnable {
 

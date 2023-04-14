@@ -79,7 +79,7 @@ public class TuileGraphique extends Polygon {
     /**
      * Le rayon des hexagones (grossièrement : la taille des tuiles)
      */
-    protected static int radius = 50;
+    protected static int radius = 40;
 
     /**
      * Le rayon minimal autorisé

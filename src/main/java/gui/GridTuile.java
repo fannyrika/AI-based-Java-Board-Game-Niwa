@@ -23,7 +23,10 @@ public class GridTuile extends JPanel implements KeyListener, MouseInputListener
     /**
      * Certainement temporaire, représente la taille de l'écran
      */
-    protected static Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();
+    protected static Dimension screen = new Dimension((int)(Toolkit.getDefaultToolkit().getScreenSize().getWidth()/InterfaceDeJeu.TABLEAU_DE_BORD_RATIO),(int)Toolkit.getDefaultToolkit().getScreenSize().getHeight()/InterfaceDeJeu.TABLEAU_DE_BORD_RATIO);
+
+    protected static final int BORDER_RATIO = 6;
+
     /**
      * Décalage des tuiles sur le graphique en x
      */
@@ -34,10 +37,6 @@ public class GridTuile extends JPanel implements KeyListener, MouseInputListener
     protected static int dy = 0;
 
     /**
-     * Représente la distance de déplacement lorsqu'on glisse le plateau (+ on l'augmente, plus le déplacement est rapide)
-     */
-    protected static final int DISTANCE_DEPLACEMENT = 10;
-    /**
      * Représente la vitesse à laquelle le zoom/dezoom est fait (+ on l'augmente, plus le zoom/dezoom est rapide)
      */
     protected static final int DISTANCE_ZOOM = 10;
@@ -45,12 +44,6 @@ public class GridTuile extends JPanel implements KeyListener, MouseInputListener
     protected ArrayList<TuileGraphique> tuilesGraphique = new ArrayList<TuileGraphique>();
     protected static HashMap<Coordonnee,Circle> allCircles = new HashMap<Coordonnee,Circle>();
     protected ArrayList<Circle> circlesToDraw = new ArrayList<Circle>(); 
-
-    /**
-     * Pour le debogage, sert à montrer les coordonnées des hexagones en direct
-     */
-    protected static final boolean showCoord = true;
-
 
     /**
      * Constructeur
@@ -72,8 +65,6 @@ public class GridTuile extends JPanel implements KeyListener, MouseInputListener
                 
             }
         });
-        //pour voir le plateau entier
-        TuileGraphique.zoom((int)(-1.5*DISTANCE_ZOOM));
     }
 
     @Override
@@ -87,12 +78,13 @@ public class GridTuile extends JPanel implements KeyListener, MouseInputListener
         allCircles.clear();
         super.paintComponent(g);
     
-    Graphics2D g2d = (Graphics2D) g.create();
-    GradientPaint gradient = new GradientPaint(0, 0,new Color(74, 174, 255), 
-                                               getWidth(), 0,new Color(255, 143, 169));
-    g2d.setPaint(gradient);
-    g2d.fillRect(0, 0, getWidth(), getHeight());
-    g2d.dispose();
+        Graphics2D g2d = (Graphics2D) g.create();
+        GradientPaint gradient = new GradientPaint(0, 0,new Color(74, 174, 255), 
+                                                getWidth(), 0,new Color(255, 143, 169));
+        g2d.setPaint(gradient);
+        g2d.fillRect(0, 0, getWidth(), getHeight());
+        g2d.dispose();
+
         // On parcours toutes les tuiles sur le plateau, pour ainsi les dessiner
         HashMap<Coordonnee,Tuile> tuileMapCopy = (HashMap<Coordonnee, Tuile>) model.getPlateau().getGridTuile().clone();
         for(Tuile t : tuileMapCopy.values()){
@@ -133,7 +125,7 @@ public class GridTuile extends JPanel implements KeyListener, MouseInputListener
         }
 
         // Pour le debogage
-        if(showCoord){
+        if(StockageSettings.SHOW_COORDS){
             for (Circle c : allCircles.values()) {
                 mainGraphics.drawString("("+c.locationInGridHexagone.getX()+","+c.locationInGridHexagone.getY()+")", c.x, c.y);
             }
@@ -154,21 +146,25 @@ public class GridTuile extends JPanel implements KeyListener, MouseInputListener
         }
     }
 
+    public void glisserVersByCran(int dx, int dy){
+        glisserVers((int)(2.5*TuileGraphique.radius)*dx, (int)(3*TuileGraphique.radius)*dy);
+    }
+
     @Override
     public void keyTyped(KeyEvent e) {
         if(model.getJeuEtat()==JeuEtat.CHANGING_VIEW){
         switch (e.getKeyChar()) {
             case 's':   // gauche
-                glisserVers(DISTANCE_DEPLACEMENT, 0);
+                glisserVersByCran(1, 0);
                 break;
             case 'f':   // droite
-                glisserVers(-DISTANCE_DEPLACEMENT, 0);
+                glisserVersByCran(-1, 0);
                 break;
             case 'd':   // bas
-                glisserVers(0, DISTANCE_DEPLACEMENT);
+                glisserVersByCran(0, 1);
                 break;
             case 'e':   // haut
-                glisserVers(0, -DISTANCE_DEPLACEMENT);
+                glisserVersByCran(0, -1);
                 break;
             case '+':   // zoom
                 TuileGraphique.zoom(DISTANCE_ZOOM);

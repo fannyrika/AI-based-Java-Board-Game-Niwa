@@ -10,7 +10,6 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.*;
-import java.io.File;
 
 public class ValiderButton extends JFrame implements ActionListener, Runnable {
 
@@ -55,6 +54,11 @@ public class ValiderButton extends JFrame implements ActionListener, Runnable {
         JRadioButton map2 = new JRadioButton("map 2");
         choix_map.add(map1);
         choix_map.add(map2); 
+
+        if(StockageSettings.NB_JOUEURS_TOTAL == 2 && StockageSettings.NB_IA == 2){
+            map2.setEnabled(false);
+            map1.setSelected(true);
+        }
 
         JButton suivant = new JButton("V A L I D E R  ");
        

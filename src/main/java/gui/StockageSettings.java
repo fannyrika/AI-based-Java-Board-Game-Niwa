@@ -6,7 +6,18 @@ import main.java.model.MapEtat;
 
 public class StockageSettings {
 
+    /**
+     * MODE DEBUG :
+     * - Tous les pions peuvent se déplacer n'importe où sur le plateau
+     * -
+     * -
+     * - *à rajouter si nécessaire...*
+     */
     public static final boolean DEBUG_MODE = false;
+    /**
+     * Pour le debogage, sert à montrer les coordonnées des hexagones en direct
+     */
+    public static final boolean SHOW_COORDS = false;
     
     public static int NB_JOUEURS_TOTAL;
     public static int NB_HUMAIN;
