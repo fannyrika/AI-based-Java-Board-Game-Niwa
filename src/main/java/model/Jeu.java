@@ -160,7 +160,7 @@ public class Jeu implements MapCreation {
      * @return -> true s'il a atteint un temple adverse, false sinon
      */
     public boolean aGagne(Joueur j){
-        System.out.println("inside aGagne");
+        //System.out.println("inside aGagne");
         for (Pion p : j.getPions()){            // On regarde chaque pion du joueur
             if(p.getLocation() != null){        // On vérifie que le pion est placé
                 Hexagone emplacement = plateau.getGridHexagone().get(p.getLocation());        // On regarde sur quel hexagone le pion est posé
@@ -170,6 +170,7 @@ public class Jeu implements MapCreation {
                         System.out.println("j.temple.getLocationInGridHexagone() = "+j.temple.getLocationInGridHexagone());
                         if(!p.getLocation().equals(j.temple.getLocationInGridHexagone())){    // On exclue le cas où le pion est dans sa propre base
                             System.out.println("Le joueur "+j.id+" a gagné");
+                            setGagneur(j);
                             return true;
                         }
                     }
@@ -230,7 +231,7 @@ public class Jeu implements MapCreation {
 
     public double getReward() {
         if (jeuEtat==JeuEtat.GAME_OVER) {
-            if (getGagneurs().get(0) == getJoueurCourant()) {
+            if (gangeurs.get(0) == joueurCourant) {
                 return 100.0;  // If the current player wins, the reward is 100
             } else {
                 return -100.0; // If the current player loses, the reward is -100

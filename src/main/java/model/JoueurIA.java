@@ -24,7 +24,7 @@ public class JoueurIA extends Joueur{
     /**
      * distance towards the temple of the competitor
      */
-    private double distance=0.0;
+    private double distance=11.0;
     
     /**
      * constructor
@@ -47,7 +47,11 @@ public class JoueurIA extends Joueur{
      * @return an action
      */
     public Action chooseAction(Jeu jeu, State currentState, ArrayList<Action> legalActions) {
-        System.out.println("Legal actions: " + legalActions);
+        System.out.println("-----------Legal actions: ");
+        //print legal actions more clearly
+        for (Action action : legalActions) {
+            System.out.println("Action: " + action);
+        }
     
         if (Math.random() < epsilon) {
             // Choose a random action with probability epsilon

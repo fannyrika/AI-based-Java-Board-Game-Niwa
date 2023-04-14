@@ -226,7 +226,8 @@ public class InterfaceDeJeu extends JFrame implements KeyListener, Runnable {
                 System.out.println("current player changed!");//debug
                 model.setJoueurCourant(model.getJoueurs().get(i));
                 System.out.println(model.getJoueurCourant());//debug
-                tableauDeBord.setJoueurCourant("<html> Joueur "+(model.getJoueurCourant().getID()+1)+"</html>");
+                char playerID = (char)(model.getJoueurCourant().getID() + 'A');
+                tableauDeBord.setJoueurCourant("<html> Joueur "+playerID+"</html>");
                 SwingUtilities.invokeLater(() -> {
                     repaint();
                 });
@@ -257,7 +258,7 @@ public class InterfaceDeJeu extends JFrame implements KeyListener, Runnable {
                     ArrayList<Action> legalActions = ((JoueurIA) model.getJoueurCourant()).getLegalActions(model);
                     if(legalActions.isEmpty()){
                         System.out.println("No legal actions for the current state, the current player loses the game.");
-                        model.setGagneur(model.getJoueurs().get((i+1)%2));//must be 2 players
+                        model.setGagneur(model.getJoueurs().get(0));//must be 2 players
                         break;
                     }
                     // draw circle around the possible destinations of the legal actions
@@ -265,6 +266,7 @@ public class InterfaceDeJeu extends JFrame implements KeyListener, Runnable {
                     // AI player chooses an action
                     Action action = ((JoueurIA) model.getJoueurCourant()).chooseAction(model, currentState, legalActions);
                     System.out.println("Chosen action: " + action);
+                    
                     // apply the action
                     State nextState = currentState.getNextState(action);
                     // If the current player is an AI player, learn from the experience
@@ -354,6 +356,7 @@ public class InterfaceDeJeu extends JFrame implements KeyListener, Runnable {
             creerPlateau();
         }
         jouer();
+        dispose();
         //TODO: quitter le jeu (fermer la fen锚tre etc...)
     }
 
@@ -667,36 +670,36 @@ protected void configureScrollBarColors() {
         //System.out.println("from main: mapsetting: "+model.getMapEtat());
 
         //test 1: 10000 rounds of 2 AI players
-        //for(int i=0; i<10000; i++){
-        //    System.out.println("-------------round "+i+"----------------");
-        //    Jeu model =  new Jeu(0, 2, MapEtat.MAP1_2P,10);
-        //    //Jeu model =  new Jeu(2, 0, MapEtat.MAP1_2P);
-        //    InterfaceDeJeu jeuVue = new InterfaceDeJeu(model);
-        //    if(model.getMapEtat().equals(MapEtat.MANUEL)){
-        //        System.out.println("mapSettings: "+model.getMapEtat());
-        //        jeuVue.creerPlateau();
-        //    }
-        //    jeuVue.jouer();
-        //}
+        for(int i=0; i<10000; i++){
+            System.out.println("-------------round "+i+"----------------");
+            Jeu model =  new Jeu(0, 2, MapEtat.MAP1_2P,10);
+            //Jeu model =  new Jeu(2, 0, MapEtat.MAP1_2P);
+            InterfaceDeJeu jeuVue = new InterfaceDeJeu(model);
+            if(model.getMapEtat().equals(MapEtat.MANUEL)){
+                System.out.println("mapSettings: "+model.getMapEtat());
+                jeuVue.creerPlateau();
+            }
+            jeuVue.run();
+        }
         
 
         
         ////test 2: 1 joueur humain vs 1 joueur IA
         //Jeu model =  new Jeu(1, 1, MapEtat.MAP1_2P, 50);
         //InterfaceDeJeu jeuVue = new InterfaceDeJeu(model);
-        //jeuVue.lancer();
+        //jeuVue.start();
         
 
         
         //test 3: 2 joueurs humains
         //Jeu model =  new Jeu(2, 0, MapEtat.MAP1_2P, 10);
         //InterfaceDeJeu jeuVue = new InterfaceDeJeu(model);
-        //jeuVue.lancer();
+        //jeuVue.start();
 
-        //test 4: 2 joueurs humains  ( map manuel)
-        Jeu model =  new Jeu(2, 0, MapEtat.MANUEL, 15);
-        InterfaceDeJeu jeuVue = new InterfaceDeJeu(model);
-        jeuVue.start();
+        ////test 4: 2 joueurs humains  ( map manuel)
+        //Jeu model =  new Jeu(2, 0, MapEtat.MANUEL, 15);
+        //InterfaceDeJeu jeuVue = new InterfaceDeJeu(model);
+        //jeuVue.start();
         
     }
 

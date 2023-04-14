@@ -202,7 +202,7 @@ public class Plateau implements DeplacementPion {
         //System.out.println("========Temple : " + p.getProprietaire().getTemple().getLocationInGridHexagone().toString());
         //System.out.println(choix[direction].equals(p.getProprietaire().getTemple().getLocationInGridHexagone()));
         if(choix[direction].equals(p.getProprietaire().getTemple().getLocationInGridHexagone())){
-            System.out.println("inside if, return empty list");
+            //System.out.println("inside if, return empty list");
             return new ArrayList<Coordonnee>();
         }   // CAS 0.1 : Le pion veut aller sur son propre temple -> on return une liste vide
 
