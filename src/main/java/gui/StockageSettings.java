@@ -17,7 +17,7 @@ public class StockageSettings {
     /**
      * Pour le debogage, sert à montrer les coordonnées des hexagones en direct
      */
-    public static final boolean SHOW_COORDS = false;
+    public static final boolean SHOW_COORDS = true;
     
     public static int NB_JOUEURS_TOTAL;
     public static int NB_HUMAIN;
