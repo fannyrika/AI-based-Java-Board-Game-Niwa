@@ -2,6 +2,7 @@ package main.java.gui;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 
 import javax.swing.JFrame;
@@ -30,23 +31,25 @@ public class JouerFrame extends JFrame implements Runnable {
 
     protected JButton jouerButton, validerButton, quitterButton, optionButton;
 
+    public static StockageSettings stockage = new StockageSettings();
+
 
     /**
      * 
      * @param imageFile
      * @throws IOException
      */
-    public JouerFrame() throws IOException {
-    	
+    public JouerFrame() {
+
     	//Fonctions permettant l'affichage correcte de la fenetre 
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setExtendedState(JFrame.MAXIMIZED_BOTH);
         setTitle("MENU NIWA");
-        setLocationRelativeTo(null); // Pour centrer la fenetre
+        //setLocationRelativeTo(null); // Pour centrer la fenetre
         setDefaultCloseOperation(EXIT_ON_CLOSE);
 
         setLayout(new BorderLayout());
-        JLabel background = new JLabel(new ImageIcon(new File(StockageSettings.bg_photo6).getAbsolutePath()));
+        JLabel background = new JLabel(new ImageIcon(StockageSettings.file_photo6.getAbsolutePath()));
         background.setLayout(new FlowLayout(FlowLayout.CENTER, 100, 350));
 
         // CREATION DES BOUTONS JOUER OPTIONS QUITTER
@@ -108,7 +111,9 @@ public class JouerFrame extends JFrame implements Runnable {
             clip.start();
         } catch (Exception e) {
             System.err.println("Problème au niveau du lancement du son...");
-            e.printStackTrace();
+            if(!StockageSettings.DEBUG_MODE){
+                e.printStackTrace();
+            }
         }
     }
 

@@ -14,6 +14,7 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.*;
 import java.io.File;
+import java.net.URISyntaxException;
 
 public class JouerButton extends JFrame implements ActionListener, Runnable {
 
@@ -26,7 +27,8 @@ public class JouerButton extends JFrame implements ActionListener, Runnable {
     JCheckBox p1, p2, p3, p4;
     JTextField nmbJoueur;
     JLabel background;
-    static File imageFile = new File(StockageSettings.bg_parametreNiwa);
+
+    int botsChecked;
 
     JouerButton() {
     	
@@ -34,9 +36,9 @@ public class JouerButton extends JFrame implements ActionListener, Runnable {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setExtendedState(JFrame.MAXIMIZED_BOTH);
         setTitle("MENU NIWA JOUERFRAME");
-        setLocationRelativeTo(null); // Pour centrer la fenetre
+        //setLocationRelativeTo(null); // Pour centrer la fenetre
         setLayout(new BorderLayout());
-        JLabel background = new JLabel(new ImageIcon(imageFile.getAbsolutePath()));
+        JLabel background = new JLabel(new ImageIcon(StockageSettings.file_parametreNiwa.getAbsolutePath()));
         background.setLayout(new FlowLayout(FlowLayout.CENTER, 100, 150));
 
         
@@ -51,7 +53,6 @@ public class JouerButton extends JFrame implements ActionListener, Runnable {
         //Permet de selectionner un seul choix(JRadioButton) � la foix
         ButtonGroup buttonGroup = new ButtonGroup();
         ButtonGroup buttonGroup2 = new ButtonGroup();
-        ButtonGroup buttonGroup3 = new ButtonGroup();
        
         //Choisir le nombre de joueurs 2 ou 4
         JLabel label0 = new JLabel("  N O M B R E   J O U E U R S    : ", JLabel.CENTER);
@@ -66,17 +67,17 @@ public class JouerButton extends JFrame implements ActionListener, Runnable {
         p3 = new JCheckBox("J3");
         p4 = new JCheckBox("J4");
 
+        JCheckBox[] botsChoices = {p1,p2,p3,p4};
+
         conteneur3.add(labelBot);
-        conteneur3.add(p1);
-        conteneur3.add(p2);
-        conteneur3.add(p3);
-        conteneur3.add(p4);
+        for (JCheckBox btn : botsChoices) {
+            conteneur3.add(btn);
+        }
 
         labelBot.setVisible(false);
-        p1.setVisible(false);
-        p2.setVisible(false);
-        p3.setVisible(false);
-        p4.setVisible(false);
+        for (JCheckBox btn : botsChoices) {
+            btn.setVisible(false);
+        }
 
         j2.addActionListener(e -> {
             labelBot.setVisible(true);
@@ -85,16 +86,27 @@ public class JouerButton extends JFrame implements ActionListener, Runnable {
             p3.setVisible(false);
             p4.setVisible(false);
 
-            p3.setSelected(false);
-            p4.setSelected(false);
+            for (JCheckBox btn : botsChoices) {
+                btn.setSelected(false);
+            }
+            botsChecked = 0;
+
+            p1.setEnabled(true);
+            manuelButton.setEnabled(true);
+            repaint();
         });
 
         j4.addActionListener(e -> {
             labelBot.setVisible(true);
-            p1.setVisible(true);
-            p2.setVisible(true);
-            p3.setVisible(true);
-            p4.setVisible(true);
+            for (JCheckBox btn : botsChoices) {
+                btn.setVisible(true);
+                btn.setSelected(false);
+            }
+            botsChecked = 0;
+
+            p1.setEnabled(false);
+            manuelButton.setEnabled(true);
+            repaint();
         });
 
         buttonGroup.add(j2);
@@ -113,6 +125,24 @@ public class JouerButton extends JFrame implements ActionListener, Runnable {
         conteneur2.add(label1);
         conteneur2.add(manuelButton);
         conteneur2.add(autoButton);
+
+        for (JCheckBox JCB : botsChoices) {
+            JCB.addActionListener(e -> {
+                if(JCB.isSelected()){
+                    botsChecked += 1;
+                    manuelButton.setSelected(false);
+                    manuelButton.setEnabled(false);
+                    autoButton.setSelected(true);
+                }
+                else if(!JCB.isSelected()){
+                    botsChecked -= 1;
+                    if(botsChecked == 0){
+                        manuelButton.setEnabled(true);
+                    }
+                }
+                repaint();
+            });
+        }
 
         
         //Bouton permettant le passage � la fenetre d'apres apres verification de la validite des choix du joueur

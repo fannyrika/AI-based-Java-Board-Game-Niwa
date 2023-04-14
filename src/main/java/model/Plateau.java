@@ -3,6 +3,7 @@ package main.java.model;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import main.java.gui.StockageSettings;
 import main.java.model.interfaces.DeplacementPion;
 import main.java.model.interfaces.HexagoneAutour;
 import main.java.model.interfaces.TuilesAutour;
@@ -179,6 +180,17 @@ public class Plateau implements DeplacementPion {
      */
     private ArrayList<Coordonnee> canMoveLocationsDirection(Pion p, Coordonnee position, int direction) {
         if(direction > 5){return new ArrayList<Coordonnee>();}        // N'est pas censé arriver si le jeu est fait correctement
+
+        // Mode debug : permettre aux pions d'aller n'importe où
+        if(StockageSettings.DEBUG_MODE){
+            ArrayList<Coordonnee> allLocationsPossibles = new ArrayList<Coordonnee>();
+            for (Coordonnee c : gridHexagone.keySet()) {
+                if(!gridPion.containsKey(c)){
+                    allLocationsPossibles.add(c);
+                }
+            }
+            return allLocationsPossibles;
+        }
 
         Coordonnee[] choix = HexagoneAutour.get(position);
 

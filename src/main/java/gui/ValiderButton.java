@@ -29,10 +29,10 @@ public class ValiderButton extends JFrame implements ActionListener, Runnable {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setExtendedState(JFrame.MAXIMIZED_BOTH);
         setTitle("Parametre NIWA");
-        setLocationRelativeTo(null); //Pour centrer la fenetre
+        //setLocationRelativeTo(null); //Pour centrer la fenetre
         setLayout(new BorderLayout());
 
-        JLabel background = new JLabel(new ImageIcon(new File(StockageSettings.bg_parametreNiwa).getAbsolutePath()));
+        JLabel background = new JLabel(new ImageIcon(StockageSettings.file_parametreNiwa.getAbsolutePath()));
         background.setLayout(new FlowLayout(FlowLayout.CENTER, 100, 150));
 
         //Conteneur pour les buttons et les JLabel
