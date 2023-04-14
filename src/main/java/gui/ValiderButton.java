@@ -55,7 +55,7 @@ public class ValiderButton extends JFrame implements ActionListener, Runnable {
         choix_map.add(map1);
         choix_map.add(map2); 
 
-        if(StockageSettings.NB_JOUEURS_TOTAL == 2 && StockageSettings.NB_IA == 2){
+        if(StockageSettings.NB_JOUEURS_TOTAL == 2 && StockageSettings.NB_IA >= 1){
             map2.setEnabled(false);
             map1.setSelected(true);
         }

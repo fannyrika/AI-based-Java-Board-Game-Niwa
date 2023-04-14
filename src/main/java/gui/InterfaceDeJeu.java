@@ -621,13 +621,6 @@ public class InterfaceDeJeu extends JFrame implements KeyListener, Runnable {
         }
     }
 
-    public static InterfaceDeJeu defautStart(){
-        Jeu model =  new Jeu(2, 0, MapEtat.MANUEL,10);
-        InterfaceDeJeu jeu = new InterfaceDeJeu(model);
-        jeu.start();
-        return jeu;
-    }
-
 
 ///scrollbar du plateau
 class CustomScrollBarUI extends BasicScrollBarUI{
