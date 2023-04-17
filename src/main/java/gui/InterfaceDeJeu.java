@@ -235,6 +235,8 @@ public class InterfaceDeJeu extends JFrame implements KeyListener, Runnable {
                 //}
                 if(model.getJoueurCourant() instanceof JoueurIA){
                     //slow down the speed of the AI player
+                    afficherInstruction("");
+                    tableauDeBord.setJoueurCourant("<html> IA </html>");
                     try {
                         Thread.sleep(100); 
                     } catch (InterruptedException e) {
@@ -279,12 +281,14 @@ public class InterfaceDeJeu extends JFrame implements KeyListener, Runnable {
                     //afficherPossiblePionPosition();
                     indexChoisi=0;
                     //waiting
+                    afficherInstruction("Cliquez sur le pion que vous voulez déplacer.");
                     while(model.getJeuEtat()!=JeuEtat.CONTINUE){
                         System.out.print("");
                     }
     
                     System.out.println("ready to place the pion");//debug
                     model.setJeuEtat(JeuEtat.PLACING_PION);
+                    afficherInstruction("Placez le pion sur le plateau en cliquant sur un cercle");
                     //locationsPossibles = afficherPossibleDestination();
                     //indexChoisi=0;
                     //waiting
@@ -294,6 +298,7 @@ public class InterfaceDeJeu extends JFrame implements KeyListener, Runnable {
                        
                     if(model.getPionCourant().size()>0){//car si le pion peut sauter, on n'a pas besoins de cette etape
                         System.out.println("ready to choose the destination for the pearl");//debug
+                        afficherInstruction("Choissinez la destination de la perle en cliquant dessus.");
                         model.setJeuEtat(JeuEtat.CHOOSING_PEARL_DESTINATION);
                         //afficherPossiblePionPosition();
                         //indexChoisi=0;
@@ -641,7 +646,7 @@ protected void configureScrollBarColors() {
         //System.out.println("from main: mapsetting: "+model.getMapEtat());
 
         //test 1: 10000 rounds of 2 AI players
-        for(int i=0; i<10000; i++){
+       /* for(int i=0; i<10000; i++){
             System.out.println("-------------round "+i+"----------------");
             Jeu model =  new Jeu(0, 2, MapEtat.MAP1_2P,10);
             //Jeu model =  new Jeu(2, 0, MapEtat.MAP1_2P);
@@ -651,7 +656,7 @@ protected void configureScrollBarColors() {
                 jeuVue.creerPlateau();
             }
             jeuVue.jouer();
-        }
+        }*/
         
 
         /*
@@ -661,12 +666,12 @@ protected void configureScrollBarColors() {
         jeuVue.lancer();
         */
 
-        /*
+        
         //test 3: 2 joueurs humains
-        Jeu model =  new Jeu(2, 0, MapEtat.MAP1_2P);
+        Jeu model =  new Jeu(2, 0, MapEtat.MAP1_2P, 10);
         InterfaceDeJeu jeuVue = new InterfaceDeJeu(model);
         jeuVue.lancer();
-        */
+        
     }
 
 }

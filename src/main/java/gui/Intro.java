@@ -1,5 +1,6 @@
 package main.java.gui;
 import java.awt.*;
+import java.io.IOException;
 import java.util.Random;
 
 import javax.swing.BorderFactory;
@@ -16,12 +17,15 @@ import main.java.model.Pion;
 
 public class Intro extends JPanel{
     private Dimension size;
-    private JProgressBar j;
+    protected JProgressBar j;
+    private int decalage=0;
+    protected JFrame f;
+    protected JLabel titre;
     Intro(){
        size=Toolkit.getDefaultToolkit().getScreenSize();
        this.setPreferredSize(size);
        this.setBackground(Color.WHITE);
-       JLabel titre=new JLabel("Niwa");
+       titre=new JLabel("Niwa");
        titre.setFont(new Font("Calibri",Font.BOLD,100)); 
        titre.setForeground(Color.ORANGE);
        this.setLayout(new GridBagLayout());
@@ -38,22 +42,51 @@ public class Intro extends JPanel{
        j.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
        j.setBackground(Color.WHITE);
        j.setPreferredSize(new Dimension((int)size.getWidth()/3,(int)size.getHeight()/20));
+       this.f=new JFrame();
+       f.add(this);
+       //add a mouse listener to j
+         j.addMouseListener(new java.awt.event.MouseAdapter() {
+              public void mouseClicked(java.awt.event.MouseEvent evt) {
+                if(j.getValue()==100) {
+                    JouerFrame frame;
+                    try {
+                        frame = new JouerFrame();
+                        frame.start();
+                        f.dispose();
+                    } catch (IOException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                    
+                     
+                }
+              }
+         });
        g.gridheight=3;
        g.gridy=4;
        this.add(j,g);
        Thread thread = new Thread(new Runnable() {
         public void run() {
             int incr=0;
+            int r=50;
+            int b=250;
             while (incr < 100) {
                 incr++;
+                
                 j.setValue(incr);
-
                 try {
-                    Thread.sleep(200); 
+                    decalage+=5;
+                    titre.setForeground(new Color(r,0,b));
+                    j.setForeground(new Color(r,0,b));
+                    b-=2;
+                    r+=2;
+                    repaint();
+                    Thread.sleep(100); 
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             }
+            j.setString("Commencer le jeu");
         }
     });
     thread.start();
@@ -62,15 +95,21 @@ public class Intro extends JPanel{
     SwingUtilities.invokeLater(() -> {
         repaint();
     });
-    
+    f.pack();
+    f.setVisible(true);
     }   
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2=(Graphics2D)g;
+        GradientPaint gradient = new GradientPaint(0, 0,new Color(74, 174, 255), 
+                                               getWidth(), 0,new Color(255, 143, 169));
+        g2.setPaint(gradient);
+        g2.fillRect(0, 0, getWidth(), getHeight());
         int largeur=(int)size.getWidth();
         int x=largeur/3-2*largeur/30;
-        int y=((int)size.getHeight())/6;
+        //int y=((int)size.getHeight())/6+decalage;
+        int y=decalage;
         int rayonTete=largeur/30;
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);
         for(int j=0;j<3;j++){
@@ -116,13 +155,13 @@ public class Intro extends JPanel{
         g2.fillArc(x+rayonTete-rayonTete/5,y+rayonTete+rayonTete/4, rayonTete/2, rayonTete/2,180,180);
         //le corps 
         switch (j) {
-            case 0: g2.setColor(new Color(122, 174, 230));
+            case 0: g2.setColor(new Color(7, 151, 247));
             break;
             case 1: g2.setColor(new Color(255, 82, 66));
             break;
             case 2: g2.setColor(new Color(247, 134, 247));
             break;
-            case 3: g2.setColor(new Color(255, 138, 202));
+            case 3: g2.setColor(new Color(255, 150, 220));
             break;
             default: g2.setColor(Color.BLACK);
         }
@@ -130,7 +169,6 @@ public class Intro extends JPanel{
         g2.fillRect(x+rayonTete/12,y+5*rayonTete, 2*rayonTete, rayonTete);
         //g2.setColor(Color.BLACK);
         x+=largeur/6;
-
 }
 }
 
@@ -139,10 +177,7 @@ public class Intro extends JPanel{
         javax.swing.SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                  Intro a=new Intro();
-                 JFrame b=new JFrame();
-                b.add(a);
-                b.pack();
-                b.setVisible(true);
+                
             }
         });
        

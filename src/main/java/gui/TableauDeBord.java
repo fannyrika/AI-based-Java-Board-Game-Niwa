@@ -63,7 +63,6 @@ public class TableauDeBord extends JPanel {
         boutonPanel.add(gestionTuilePanel);
         boutonPanel.add(gestionPartiePanel);
         
-        //rends instructionPanel joli et lisible car maintenant le texte déborde
 
         JPanel instructionPanel=new JPanel();
         instructionPanel.setLayout(new GridLayout(3,1));
@@ -77,9 +76,7 @@ public class TableauDeBord extends JPanel {
         instructionPanel.add(pioche);
       
         
-        
-
-        //this.add(joueurPanel);
+      
         this.add(instructionPanel);
         this.add(boutonPanel);
 
