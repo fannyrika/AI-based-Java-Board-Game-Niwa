@@ -25,6 +25,8 @@ public class InterfaceDeJeu extends JFrame implements KeyListener, Runnable {
     public Thread t;
     public static final String threadName = "Thread_IDJ";
 
+    protected static final int TABLEAU_DE_BORD_RATIO = 4;
+
     protected Jeu model;
     //protected Controleur controleur;
     /**
@@ -37,33 +39,34 @@ public class InterfaceDeJeu extends JFrame implements KeyListener, Runnable {
     protected static int nb_joueurs_ia = 1;
     protected GridTuile gridTuile;
     protected TableauDeBord tableauDeBord;
+    protected static JScrollPane scrollPane;
     
     public InterfaceDeJeu(Jeu m){
-        setVisible(true);
         setLayout(new BorderLayout());
         setTitle("NIWA");
         
         model=m;
         gridTuile = new GridTuile(model);
-        JScrollPane plateau=new JScrollPane(gridTuile);
         gridTuile.setBackground(Color.WHITE);
-        plateau.getVerticalScrollBar().setUI(new CustomScrollBarUI());
-        plateau.setBackground(new Color(61, 58, 58));
-        plateau.getHorizontalScrollBar().setUI(new CustomScrollBarUI());
+        scrollPane=new JScrollPane(gridTuile);
+        scrollPane.getVerticalScrollBar().setUI(new CustomScrollBarUI());
+        scrollPane.setBackground(new Color(61, 58, 58));
+        scrollPane.getHorizontalScrollBar().setUI(new CustomScrollBarUI());
         tableauDeBord=new TableauDeBord(model);
         tableauDeBord.boutonQuitter.addActionListener(e->{
             this.dispose();
+            model.setJeuEtat(JeuEtat.GAME_INTERRUPT);
         });
         tableauDeBord.boutonZoom.addActionListener(e->{
             TuileGraphique.zoom(GridTuile.DISTANCE_ZOOM);
             //gridTuile.setPreferredSize(new Dimension(10*GridTuile.DISTANCE_ZOOM+gridTuile.getSize().width,10*GridTuile.DISTANCE_ZOOM+gridTuile.getSize().height));
-            plateau.repaint();
+            scrollPane.repaint();
             
         });
         tableauDeBord.boutonDezoom.addActionListener(e->{
             TuileGraphique.zoom(-GridTuile.DISTANCE_ZOOM);
             //gridTuile.setPreferredSize(new Dimension(-10*GridTuile.DISTANCE_ZOOM+gridTuile.getSize().width,-10*GridTuile.DISTANCE_ZOOM+gridTuile.getSize().height));
-            plateau.repaint();
+            scrollPane.repaint();
         });
         tableauDeBord.boutonRotationHoraire.addActionListener(e->{
             if(model.getJeuEtat()==JeuEtat.ROTATING_TUILE){
@@ -95,10 +98,10 @@ public class InterfaceDeJeu extends JFrame implements KeyListener, Runnable {
         });
         JPanel vueComplete=new JPanel(new BorderLayout());
         vueComplete.setBackground(new Color(61, 58, 58));
-        vueComplete.add(plateau, BorderLayout.CENTER);
+        vueComplete.add(scrollPane, BorderLayout.CENTER);
         vueComplete.add(tableauDeBord,BorderLayout.LINE_END);
         Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
-        size.width /= 4; // divide the width by 3
+        size.width /= TABLEAU_DE_BORD_RATIO; // divide the width by 4
         tableauDeBord.setPreferredSize(size);
         //controleur=new Controleur(model, this);
         //TODO: construire l'interface graphique (avec la tuileTemple du joueur0 comme la tuile initiale)
@@ -111,8 +114,7 @@ public class InterfaceDeJeu extends JFrame implements KeyListener, Runnable {
         });
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         add(vueComplete, BorderLayout.CENTER);
-        pack();
-        setLocationRelativeTo(null);
+        //setLocationRelativeTo(null);
         //setVisible(true);
     }
 
@@ -123,7 +125,7 @@ public class InterfaceDeJeu extends JFrame implements KeyListener, Runnable {
      
     public void creerPlateau() {
         
-        while(true){
+        while(model.getJeuEtat() != JeuEtat.GAME_INTERRUPT){
             //for(int i=0; i<model.getJoueurs().size(); i++) System.out.println("affiche joueurs:"+model.getJoueurs().get(i));
             for(int i=0; i<model.getJoueurs().size(); i++){
                 //controleur.rotationTmp=0;
@@ -169,7 +171,9 @@ public class InterfaceDeJeu extends JFrame implements KeyListener, Runnable {
                 
                 //waiting
                 while(model.getJeuEtat()!=JeuEtat.CONTINUE){
-                    
+                    if(model.getJeuEtat() == JeuEtat.GAME_INTERRUPT){
+                        return;
+                    }
                     System.out.print("");
                 }
 
@@ -200,6 +204,7 @@ public class InterfaceDeJeu extends JFrame implements KeyListener, Runnable {
             model.setJeuEtat(JeuEtat.PLACING_START_PION);
             // waiting
             while (!model.allPionsPlaced()){
+                if(model.getJeuEtat() == JeuEtat.GAME_INTERRUPT){return;}
                 //on désactive le zoom et le dézoom car sinon les cerlces ne sont pas centrés
                 tableauDeBord.boutonZoom.setEnabled(false);
                 tableauDeBord.boutonDezoom.setEnabled(false);
@@ -213,7 +218,7 @@ public class InterfaceDeJeu extends JFrame implements KeyListener, Runnable {
         }
 
 
-        while(model.getJeuEtat()!=JeuEtat.GAME_OVER){
+        while(model.getJeuEtat()!=JeuEtat.GAME_OVER && model.getJeuEtat() != JeuEtat.GAME_INTERRUPT){
             
             //for(int i=0; i<model.getJoueurs().size(); i++) System.out.println("affiche joueurs:"+model.getJoueurs().get(i));
             for(int i=0; i<model.getJoueurs().size(); i++){
@@ -221,7 +226,8 @@ public class InterfaceDeJeu extends JFrame implements KeyListener, Runnable {
                 System.out.println("current player changed!");//debug
                 model.setJoueurCourant(model.getJoueurs().get(i));
                 System.out.println(model.getJoueurCourant());//debug
-                tableauDeBord.setJoueurCourant("<html>"+model.getJoueurCourant().getID()+"</html>");
+                char playerID = (char)(model.getJoueurCourant().getID() + 'A');
+                tableauDeBord.setJoueurCourant("<html> Joueur "+playerID+"</html>");
                 SwingUtilities.invokeLater(() -> {
                     repaint();
                 });
@@ -254,7 +260,7 @@ public class InterfaceDeJeu extends JFrame implements KeyListener, Runnable {
                     ArrayList<Action> legalActions = ((JoueurIA) model.getJoueurCourant()).getLegalActions(model);
                     if(legalActions.isEmpty()){
                         System.out.println("No legal actions for the current state, the current player loses the game.");
-                        model.setGagneur(model.getJoueurs().get((i+1)%2));//must be 2 players
+                        model.setGagneur(model.getJoueurs().get(0));//must be 2 players
                         break;
                     }
                     // draw circle around the possible destinations of the legal actions
@@ -262,6 +268,7 @@ public class InterfaceDeJeu extends JFrame implements KeyListener, Runnable {
                     // AI player chooses an action
                     Action action = ((JoueurIA) model.getJoueurCourant()).chooseAction(model, currentState, legalActions);
                     System.out.println("Chosen action: " + action);
+                    
                     // apply the action
                     State nextState = currentState.getNextState(action);
                     // If the current player is an AI player, learn from the experience
@@ -283,6 +290,7 @@ public class InterfaceDeJeu extends JFrame implements KeyListener, Runnable {
                     //waiting
                     afficherInstruction("Cliquez sur le pion que vous voulez déplacer.");
                     while(model.getJeuEtat()!=JeuEtat.CONTINUE){
+                        if(model.getJeuEtat() == JeuEtat.GAME_INTERRUPT){return;}
                         System.out.print("");
                     }
     
@@ -293,6 +301,7 @@ public class InterfaceDeJeu extends JFrame implements KeyListener, Runnable {
                     //indexChoisi=0;
                     //waiting
                     while(model.getJeuEtat()!=JeuEtat.CONTINUE){
+                        if(model.getJeuEtat() == JeuEtat.GAME_INTERRUPT){return;}
                         System.out.print("");
                     }
                        
@@ -304,6 +313,7 @@ public class InterfaceDeJeu extends JFrame implements KeyListener, Runnable {
                         //indexChoisi=0;
                         //waiting
                         while(model.getJeuEtat()!=JeuEtat.CONTINUE){
+                            if(model.getJeuEtat() == JeuEtat.GAME_INTERRUPT){return;}
                             System.out.print("");
                         }
                     }
@@ -351,6 +361,7 @@ public class InterfaceDeJeu extends JFrame implements KeyListener, Runnable {
             creerPlateau();
         }
         jouer();
+        dispose();
         //TODO: quitter le jeu (fermer la fen锚tre etc...)
     }
 
@@ -380,6 +391,20 @@ public class InterfaceDeJeu extends JFrame implements KeyListener, Runnable {
             else if(dx < 0){glisserTuile(tuile, dx-1, dy);}
             else if(dy > 0){glisserTuile(tuile, dx, dy+1);}
             else if(dy < 0){glisserTuile(tuile, dx, dy-1);}
+        }
+        else{
+            if(dx > 0 && ((x+dx-2) * 2.5*TuileGraphique.radius) + GridTuile.dx > gridTuile.getPreferredSize().getWidth()){
+                gridTuile.glisserVersByCran(-dx, dy);
+            }
+            else if(dx < 0 && ((x+dx+2) * 2.5*TuileGraphique.radius) + gridTuile.getPreferredSize().getWidth() + GridTuile.dx < 0){
+                gridTuile.glisserVersByCran(-dx, dy);
+            }
+            else if(dy < 0 && ((y+dy+2) * 3*TuileGraphique.radius) + gridTuile.getPreferredSize().getHeight() - GridTuile.dy < 0){
+                gridTuile.glisserVersByCran(dx, -dy);
+            }
+            else if(dy > 0 && ((y+dy-2) * 3*TuileGraphique.radius) - GridTuile.dy > gridTuile.getPreferredSize().getHeight()){
+                gridTuile.glisserVersByCran(dx, -dy);
+            }
         }
     }
 
@@ -587,6 +612,10 @@ public class InterfaceDeJeu extends JFrame implements KeyListener, Runnable {
 
     @Override
     public void run() {
+        this.pack();
+        this.setVisible(true);
+        this.setExtendedState(MAXIMIZED_BOTH);
+
         this.lancer();
     }
 
@@ -595,13 +624,6 @@ public class InterfaceDeJeu extends JFrame implements KeyListener, Runnable {
             t = new Thread(this, threadName);
             t.start();
         }
-    }
-
-    public static InterfaceDeJeu defautStart(){
-        Jeu model =  new Jeu(2, 0, MapEtat.MANUEL,10);
-        InterfaceDeJeu jeu = new InterfaceDeJeu(model);
-        jeu.start();
-        return jeu;
     }
 
 
@@ -655,8 +677,8 @@ protected void configureScrollBarColors() {
                 System.out.println("mapSettings: "+model.getMapEtat());
                 jeuVue.creerPlateau();
             }
-            jeuVue.jouer();
-        }*/
+            jeuVue.run();
+        }
         
 
         /*
@@ -666,11 +688,17 @@ protected void configureScrollBarColors() {
         jeuVue.lancer();
         */
 
-        
+        /*
         //test 3: 2 joueurs humains
-        Jeu model =  new Jeu(2, 0, MapEtat.MAP1_2P, 10);
-        InterfaceDeJeu jeuVue = new InterfaceDeJeu(model);
-        jeuVue.lancer();
+        //Jeu model =  new Jeu(2, 0, MapEtat.MAP1_2P, 10);
+        //InterfaceDeJeu jeuVue = new InterfaceDeJeu(model);
+        //jeuVue.start();
+
+        ////test 4: 2 joueurs humains  ( map manuel)
+        //Jeu model =  new Jeu(2, 0, MapEtat.MANUEL, 15);
+        //InterfaceDeJeu jeuVue = new InterfaceDeJeu(model);
+        //jeuVue.start();
+        */
         
     }
 

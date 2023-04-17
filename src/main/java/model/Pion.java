@@ -108,7 +108,7 @@ public class Pion extends Stack<Couleurs> {
         Joueur j1 = new Joueur();
         Joueur j2 = new Joueur();
         Pion p1 = new Pion(j1);
-        Pion p2 = new Pion(j1);
+        Pion p2 = new Pion(j2);
         p1.add(Couleurs.ROUGE);
         p1.add(Couleurs.ROUGE);
         p2.add(Couleurs.ROUGE);

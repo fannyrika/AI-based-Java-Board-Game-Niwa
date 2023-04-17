@@ -14,5 +14,7 @@ public enum JeuEtat {
 
     GAME_OVER,
 
-    CHANGING_VIEW;
+    CHANGING_VIEW,
+
+    GAME_INTERRUPT;
 }

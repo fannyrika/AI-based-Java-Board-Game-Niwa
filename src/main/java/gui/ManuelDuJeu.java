@@ -30,7 +30,7 @@ public class ManuelDuJeu extends JFrame{
         
         editorPane.setOpaque(false);
         editorPane.setEditable(false);
-        try (BufferedReader reader = new BufferedReader(new FileReader("2022-ed2-g2--niwa/src/ManuelDuJeuFR.html"))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader("src/ManuelDuJeuFR.html"))) {
             editorPane.read(reader, null);
             reader.close();
         } catch (IOException e) {
@@ -50,7 +50,7 @@ public class ManuelDuJeu extends JFrame{
         this.pack();
         this.setResizable(false);
         this.setSize(800,500);
-        this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+        this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         this.setVisible(true);
     }
     
