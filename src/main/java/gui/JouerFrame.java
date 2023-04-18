@@ -14,6 +14,8 @@ import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class JouerFrame extends JFrame implements Runnable {
 
@@ -21,9 +23,10 @@ public class JouerFrame extends JFrame implements Runnable {
     public static final String threadName = "Thread_JF";
 
     protected JButton jouerButton, validerButton, quitterButton, optionButton;
+    protected static boolean soundON = true;
+    protected static Clip clip, clip2;
 
     public static StockageSettings stockage = new StockageSettings();
-
 
     /**
      * 
@@ -31,12 +34,13 @@ public class JouerFrame extends JFrame implements Runnable {
      * @throws IOException
      */
     public JouerFrame() {
+        JouerFrame tmp = this;
 
-    	//Fonctions permettant l'affichage correcte de la fenetre 
+        // Fonctions permettant l'affichage correcte de la fenetre
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setExtendedState(JFrame.MAXIMIZED_BOTH);
         setTitle("MENU NIWA");
-        //setLocationRelativeTo(null); // Pour centrer la fenetre
+        // setLocationRelativeTo(null); // Pour centrer la fenetre
         setDefaultCloseOperation(EXIT_ON_CLOSE);
 
         setLayout(new BorderLayout());
@@ -52,13 +56,26 @@ public class JouerFrame extends JFrame implements Runnable {
         jouerButton.setBackground(Color.WHITE);
         jouerButton.setBorder(new LineBorder(Color.CYAN));
         jouerButton.addActionListener(e -> {
+            // Pour le son lorqu'on clique sur le bouton
+            beep();
             this.dispose();
-            //Passage a la page suivante pour que le joueur effectue les choix du mode de jeux
-            JouerButton jouerButton = new JouerButton();
+            // Passage a la page suivante pour que le joueur effectue les choix du mode de
+            // jeux
+            JouerButton jouerButton = new JouerButton(tmp);
             jouerButton.start();
         });
-         
-        //Permettant � l'utilisateur de garder ou d'enlever la musique en arriere plan
+        jouerButton.addMouseListener(new MouseAdapter() {
+            public void mouseEntered(MouseEvent evt) {
+                jouerButton.setBackground(new Color(204, 235, 245));
+            }
+
+            public void mouseExited(MouseEvent evt) {
+                jouerButton.setBackground(Color.white);
+            }
+
+        });
+
+        // Permettant � l'utilisateur de garder ou d'enlever la musique en arriere plan
         optionButton = new JButton("O P T I O N S ");
         optionButton.setFont(new Font("Congenial Black", Font.BOLD, 15));
         optionButton.setPreferredSize(new Dimension(120, 50));
@@ -66,7 +83,26 @@ public class JouerFrame extends JFrame implements Runnable {
         optionButton.setForeground(Color.ORANGE);
         optionButton.setBackground(Color.WHITE);
         optionButton.setBorder(new LineBorder(Color.CYAN));
-     
+        optionButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent event) {
+                beep();
+                // Passage a la page suivante pour que le joueur effectue les choix du mode de
+                // jeux
+                OptionButtoon optionButton = new OptionButtoon(tmp);
+                setVisible(false);
+            }
+        });
+        optionButton.addMouseListener(new MouseAdapter() {
+            public void mouseEntered(MouseEvent evt) {
+                optionButton.setBackground(new Color(204, 235, 245));
+            }
+
+            public void mouseExited(MouseEvent evt) {
+                optionButton.setBackground(Color.white);
+            }
+
+        });
+
         quitterButton = new JButton("Q U I T T E R");
         quitterButton.setFont(new Font("Congenial Black", Font.BOLD, 15));
         quitterButton.setPreferredSize(new Dimension(120, 50));
@@ -76,8 +112,19 @@ public class JouerFrame extends JFrame implements Runnable {
         quitterButton.setBorder(new LineBorder(Color.CYAN));
         quitterButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
+                beep();
                 System.exit(0);
             }
+        });
+        quitterButton.addMouseListener(new MouseAdapter() {
+            public void mouseEntered(MouseEvent evt) {
+                quitterButton.setBackground(new Color(204, 235, 245));
+            }
+
+            public void mouseExited(MouseEvent evt) {
+                quitterButton.setBackground(Color.white);
+            }
+
         });
 
         background.add(jouerButton);
@@ -85,7 +132,7 @@ public class JouerFrame extends JFrame implements Runnable {
         background.add(quitterButton);
         add(background);
 
-    } 
+    }
 
     @Override
     public void run() {
@@ -97,25 +144,47 @@ public class JouerFrame extends JFrame implements Runnable {
         AudioInputStream ais;
         try {
             ais = AudioSystem.getAudioInputStream(inputStream);
-            Clip clip = AudioSystem.getClip();
+            clip = AudioSystem.getClip();
             clip.open(ais);
             clip.start();
+            clip.loop(Clip.LOOP_CONTINUOUSLY);
         } catch (Exception e) {
             System.err.println("Problème au niveau du lancement du son...");
-            if(!StockageSettings.DEBUG_MODE){
+            if (!StockageSettings.DEBUG_MODE) {
                 e.printStackTrace();
             }
         }
     }
 
-    public void start(){
-        if(t == null){
-            t = new Thread(this,threadName);
+    public void start() {
+        if (t == null) {
+            t = new Thread(this, threadName);
             t.start();
         }
     }
 
-    public static void main(String args[]) throws IOException{
+   
+    // SON POUR LES BOUTONS
+    public void beep() {
+        // PARTIE AUDIO permettant le lancenment de la musique
+        InputStream inputStream = getClass().getClassLoader().getResourceAsStream(StockageSettings.niwaBeep);
+        AudioInputStream ais;
+        try {
+            ais = AudioSystem.getAudioInputStream(inputStream);
+            clip2 = AudioSystem.getClip();
+            clip2.open(ais);
+            clip2.start();
+
+        } catch (Exception ee) {
+            System.err.println("ProblÃ¨me au niveau du lancement du son...");
+            if (!StockageSettings.DEBUG_MODE) {
+                ee.printStackTrace();
+            }
+        }
+
+    }
+
+    public static void main(String args[]) throws IOException {
 
         JouerFrame frame = new JouerFrame();
         frame.start();

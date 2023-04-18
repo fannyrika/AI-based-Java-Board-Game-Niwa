@@ -62,16 +62,12 @@ public class Joueur implements Cloneable{
     }
 
     public String toString(){
-        /*String str="";
-        str+="nom:"+nom+" ";
-        str+="id="+id+" ";*/
-       /* for(int i=0; i<pions.size(); i++){
         String str="";
         str+="id="+id+" ";
         for(int i=0; i<pions.size(); i++){
             str+=pions.get(i).toString();
             str+=" ";
-        }*/
+        }
         return "Joueur "+id;
     }
 

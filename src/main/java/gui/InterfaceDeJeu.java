@@ -247,6 +247,8 @@ public class InterfaceDeJeu extends JFrame implements KeyListener, Runnable {
                     //print the qtable
                     //((JoueurIA) model.getJoueurCourant()).printQTable(100);
                     //slow down the speed of the AI player
+                    afficherInstruction("");
+                    tableauDeBord.setJoueurCourant("<html> IA </html>");
                     try {
                         Thread.sleep(100); 
                     } catch (InterruptedException e) {
@@ -293,6 +295,7 @@ public class InterfaceDeJeu extends JFrame implements KeyListener, Runnable {
                     //afficherPossiblePionPosition();
                     indexChoisi=0;
                     //waiting
+                    afficherInstruction("Cliquez sur le pion que vous voulez déplacer.");
                     while(model.getJeuEtat()!=JeuEtat.CONTINUE){
                         if(model.getJeuEtat() == JeuEtat.GAME_INTERRUPT){return;}
                         System.out.print("");
@@ -300,6 +303,7 @@ public class InterfaceDeJeu extends JFrame implements KeyListener, Runnable {
     
                     System.out.println("ready to place the pion");//debug
                     model.setJeuEtat(JeuEtat.PLACING_PION);
+                    afficherInstruction("Placez le pion sur le plateau en cliquant sur un cercle");
                     //locationsPossibles = afficherPossibleDestination();
                     //indexChoisi=0;
                     //waiting
@@ -310,6 +314,7 @@ public class InterfaceDeJeu extends JFrame implements KeyListener, Runnable {
                        
                     if(model.getPionCourant().size()>0){//car si le pion peut sauter, on n'a pas besoins de cette etape
                         System.out.println("ready to choose the destination for the pearl");//debug
+                        afficherInstruction("Choissinez la destination de la perle en cliquant dessus.");
                         model.setJeuEtat(JeuEtat.CHOOSING_PEARL_DESTINATION);
                         //afficherPossiblePionPosition();
                         //indexChoisi=0;
@@ -631,13 +636,6 @@ public class InterfaceDeJeu extends JFrame implements KeyListener, Runnable {
         }
     }
 
-    public static InterfaceDeJeu defautStart(){
-        Jeu model =  new Jeu(2, 0, MapEtat.MANUEL,10);
-        InterfaceDeJeu jeu = new InterfaceDeJeu(model);
-        jeu.start();
-        return jeu;
-    }
-
 
 ///scrollbar du plateau
 class CustomScrollBarUI extends BasicScrollBarUI{
@@ -693,14 +691,14 @@ protected void configureScrollBarColors() {
         }
         
 
-        
-        ////test 2: 1 joueur humain vs 1 joueur IA
-        //Jeu model =  new Jeu(1, 1, MapEtat.MAP1_2P, 50);
-        //InterfaceDeJeu jeuVue = new InterfaceDeJeu(model);
-        //jeuVue.start();
-        
+        /*
+        //test 2: 1 joueur humain vs 1 joueur IA
+        Jeu model =  new Jeu(1, 1, MapEtat.MAP1_2P);
+        InterfaceDeJeu jeuVue = new InterfaceDeJeu(model);
+        jeuVue.lancer();
+        */
 
-        
+        /*
         //test 3: 2 joueurs humains
         //Jeu model =  new Jeu(2, 0, MapEtat.MAP1_2P, 10);
         //InterfaceDeJeu jeuVue = new InterfaceDeJeu(model);
@@ -710,6 +708,7 @@ protected void configureScrollBarColors() {
         //Jeu model =  new Jeu(2, 0, MapEtat.MANUEL, 15);
         //InterfaceDeJeu jeuVue = new InterfaceDeJeu(model);
         //jeuVue.start();
+        */
         
     }
 
