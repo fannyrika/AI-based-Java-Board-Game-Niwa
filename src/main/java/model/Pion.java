@@ -40,9 +40,9 @@ public class Pion extends Stack<Couleurs> {
         if(p.location != null){
             this.location=new Coordonnee(p.location);
         }
-        else{
-            throw new IllegalArgumentException("Pion location is null");
-        }
+        //else{
+        //    throw new IllegalArgumentException("Pion location is null");
+        //}
         this.id = p.id;
     }
 

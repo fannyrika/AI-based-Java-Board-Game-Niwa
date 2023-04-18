@@ -12,6 +12,8 @@ import java.io.InvalidClassException;
 import java.util.ArrayList;
 import java.util.Random;
 
+import main.java.gui.StockageSettings;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -47,11 +49,12 @@ public class JoueurIA extends Joueur{
      * @return an action
      */
     public Action chooseAction(Jeu jeu, State currentState, ArrayList<Action> legalActions) {
-        System.out.println("-----------Legal actions: ");
-        //print legal actions more clearly
-        for (Action action : legalActions) {
-            System.out.println("Action: " + action);
-        }
+        if(StockageSettings.DEBUG_MODE){            
+            System.out.println("-----------Legal actions: ");
+            //print legal actions more clearly
+            for (Action action : legalActions) {
+                System.out.println("Action: " + action);
+            }}
     
         if (Math.random() < epsilon) {
             // Choose a random action with probability epsilon
@@ -184,9 +187,14 @@ public class JoueurIA extends Joueur{
                 }
             }
         }
-        //all pions are blocked
-        if (nbBlockedPion==jeu.getJoueurCourant().getPions().size()){
-            jeu.eliminerJoueur(jeu.getJoueurCourant());
+        //almost pions are blocked
+        if (nbBlockedPion==jeu.getJoueurCourant().getPions().size()-1){
+            jeu.incrementAlmostBlockedCount();
+            if(jeu.getAlmostBlockedCount()>20){
+                //eliminerJoueur(getJoueurCourant());
+                jeu.setGagneur(jeu.getJoueurs().get((jeu.getJoueurCourant().getID()+1)%2));
+            }
+            
         }
         return legalActions;
     }
@@ -281,7 +289,9 @@ public class JoueurIA extends Joueur{
         }
     }
 
-    public void printQTable() {
-        this.QTable.print();
+    public void printQTable(int maxPrintTimes) {
+        this.QTable.print(maxPrintTimes);
     }
+
+    
 }

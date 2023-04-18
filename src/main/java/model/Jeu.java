@@ -52,6 +52,11 @@ public class Jeu implements MapCreation {
      * Représente le nombre de perles qu'un pion peut garder sur sa tête
      */
     public static final int NB_PEARL_MAX = 3;
+
+    /**
+     * to avoid infinite loop when the game is almost blocked
+     */
+    protected int almostBlockedCount=0;
     
      /**
      * Constructeur permettant d'initialiser les attributs
@@ -94,7 +99,7 @@ public class Jeu implements MapCreation {
             sacTemples.add(j.temple);   // On ajoute chaque temple dans la liste des temples
         }
         for (int i = 0; i < nb_joueurs_ia; i++) {
-            JoueurIA j = new JoueurIA(0.1, 0.5, 0.9);
+            JoueurIA j = new JoueurIA(1.0, 0.5, 0.9);
             joueurs.add(j);             // On ajoute les joueurs dans la liste de joueurs
             sacTemples.add(j.temple);   // On ajoute chaque temple dans la liste des temples
         }
@@ -196,8 +201,15 @@ public class Jeu implements MapCreation {
         }
         //all pions are blocked
         if (nbBlockedPion==getJoueurCourant().getPions().size()){
-            eliminerJoueur(getJoueurCourant());
+            if(isAiTraining()){
+            //dont eliminate the player
+                setGagneur(joueurs.get( (joueurCourant.getID()+1) % joueurs.size() ));
+            }else{
+            //eliminate the player
+                eliminerJoueur(getJoueurCourant());
+            }
         }
+        //set back the pion courant
         setPionCourant(pionCourant);
     }
 
@@ -253,7 +265,7 @@ public class Jeu implements MapCreation {
             System.out.println("minDistance: " + minDistance);
             System.out.println("distance: " + ((JoueurIA) joueurCourant).getDistance());
             // Calculate the reward based on the distance
-            double reward = ((JoueurIA) joueurCourant).getDistance() - minDistance;
+            double reward = 5*( ((JoueurIA) joueurCourant).getDistance() - minDistance ) ;
             ((JoueurIA) joueurCourant).setDistance(minDistance);
             return reward;
         }
@@ -304,6 +316,10 @@ public class Jeu implements MapCreation {
         sacTemples.remove(sacTemples.size()-1);
         return temple;
     }
+
+    public void resetAlmostBlockedCount(){almostBlockedCount=0;}
+    public void incrementAlmostBlockedCount(){almostBlockedCount++;}
+    public int getAlmostBlockedCount(){return almostBlockedCount;}
 
     @Override
     public boolean equals(Object obj) {

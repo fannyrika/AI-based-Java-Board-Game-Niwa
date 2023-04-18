@@ -131,7 +131,8 @@ public class InterfaceDeJeu extends JFrame implements KeyListener, Runnable {
                 //controleur.rotationTmp=0;
                 model.setJoueurCourant(model.getJoueurs().get(i));
                 tableauDeBord.setJoueurCourant("<html><h2>Création du plateau</h2></html>");
-                System.out.println("joueur courant:"+model.getJoueurCourant());//debug
+                if(StockageSettings.DEBUG_MODE)
+                    System.out.println("joueur courant:"+model.getJoueurCourant());//debug
                 //TODO: afficher l'information du joueur courant
                
                 //validate();
@@ -217,11 +218,14 @@ public class InterfaceDeJeu extends JFrame implements KeyListener, Runnable {
             tableauDeBord.boutonDezoom.setEnabled(true);
         }
 
-
+        //in order to avoid one part being too long
+        int nbTour = 0;
         while(model.getJeuEtat()!=JeuEtat.GAME_OVER && model.getJeuEtat() != JeuEtat.GAME_INTERRUPT){
-            
+            nbTour++;
             //for(int i=0; i<model.getJoueurs().size(); i++) System.out.println("affiche joueurs:"+model.getJoueurs().get(i));
             for(int i=0; i<model.getJoueurs().size(); i++){
+                model.resetAlmostBlockedCount();
+
                 //controleur.rotationTmp=0;
                 System.out.println("current player changed!");//debug
                 model.setJoueurCourant(model.getJoueurs().get(i));
@@ -240,6 +244,8 @@ public class InterfaceDeJeu extends JFrame implements KeyListener, Runnable {
                 //    controleur.controlIA();
                 //}
                 if(model.getJoueurCourant() instanceof JoueurIA){
+                    //print the qtable
+                    //((JoueurIA) model.getJoueurCourant()).printQTable(100);
                     //slow down the speed of the AI player
                     try {
                         Thread.sleep(100); 
@@ -258,14 +264,15 @@ public class InterfaceDeJeu extends JFrame implements KeyListener, Runnable {
                     ArrayList<Action> legalActions = ((JoueurIA) model.getJoueurCourant()).getLegalActions(model);
                     if(legalActions.isEmpty()){
                         System.out.println("No legal actions for the current state, the current player loses the game.");
-                        model.setGagneur(model.getJoueurs().get(0));//must be 2 players
+                        model.setGagneur(model.getJoueurs().get((i+1)%2));//must be 2 players
                         break;
                     }
                     // draw circle around the possible destinations of the legal actions
                     drawPossibleActionDestinations(legalActions);
                     // AI player chooses an action
                     Action action = ((JoueurIA) model.getJoueurCourant()).chooseAction(model, currentState, legalActions);
-                    System.out.println("Chosen action: " + action);
+                    if(StockageSettings.DEBUG_MODE)
+                        System.out.println("Chosen action: " + action);
                     
                     // apply the action
                     State nextState = currentState.getNextState(action);
@@ -314,10 +321,13 @@ public class InterfaceDeJeu extends JFrame implements KeyListener, Runnable {
                     }
                 }
             }
-            if(model.getGagneurs().size()==model.getJoueurs().size()-1){
+            if(model.getGagneurs().size()==model.getJoueurs().size()-1 || nbTour>200){
+                //print the q-table
+                //((JoueurIA) (model.getJoueurCourant())).getQTable().print();
+                System.out.println("----------nbTour:"+nbTour);
                 //game over
                 gameOver();
-                //System.out.print(((JoueurIA) (model.getJoueurCourant())).getQTable());
+                //
                 
                 ////eliminate all the players on the board
                 //for(Joueur joueur : model.getJoueurs()){
@@ -669,7 +679,7 @@ protected void configureScrollBarColors() {
 
         //System.out.println("from main: mapsetting: "+model.getMapEtat());
 
-        //test 1: 10000 rounds of 2 AI players
+        //test 1: 1000000 rounds of 2 AI players
         for(int i=0; i<10000; i++){
             System.out.println("-------------round "+i+"----------------");
             Jeu model =  new Jeu(0, 2, MapEtat.MAP1_2P,10);
