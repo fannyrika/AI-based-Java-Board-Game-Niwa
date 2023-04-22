@@ -68,7 +68,25 @@ public class Joueur implements Cloneable{
             str+=pions.get(i).toString();
             str+=" ";
         }
-        return "Joueur "+id;
+        String strCouleur = "";
+        switch (id) {
+            case 0:
+                strCouleur = "Bleu";
+                break;
+            case 1:
+                strCouleur = "Rouge";
+                break;
+            case 2:
+                strCouleur = "Rose";
+                break;
+            case 3:
+                strCouleur = "Jaune";
+                break;
+            default:
+                strCouleur = "inconnu";
+                break;
+        }
+        return "Joueur "+strCouleur;
     }
 
     public ArrayList<Pion> getPions(){ return this.pions; }

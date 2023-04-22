@@ -154,7 +154,9 @@ public class PionGraphique {
             case 0: return new Color(7, 151, 247);
             case 1: return new Color(255, 46, 81);
             case 2: return new Color(247, 134, 247);
-            case 3: return new Color(255, 138, 202);
+            //set orange
+            case 3: return new Color(255, 177, 110);
+
             default: return Color.BLACK;
         }
     }

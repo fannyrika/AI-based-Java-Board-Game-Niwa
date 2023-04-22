@@ -230,8 +230,7 @@ public class InterfaceDeJeu extends JFrame implements KeyListener, Runnable {
                 System.out.println("current player changed!");//debug
                 model.setJoueurCourant(model.getJoueurs().get(i));
                 System.out.println(model.getJoueurCourant());//debug
-                char playerID = (char)(model.getJoueurCourant().getID() + 'A');
-                tableauDeBord.setJoueurCourant("<html> Joueur "+playerID+"</html>");
+                tableauDeBord.setJoueurCourant("<html> "+model.getJoueurCourant()+"</html>");
                 SwingUtilities.invokeLater(() -> {
                     repaint();
                 });
