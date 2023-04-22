@@ -6,6 +6,7 @@ import javax.swing.event.MouseInputListener;
 import java.awt.*;
 import java.awt.event.*;
 
+import main.java.model.interfaces.ColorsSwitcher;
 import main.java.model.interfaces.HexagoneAutour;
 
 import java.util.ArrayList;
@@ -297,7 +298,17 @@ public class GridTuile extends JPanel implements KeyListener, MouseInputListener
         for (Joueur j : model.getJoueurs()) {
             if(!j.placedAllPions()){
                 TuileTemple temple = j.getTemple();
-                autourTemples.addAll(HexagoneAutour.getList(temple.getLocationInGridHexagone()));
+                ArrayList<Coordonnee> hexagones = HexagoneAutour.getList(temple.getLocationInGridHexagone());
+                for (Coordonnee c : hexagones) {
+                    int index = 0;
+                    Pion p = j.getPions().get(index);
+                    while (p.isPlaced()) {
+                        index++;
+                        p = j.getPions().get(index);
+                    }
+                    allCircles.get(c).setColor(ColorsSwitcher.toColor(p.peek()));
+                }
+                autourTemples.addAll(hexagones);
             }
         }
         autourTemples.removeAll(model.getPlateau().getGridPion().keySet());
@@ -308,6 +319,16 @@ public class GridTuile extends JPanel implements KeyListener, MouseInputListener
             repaint();
         });
         
+    }
+
+    public void showStartPionLocationsV2(){
+        circlesToDraw.clear();
+        ArrayList<TuileTempleGraphique> temples = new ArrayList<TuileTempleGraphique>();
+        for (Joueur j : model.getJoueurs()) {
+            if(!j.placedAllPions()){
+                TuileTemple temple = j.getTemple();
+            }
+        }
     }
     
 

@@ -15,6 +15,11 @@ public class TuileGraphique extends Polygon {
         protected int y;
         protected static int circleRadius = (int)(TuileGraphique.radius * HITBOX_CIRCLE_RADIUS_RATIO);
         protected Coordonnee locationInGridHexagone;
+        /**
+         * Permet de savoir de quelle couleur le cercle doit être.
+         * @warning Cet attribut peut-être NULL
+         */
+        protected Color couleur;
 
         /**
          * Constructeur permettant de "simuler" un cercle, avec comme centre (x,y) et comme rayon "radius"
@@ -60,7 +65,21 @@ public class TuileGraphique extends Polygon {
 
         public void draw(Graphics g){
             Graphics2D g2d = (Graphics2D)g;
+            Color oldColor = g.getColor();        // On garde l'ancienne couleur
+            Stroke oldStroke = g2d.getStroke();
+
+            g2d.setStroke(new BasicStroke(2));
+            g2d.setColor(Color.BLACK);
             g2d.drawOval((x-circleRadius/2), (y-circleRadius/2), circleRadius, circleRadius);
+
+            g2d.setStroke(oldStroke);
+            if(couleur != null){
+                g.setColor(couleur);
+            }
+            g2d.drawOval((x-circleRadius/2), (y-circleRadius/2), circleRadius, circleRadius);
+
+
+            g.setColor(oldColor);                 // On remet l'ancienne couleur
         }
 
         public void setLocationInGridHexagone(Coordonnee c){
@@ -69,6 +88,14 @@ public class TuileGraphique extends Polygon {
 
         public Coordonnee getLocationInGridHexagone(){
             return locationInGridHexagone;
+        }
+
+        public void setColor(Color c){
+            couleur = c;
+        }
+
+        public Color getColor(){
+            return couleur;
         }
     }
 

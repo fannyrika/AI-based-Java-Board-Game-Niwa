@@ -49,14 +49,9 @@ public class Intro extends JPanel{
               public void mouseClicked(java.awt.event.MouseEvent evt) {
                 if(j.getValue()==100) {
                     JouerFrame frame;
-                    try {
-                        frame = new JouerFrame();
-                        frame.start();
-                        f.dispose();
-                    } catch (IOException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    }
+                    frame = new JouerFrame();
+                    frame.start();
+                    f.dispose();
                     
                      
                 }
