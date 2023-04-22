@@ -680,7 +680,7 @@ protected void configureScrollBarColors() {
         //test 1: 1000000 rounds of 2 AI players
         for(int i=0; i<10000; i++){
             System.out.println("-------------round "+i+"----------------");
-            Jeu model =  new Jeu(1, 1, MapEtat.MAP1_2P,10);
+            Jeu model =  new Jeu(0, 2, MapEtat.MAP1_2P,10);
             //Jeu model =  new Jeu(2, 0, MapEtat.MAP1_2P);
             InterfaceDeJeu jeuVue = new InterfaceDeJeu(model);
             if(model.getMapEtat().equals(MapEtat.MANUEL)){

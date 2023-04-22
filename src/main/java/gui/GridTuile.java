@@ -19,13 +19,35 @@ public class GridTuile extends JPanel implements KeyListener, MouseInputListener
 
     public class CursorInfo extends Cursor {
 
+        /**
+         * Point pour connaitre l'emplacement du curseur sur l'écran
+         */
         protected Point point;
+        /**
+         * Pion sur lequel le curseur pointe
+         */
         protected Pion pion;
+        /**
+         * S'il y a une perle à donner au pion pointé, elle est ici
+         */
         protected Couleurs perle;
 
+        /**
+         * Longueur des rectangles de couleurs
+         */
         protected static final int lx = 30;
+        /**
+         * Hauteur des rectangles de couleurs
+         */
         protected static final int ly = 20;
+        /**
+         * Taux de transparence lorsqu'on veut donner une perle au pion
+         */
         protected static final int transparence = 50;
+        /**
+         * Taille de la croix lorsqu'on ne peut pas donner la perle au pion
+         */
+        protected static final int red_X = 15;
 
         public CursorInfo(int type, Point point, Pion pion) {
             super(type);
@@ -48,7 +70,24 @@ public class GridTuile extends JPanel implements KeyListener, MouseInputListener
             Pion pion_copy = new Pion(pion);
 
             if(perle != null){
-                // Mettre transparent ici
+
+                if(pion_copy.size() >= Joueur.MAX_PIONS){
+
+                    g2d.setColor(Color.BLACK);
+                    g2d.setStroke(new BasicStroke(3));
+                    g2d.drawLine(p.x + 5, p.y, p.x + 5 + red_X, p.y - red_X);
+                    g2d.drawLine(p.x + 5, p.y - red_X, p.x + 5 + red_X, p.y);
+
+                    g2d.setColor(Color.RED);
+                    g2d.setStroke(new BasicStroke(2));
+                    g2d.drawLine(p.x + 5, p.y, p.x + 5 + red_X, p.y - red_X);
+                    g2d.drawLine(p.x + 5, p.y - red_X, p.x + 5 + red_X, p.y);
+
+
+                    g2d.setColor(oldColor);
+                    g2d.setStroke(oldStroke);
+                    return;
+                }
 
                 Color c = ColorsSwitcher.toColor(perle);
 
