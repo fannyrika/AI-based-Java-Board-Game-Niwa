@@ -291,7 +291,14 @@ public class GridTuile extends JPanel implements KeyListener, MouseInputListener
                                 // si il y a des locations possibles a placer
                                 if(locationsPossible.size()>0){
                                     for (Coordonnee coordonnee : locationsPossible) {
-                                        circlesToDraw.add(allCircles.get(coordonnee));
+                                        Circle circle = allCircles.get(coordonnee);
+                                        if(!pionChoisi.isEmpty()){
+                                            circle.setColor(ColorsSwitcher.toColor(pionChoisi.peek()));
+                                        }
+                                        else{
+                                            circle.setColor(Color.BLACK);
+                                        }
+                                        circlesToDraw.add(circle);
                                     }
                                     SwingUtilities.invokeLater(() -> {
                                         repaint();
@@ -406,7 +413,9 @@ public class GridTuile extends JPanel implements KeyListener, MouseInputListener
 
     @Override
     public void mouseMoved(MouseEvent e) {
-        repaint();
+        SwingUtilities.invokeLater(() -> {
+            repaint();
+        });
         Point position = e.getPoint();
         for (TuileGraphique t : tuilesGraphique) {
             for (Circle c : t.cercles) {
