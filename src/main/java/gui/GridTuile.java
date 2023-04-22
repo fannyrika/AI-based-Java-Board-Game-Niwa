@@ -5,6 +5,7 @@ import javax.swing.event.MouseInputListener;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.geom.Rectangle2D;
 
 import main.java.model.interfaces.ColorsSwitcher;
 import main.java.model.interfaces.HexagoneAutour;
@@ -16,6 +17,43 @@ import main.java.gui.TuileGraphique.Circle;
 import main.java.model.*;
 
 public class GridTuile extends JPanel implements KeyListener, MouseInputListener {
+
+    public class CursorInfo extends Cursor {
+
+        protected Point point;
+        protected Pion pion;
+
+        protected static final int lx = 30;
+        protected static final int ly = 20;
+
+        public CursorInfo(int type, Point point, Pion pion) {
+            super(type);
+            this.point = point;
+            this.pion = pion;
+        }
+
+        public void draw(Graphics g, Point p){
+            Graphics2D g2d = (Graphics2D) g;
+
+            Color oldColor = g2d.getColor();
+            Stroke oldStroke = g2d.getStroke();
+
+            Pion pion_copy = new Pion(pion);
+            while (!pion_copy.isEmpty()) {
+                g2d.setColor(ColorsSwitcher.toColor(pion_copy.peek()));
+                g2d.fillRect(p.x + 5, p.y - pion_copy.size()*ly, lx, ly);
+
+                g2d.setStroke(new BasicStroke(3));
+                g2d.setColor(Color.BLACK);
+                g2d.drawRect(p.x + 5, p.y - pion_copy.size()*ly, lx, ly);
+                g2d.setStroke(oldStroke);
+            
+                pion_copy.pop();
+            }
+
+            g2d.setColor(oldColor);
+        }
+    }
 
     /**
      * Le model sur lequel le graphique se base
@@ -123,6 +161,11 @@ public class GridTuile extends JPanel implements KeyListener, MouseInputListener
             if(c != null){
                 c.draw(mainGraphics);
             }
+        }
+
+        if(getCursor() instanceof CursorInfo){
+            CursorInfo cursor = (CursorInfo) getCursor();
+            cursor.draw(mainGraphics, cursor.point);
         }
 
         // Pour le debogage
@@ -319,18 +362,7 @@ public class GridTuile extends JPanel implements KeyListener, MouseInputListener
             repaint();
         });
         
-    }
-
-    public void showStartPionLocationsV2(){
-        circlesToDraw.clear();
-        ArrayList<TuileTempleGraphique> temples = new ArrayList<TuileTempleGraphique>();
-        for (Joueur j : model.getJoueurs()) {
-            if(!j.placedAllPions()){
-                TuileTemple temple = j.getTemple();
-            }
-        }
-    }
-    
+    }    
 
     @Override
     public void mousePressed(MouseEvent e) {}
@@ -349,6 +381,7 @@ public class GridTuile extends JPanel implements KeyListener, MouseInputListener
 
     @Override
     public void mouseMoved(MouseEvent e) {
+        repaint();
         Point position = e.getPoint();
         for (TuileGraphique t : tuilesGraphique) {
             for (Circle c : t.cercles) {
@@ -367,7 +400,7 @@ public class GridTuile extends JPanel implements KeyListener, MouseInputListener
                     if(model.getJeuEtat()==JeuEtat.CHOOSING_PION){
                         if(model.getPlateau().getGridPion().containsKey(c.getLocationInGridHexagone())){
                             if(model.getPlateau().getGridPion().get(c.getLocationInGridHexagone()).getProprietaire() == model.getJoueurCourant()){
-                                this.setCursor(new Cursor(Cursor.HAND_CURSOR));
+                                this.setCursor(new CursorInfo(Cursor.HAND_CURSOR, position, model.getPlateau().getGridPion().get(c.getLocationInGridHexagone())));
                             }
                         }
                     }
@@ -379,7 +412,7 @@ public class GridTuile extends JPanel implements KeyListener, MouseInputListener
                     }
                     else if(model.getJeuEtat()==JeuEtat.CHOOSING_PEARL_DESTINATION){
                         if(model.getPlateau().getGridPion().containsKey(c.getLocationInGridHexagone()) && model.getPlateau().getGridPion().get(c.getLocationInGridHexagone()) != model.getPionCourant() && model.getPlateau().getGridPion().get(c.getLocationInGridHexagone()).getProprietaire() == model.getPionCourant().getProprietaire()){
-                            this.setCursor(new Cursor(Cursor.HAND_CURSOR));
+                            this.setCursor(new CursorInfo(Cursor.HAND_CURSOR, position, model.getPlateau().getGridPion().get(c.getLocationInGridHexagone())));
                         }
                     }
                     return;

@@ -46,7 +46,7 @@ public class Coordonnee implements Serializable{
      */
 
     /**
-     * Méthode qui @return true si les deux references pointent vers le même objet ou qu'ils ont les mêmes "x" et "y"
+     * @return true si les deux references pointent vers le même objet ou s'ils ont les mêmes "x" et "y"
      */
     @Override
     public boolean equals(Object o){
