@@ -5,7 +5,6 @@ import javax.swing.event.MouseInputListener;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.geom.Rectangle2D;
 
 import main.java.model.interfaces.ColorsSwitcher;
 import main.java.model.interfaces.HexagoneAutour;
@@ -22,15 +21,23 @@ public class GridTuile extends JPanel implements KeyListener, MouseInputListener
 
         protected Point point;
         protected Pion pion;
+        protected Couleurs perle;
 
         protected static final int lx = 30;
         protected static final int ly = 20;
+        protected static final int transparence = 50;
 
         public CursorInfo(int type, Point point, Pion pion) {
             super(type);
             this.point = point;
             this.pion = pion;
         }
+
+        public CursorInfo(int type, Point point, Pion pion, Couleurs perle){
+            this(type, point, pion);
+            this.perle = perle;
+        }
+
 
         public void draw(Graphics g, Point p){
             Graphics2D g2d = (Graphics2D) g;
@@ -39,6 +46,20 @@ public class GridTuile extends JPanel implements KeyListener, MouseInputListener
             Stroke oldStroke = g2d.getStroke();
 
             Pion pion_copy = new Pion(pion);
+
+            if(perle != null){
+                // Mettre transparent ici
+
+                Color c = ColorsSwitcher.toColor(perle);
+
+                g2d.setColor(new Color(c.getRed(),c.getGreen(),c.getBlue(),transparence));
+                g2d.fillRect(p.x + 5, p.y - (pion_copy.size()+1)*ly, lx, ly);
+                g2d.setStroke(new BasicStroke(3));
+                g2d.setColor(new Color(0, 0, 0, transparence));
+                g2d.drawRect(p.x + 5, p.y - (pion_copy.size()+1)*ly, lx, ly);
+                g2d.setStroke(oldStroke);
+            }
+
             while (!pion_copy.isEmpty()) {
                 g2d.setColor(ColorsSwitcher.toColor(pion_copy.peek()));
                 g2d.fillRect(p.x + 5, p.y - pion_copy.size()*ly, lx, ly);
@@ -314,6 +335,11 @@ public class GridTuile extends JPanel implements KeyListener, MouseInputListener
             
                                         model.getPlateau().getGridPion().remove(model.getPionCourant().getLocation());
                                         model.getPlateau().placerPionForce(model.getPionCourant(), model.getPionCourant().getLocation());
+
+                                        if(getCursor() instanceof CursorInfo){
+                                            ((CursorInfo)getCursor()).perle = null;
+                                        }
+
                                         SwingUtilities.invokeLater(() -> {
                                             repaint();
                                         });
@@ -324,7 +350,6 @@ public class GridTuile extends JPanel implements KeyListener, MouseInputListener
                                 }
                             }
                         }
-    
                         return;
                     }
                 }
@@ -412,7 +437,7 @@ public class GridTuile extends JPanel implements KeyListener, MouseInputListener
                     }
                     else if(model.getJeuEtat()==JeuEtat.CHOOSING_PEARL_DESTINATION){
                         if(model.getPlateau().getGridPion().containsKey(c.getLocationInGridHexagone()) && model.getPlateau().getGridPion().get(c.getLocationInGridHexagone()) != model.getPionCourant() && model.getPlateau().getGridPion().get(c.getLocationInGridHexagone()).getProprietaire() == model.getPionCourant().getProprietaire()){
-                            this.setCursor(new CursorInfo(Cursor.HAND_CURSOR, position, model.getPlateau().getGridPion().get(c.getLocationInGridHexagone())));
+                            this.setCursor(new CursorInfo(Cursor.HAND_CURSOR, position, model.getPlateau().getGridPion().get(c.getLocationInGridHexagone()),model.getPionCourant().peek()));
                         }
                     }
                     return;
