@@ -48,8 +48,8 @@ public class Intro extends JPanel{
          j.addMouseListener(new java.awt.event.MouseAdapter() {
               public void mouseClicked(java.awt.event.MouseEvent evt) {
                 if(j.getValue()==100) {
-                    JouerFrame frame;
-                    frame = new JouerFrame();
+                    NiwaWindow frame;
+                    frame = new NiwaWindow();
                     frame.start();
                     f.dispose();
                     

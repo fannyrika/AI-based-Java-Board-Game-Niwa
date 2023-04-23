@@ -21,25 +21,17 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.LineBorder;
 
-public class OptionButtoon extends JFrame implements ActionListener {
+public class OptionButtoon extends JPanel implements ActionListener {
 	// protected Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 	 protected GridBagConstraints pos = new GridBagConstraints();
    	 
-	public OptionButtoon(JouerFrame prec) {
+	public OptionButtoon(NiwaWindow frame) {
    		
- 		//Fonctions permettant l'affichage correcte de la fenetre 
- 	    setDefaultCloseOperation(EXIT_ON_CLOSE);
- 	  // this.setSize(screenSize);
- 	    setExtendedState(JFrame.MAXIMIZED_BOTH);
- 	    setTitle("OPTION NIWA");
- 	    pack();
- 	    setLocationRelativeTo(null); //Pour centrer la fenetre
- 	    setDefaultCloseOperation(EXIT_ON_CLOSE);
  	    setVisible(true);
- 	    setLayout(new BorderLayout());  
- 	   setLayout(new BorderLayout());
-       JLabel background = new JLabel(new ImageIcon(StockageSettings.file_parametreNiwa.getAbsolutePath()));
-       background.setLayout(new FlowLayout(FlowLayout.CENTER, 50, 280));
+ 		setLayout(new BorderLayout());  
+ 	   	setLayout(new BorderLayout());
+       	JLabel background = new JLabel(new ImageIcon(StockageSettings.file_parametreNiwa.getAbsolutePath()));
+       	background.setLayout(new FlowLayout(FlowLayout.CENTER, 50, 280));
 
 
 
@@ -51,56 +43,58 @@ public class OptionButtoon extends JFrame implements ActionListener {
         text.setBorder(new LineBorder(Color.CYAN));  
  		 
  		
- 	   ImageIcon sound =new ImageIcon(StockageSettings.file_musicOn.getAbsolutePath());
+ 	   	ImageIcon sound;
+		if(NiwaWindow.soundON){
+			sound = new ImageIcon(StockageSettings.file_musicOn.getAbsolutePath());
+		}
+		else{
+			sound = new ImageIcon(StockageSettings.file_musicOf.getAbsolutePath());
+		}
  	   
- 	   JButton button = new JButton(sound);
+ 	   	JButton button = new JButton(sound);
  	    button.setPreferredSize(new Dimension(50, 50));
  	    button.setBackground(new Color(245,236,206));
  	    button.setFocusPainted( false );
  	    button.setBorder(new LineBorder(Color.CYAN));
  	   
- 	   button.addActionListener(new ActionListener() {
+ 	   	button.addActionListener(new ActionListener() {
  	    	ImageIcon s;
  			@Override
  			public void actionPerformed(ActionEvent event) {
- 				if(JouerFrame.soundON==true) {
- 				s= new ImageIcon(StockageSettings.file_musicOf.getAbsolutePath());
-                JouerFrame.clip.stop();
-               // JouerFrame.setSound(false);
-                prec.soundON=false;
- 			}else {
- 				 s= new ImageIcon(StockageSettings.file_musicOn.getAbsolutePath());
- 				 JouerFrame.clip.start();;
-                // JouerFrame.setSound(true);   
- 				 prec.soundON=true;
- 				
- 			}
- 				 button.setIcon(s);
+				if(NiwaWindow.soundON==true) {
+					s= new ImageIcon(StockageSettings.file_musicOf.getAbsolutePath());
+					NiwaWindow.clip.stop();
+					// NiwaWindow.setSound(false);
+					NiwaWindow.soundON=false;
+ 				}
+				else {
+					s= new ImageIcon(StockageSettings.file_musicOn.getAbsolutePath());
+					NiwaWindow.clip.start();;
+					// NiwaWindow.setSound(true);   
+					NiwaWindow.soundON=true;			
+				}
+ 				button.setIcon(s);
  			}
  			 
  		});  
  	  
  	  
-       //Retourner a la page precedente 
-       JButton retour=new JButton("R E T O U R ");
-       retour.setFont(new Font("Congenial Black", Font.BOLD, 15));
-       retour.setPreferredSize(new Dimension(150, 50));
-       retour.setFocusable(false);
-       retour.setForeground(Color.ORANGE);
-       retour.setBackground(new Color(245,236,206));
-       retour.setBorder(new LineBorder(Color.CYAN));
-       retour.addActionListener(e -> {
-    	   prec.beep();
-        prec.setVisible(true);
-    	  
-			 
-			setVisible(false);
-       }
-       );
+		//Retourner a la page precedente 
+		JButton retour=new JButton("R E T O U R ");
+		retour.setFont(new Font("Congenial Black", Font.BOLD, 15));
+		retour.setPreferredSize(new Dimension(150, 50));
+		retour.setFocusable(false);
+		retour.setForeground(Color.ORANGE);
+		retour.setBackground(new Color(245,236,206));
+		retour.setBorder(new LineBorder(Color.CYAN));
+		retour.addActionListener(e -> {
+    	   	frame.beep();
+			frame.setPanel(new JouerFrame(frame));
+       	});
 
- 	    background.add(text);
- 	   background.add(button);
- 	  background.add(retour);
+		background.add(text);
+		background.add(button);
+		background.add(retour);
  	    
  	    add(background);
  		

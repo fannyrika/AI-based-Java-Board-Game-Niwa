@@ -14,10 +14,7 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.*;
 
-public class JouerButton extends JouerFrame implements ActionListener {
-
-    public Thread t;
-    public static final String threadName = "Thread_JB";
+public class JouerButton extends JPanel implements ActionListener {
 
     JPanel conteneur;
     JButton btn;
@@ -28,13 +25,8 @@ public class JouerButton extends JouerFrame implements ActionListener {
 
     int botsChecked;
 
-    JouerButton(JouerFrame prec) {
-        JouerButton tmp = this;
+    public JouerButton(NiwaWindow frame) {
 
-        // Fonctions permettant l'affichage correcte de la fenetre
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setExtendedState(JFrame.MAXIMIZED_BOTH);
-        setTitle("MENU NIWA JOUERFRAME");
         // setLocationRelativeTo(null); // Pour centrer la fenetre
         setLayout(new BorderLayout());
         JLabel background = new JLabel(new ImageIcon(StockageSettings.file_parametreNiwa.getAbsolutePath()));
@@ -167,7 +159,7 @@ public class JouerButton extends JouerFrame implements ActionListener {
         suivant.setBackground(new Color(245, 236, 206));
         suivant.setBorder(new LineBorder(Color.CYAN));
         suivant.addActionListener(e -> {
-            beep();
+            frame.beep();
             // Message d'erreur s'affichant si aucun choix pour le nombre de joueur ou le
             // mode du plateau n'est selctionn�
             if (!(j2.isSelected()) && !(j4.isSelected())
@@ -180,7 +172,6 @@ public class JouerButton extends JouerFrame implements ActionListener {
             }
 
             else {
-                this.dispose();
                 StockageSettings.NB_JOUEURS_TOTAL = j2.isSelected() ? 2 : 4;
                 StockageSettings.NB_IA = 0;
                 if (p1.isSelected()) {
@@ -197,8 +188,7 @@ public class JouerButton extends JouerFrame implements ActionListener {
                 }
                 StockageSettings.NB_HUMAIN = StockageSettings.NB_JOUEURS_TOTAL - StockageSettings.NB_IA;
                 StockageSettings.MAP_ETAT = manuelButton.isSelected() ? MapEtat.MANUEL : null;
-                ValiderButton pageSuivante = new ValiderButton(tmp);
-                pageSuivante.start();
+                frame.setPanel(new ValiderButton(frame));
             }
         });
         conteneur4.add(suivant);
@@ -211,10 +201,8 @@ public class JouerButton extends JouerFrame implements ActionListener {
         retour.setBackground(new Color(245, 236, 206));
         retour.setBorder(new LineBorder(Color.CYAN));
         retour.addActionListener(e -> {
-            beep();
-            prec.setVisible(true);
-
-            setVisible(false);
+            frame.beep();
+            frame.setPanel(new JouerFrame(frame));
         });
         conteneur5.add(retour);
 
@@ -230,24 +218,5 @@ public class JouerButton extends JouerFrame implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-    }
-
-    @Override
-    public void run() {
-        this.pack();
-        this.setVisible(true);
-    }
-
-    public void start() {
-        if (t == null) {
-            t = new Thread(this, threadName);
-            t.start();
-        }
-    }
-
-    public static void main(String[] args) {
-        JouerFrame frame = new JouerFrame();
-        new JouerButton(frame).start();
-        ;
     }
 }

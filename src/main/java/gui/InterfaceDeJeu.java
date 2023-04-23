@@ -56,6 +56,7 @@ public class InterfaceDeJeu extends JFrame implements KeyListener, Runnable {
         tableauDeBord.boutonQuitter.addActionListener(e->{
             this.dispose();
             model.setJeuEtat(JeuEtat.GAME_INTERRUPT);
+            new NiwaWindow().start();
         });
         tableauDeBord.boutonZoom.addActionListener(e->{
             TuileGraphique.zoom(GridTuile.DISTANCE_ZOOM);

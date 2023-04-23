@@ -15,7 +15,7 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.*;
 
-public class ValiderButton extends JouerFrame implements ActionListener {
+public class ValiderButton extends JPanel implements ActionListener {
 
     public Thread t;
     public static final String threadName = "Thread_VB";
@@ -26,12 +26,8 @@ public class ValiderButton extends JouerFrame implements ActionListener {
     JTextField nmbJoueur;
     JLabel background;
 
-    ValiderButton(JouerButton prec) {
+    public ValiderButton(NiwaWindow frame) {
 
-        // Fonctions permettant l'affichage correcte de la fenetre
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setExtendedState(JFrame.MAXIMIZED_BOTH);
-        setTitle("Parametre NIWA");
         // setLocationRelativeTo(null); //Pour centrer la fenetre
         setLayout(new BorderLayout());
 
@@ -99,7 +95,7 @@ public class ValiderButton extends JouerFrame implements ActionListener {
                             "Veuillez chosir un nombre de Tuiles compris entre 10 et 24 : ");
                 } else {
                     StockageSettings.NB_TUILES = Integer.valueOf(nmbTuile.getText());
-                    this.dispose();
+                    frame.dispose();
                     lancerPartie();
                 }
             });
@@ -109,7 +105,7 @@ public class ValiderButton extends JouerFrame implements ActionListener {
             conteneur2.add(map2);
 
             suivant.addActionListener(e -> {
-                beep();
+                frame.beep();
                 // Message d'erreur s'affichant si le nmb de tuile choisi n'est pas valide
                 if (!map1.isSelected() && !map2.isSelected()) {
                     JOptionPane.showMessageDialog(this, "Veuillez chosir une map : ");
@@ -119,7 +115,7 @@ public class ValiderButton extends JouerFrame implements ActionListener {
                     } else {
                         StockageSettings.MAP_ETAT = map2.isSelected() ? MapEtat.MAP1_4P : MapEtat.MAP2_4P;
                     }
-                    this.dispose();
+                    frame.dispose();
                     lancerPartie();
                 }
             });
@@ -135,8 +131,8 @@ public class ValiderButton extends JouerFrame implements ActionListener {
         retour.setBackground(new Color(245, 236, 206));
         retour.setBorder(new LineBorder(Color.CYAN));
         retour.addActionListener(e -> {
-            beep();
-            prec.setVisible(true);
+            frame.beep();
+            frame.setPanel(new JouerButton(frame));
 
             setVisible(false);
         });
@@ -161,18 +157,5 @@ public class ValiderButton extends JouerFrame implements ActionListener {
                 StockageSettings.NB_TUILES);
         InterfaceDeJeu interfaceDeJeu = new InterfaceDeJeu(model);
         interfaceDeJeu.start();
-    }
-
-    @Override
-    public void run() {
-        this.pack();
-        this.setVisible(true);
-    }
-
-    public void start() {
-        if (t == null) {
-            t = new Thread(this, threadName);
-            t.start();
-        }
     }
 }
