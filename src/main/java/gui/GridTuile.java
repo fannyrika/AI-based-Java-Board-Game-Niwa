@@ -11,6 +11,8 @@ import main.java.model.interfaces.HexagoneAutour;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import main.java.gui.TuileGraphique.Circle;
 import main.java.model.*;
@@ -143,6 +145,8 @@ public class GridTuile extends JPanel implements KeyListener, MouseInputListener
     protected ArrayList<TuileGraphique> tuilesGraphique = new ArrayList<TuileGraphique>();
     protected static HashMap<Coordonnee,Circle> allCircles = new HashMap<Coordonnee,Circle>();
     protected ArrayList<Circle> circlesToDraw = new ArrayList<Circle>(); 
+
+    Timer vibe = new Timer();
 
     /**
      * Constructeur
@@ -510,5 +514,31 @@ public class GridTuile extends JPanel implements KeyListener, MouseInputListener
      */
     public void clearAllCircles(){
         allCircles.clear();
+    }
+    
+    public void vibrate(){
+        vibe.schedule(new TimerTask() {
+
+            int time = 31;
+            int vibrationPower = 5;
+
+            @Override
+            public void run() {
+                if(time % 2 == 0){
+
+                    glisserVers(vibrationPower, 0);
+                    repaint();
+                }
+                else if(time % 2 == 1){
+                    glisserVers(-vibrationPower, 0);
+                    repaint();
+                }
+                if(time == 0){
+                    cancel();
+                }
+                time--;
+            }
+            
+        },5,15);
     }
 }

@@ -100,7 +100,8 @@ public class Plateau implements DeplacementPion {
 
     /**
      * Même méthode que placeTuileForce(), mais en prenant en compte les contraintes de placement
-     * exemple : la tuile ne se place que si elle est collée au moins à une autre tuile
+     * - la tuile ne se place que si elle est collée au moins à une autre tuile
+     * - la tuile ne se place pas à cote d'un autre temple
      * @return true si la tuile a été placée
      * @return false sinon
      */
@@ -111,6 +112,14 @@ public class Plateau implements DeplacementPion {
     public boolean placeTuileContraint(Tuile t, int x, int y){
         Coordonnee[] ta = TuilesAutour.get(new Coordonnee(x, y));
         if(gridTuile.containsKey(ta[0]) || gridTuile.containsKey(ta[1]) || gridTuile.containsKey(ta[2]) || gridTuile.containsKey(ta[3]) || gridTuile.containsKey(ta[4]) || gridTuile.containsKey(ta[5])){
+            if(t instanceof TuileTemple){
+                for (int i = 0; i < ta.length; i++) {
+                    Tuile voisin = gridTuile.get(ta[i]);
+                    if(voisin != null && (voisin instanceof TuileTemple)){
+                        return false;
+                    }
+                }
+            }
             return placeTuileForce(t, x, y);
         }
         return false;

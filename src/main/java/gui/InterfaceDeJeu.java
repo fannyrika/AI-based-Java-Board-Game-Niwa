@@ -197,6 +197,7 @@ public class InterfaceDeJeu extends JFrame implements KeyListener, Runnable {
      * dealing the loop of the game
      */
     public void jouer() {
+        if(model.getJeuEtat() == JeuEtat.GAME_INTERRUPT){return;}
         //2 ai players trains each other
         if(model.isAiTraining()){
             model.setJeuEtat(JeuEtat.CONTINUE);
@@ -566,7 +567,8 @@ public class InterfaceDeJeu extends JFrame implements KeyListener, Runnable {
                             tableauDeBord.boutonRotationAntiHoraire.setEnabled(true);
                             tableauDeBord.boutonRotationHoraire.setEnabled(true);
                         }
-                        else{                                                                                                                   // Sinon, on reste sur le deplacement de tuile
+                        else{         
+                            gridTuile.vibrate();                                                                                                          // Sinon, on reste sur le deplacement de tuile
                             model.getPlateau().placeTuileForce(model.getTuileCourant(),model.getTuileCourant().getLocationInGridTuile());
                             tableauDeBord.boutonRotationAntiHoraire.setEnabled(false);
                             tableauDeBord.boutonRotationHoraire.setEnabled(false);
