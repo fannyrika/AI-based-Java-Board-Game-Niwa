@@ -447,17 +447,26 @@ public class InterfaceDeJeu extends JFrame implements KeyListener, Runnable {
         if(model.getJoueurCourant() instanceof JoueurHumain){
             switch (e.getKeyChar()) {
                 case 'r'://placer l'autre tuile avec temple
-                    if(model.getJeuEtat()==JeuEtat.CHOOSING_TUILE_LOCATION && model.getSacTemples().size()>0){
-                        if(!(model.getTuileCourant() instanceof TuileTemple)){
+                    if(model.getJeuEtat()==JeuEtat.CHOOSING_TUILE_LOCATION){
+                        if(!(model.getTuileCourant() instanceof TuileTemple) && model.getSacTemples().size()>0){
+                            model.getSac().add(model.getTuileCourant());
                             Coordonnee coordonnee = model.getTuileCourant().getLocationInGridTuile();
                             model.getPlateau().removeTuileBrutForce(coordonnee);                            
                             
                             model.setTuileCourante(model.popTemple());
                             model.getPlateau().placeTuileBrutForce( model.getTuileCourant(), coordonnee );
-                            SwingUtilities.invokeLater(() -> {
-                                repaint();
-                            });
                         }
+                        else{
+                            Coordonnee coordonnee = model.getTuileCourant().getLocationInGridTuile();
+                            model.getSacTemples().add((TuileTemple) model.getTuileCourant());
+                            model.getPlateau().removeTuileBrutForce(coordonnee);
+
+                            model.setTuileCourante(model.piocher());
+                            model.getPlateau().placeTuileBrutForce( model.getTuileCourant(), coordonnee );
+                        }
+                        SwingUtilities.invokeLater(() -> {
+                            repaint();
+                        });
                     }
                     break;
                 case 's':   // gauche
