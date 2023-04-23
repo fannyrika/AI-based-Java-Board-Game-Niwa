@@ -172,11 +172,17 @@ public class Jeu implements MapCreation {
                 Hexagone emplacement = plateau.getGridHexagone().get(p.getLocation());        // On regarde sur quel hexagone le pion est posé
                 if(emplacement instanceof HexagoneCentral){                     // On vérifie qu'il est bien sur un hexagone central
                     if(((HexagoneCentral) emplacement).isTemple()){             // On vérifie que c'est un temple
-                        System.out.println("p.getLocation() = "+p.getLocation());
-                        System.out.println("j.temple.getLocationInGridHexagone() = "+j.temple.getLocationInGridHexagone());
+                        //System.out.println("p.getLocation() = "+p.getLocation());
+                        //System.out.println("j.temple.getLocationInGridHexagone() = "+j.temple.getLocationInGridHexagone());
                         if(!p.getLocation().equals(j.temple.getLocationInGridHexagone())){    // On exclue le cas où le pion est dans sa propre base
                             System.out.println("Le joueur "+j.id+" a gagné");
                             setGagneur(j);
+                            //find the player who lost, that means find the propriety of the temple
+                            for (Joueur joueur : joueurs) {
+                                if(joueur.temple.getLocationInGridHexagone().equals(p.getLocation())){
+                                    setPerdant(joueur);
+                                }
+                            }
                             return true;
                         }
                     }
@@ -204,7 +210,7 @@ public class Jeu implements MapCreation {
         if (nbBlockedPion==getJoueurCourant().getPions().size()){
             if(isAiTraining()){
             //dont eliminate the player
-                setGagneur(joueurs.get( (joueurCourant.getID()+1) % joueurs.size() ));
+                setPerdant(joueurCourant);
             }else{
                 perdants.add(joueurCourant);
             }

@@ -226,6 +226,11 @@ public class InterfaceDeJeu extends JFrame implements KeyListener, Runnable {
             ArrayList<Joueur> joueurListeComplete = new ArrayList<>(model.getJoueurs());
             //for(int i=0; i<model.getJoueurs().size(); i++) System.out.println("affiche joueurs:"+model.getJoueurs().get(i));
             for(int i=0; i<model.getJoueurs().size(); i++){
+                //skip the player if he is in the perdant list
+                if(!model.isAiTraining())
+                    if(model.getPerdants().contains(model.getJoueurs().get(i))){
+                        continue;
+                    }
                 model.resetAlmostBlockedCount();
 
                 //controleur.rotationTmp=0;
@@ -267,12 +272,11 @@ public class InterfaceDeJeu extends JFrame implements KeyListener, Runnable {
                     ArrayList<Action> legalActions = ((JoueurIA) model.getJoueurCourant()).getLegalActions(model);
                     if(legalActions.isEmpty()){
                         System.out.println("No legal actions for the current state, the current player loses the game.");
-                        if(model.getJoueurs().size()==2)
-                            {model.setGagneur(model.getJoueurs().get((i+1)%2));}//must be 2 players
-                        else{
-                            System.out.println("eliminer loser");
-                            model.eliminerJoueur(model.getJoueurCourant());
-                        }
+                        model.setPerdant(model.getJoueurCourant());
+                        //else{
+                        //    System.out.println("eliminer loser");
+                        //    model.eliminerJoueur(model.getJoueurCourant());
+                        //}
                         break;
                     }
                     // draw circle around the possible destinations of the legal actions
@@ -333,30 +337,29 @@ public class InterfaceDeJeu extends JFrame implements KeyListener, Runnable {
                     }
                 }
                 //check if we need to eliminate the current player
-                if(!model.isAiTraining())
-                    if(model.getGagneurs().contains(model.getJoueurCourant()) || model.getPerdants().contains(model.getJoueurCourant())){
-                        System.out.println("eliminer the current player");
-                        model.eliminerJoueur(model.getJoueurCourant());
-                }
-
-                System.out.println("gagneurs:"+model.getGagneurs());
-                System.out.println("joueurs:"+model.getJoueurs());
-                if(model.getJoueurs().size()==1 || nbTour>200){
-                    //print the q-table
-                    //((JoueurIA) (model.getJoueurCourant())).getQTable().print();
-                    System.out.println("----------nbTour:"+nbTour);
-                    //game over
-                    gameOver();
-                    break;
-                    //
-                    
-                    ////eliminate all the players on the board
-                    //for(Joueur joueur : model.getJoueurs()){
-                    //    model.eliminerJoueur(joueur);
-                    //}
-                }
+                //if(!model.isAiTraining())
+                //    if(model.getGagneurs().contains(model.getJoueurCourant()) || model.getPerdants().contains(model.getJoueurCourant())){
+                //        System.out.println("eliminer the current player");
+                //        model.eliminerJoueur(model.getJoueurCourant());
+                //}
             }
-
+            System.out.println("gagneurs:"+model.getGagneurs());
+            System.out.println("perdants:"+model.getPerdants());
+            System.out.println("joueurs:"+model.getJoueurs());
+            if(model.getGagneurs().size()==model.getJoueurs().size()-1 || model.getPerdants().size()==model.getJoueurs().size()-1 || nbTour>200){
+                //print the q-table
+                //((JoueurIA) (model.getJoueurCourant())).getQTable().print();
+                System.out.println("----------nbTour:"+nbTour);
+                //game over
+                gameOver();
+                break;
+                //
+                
+                ////eliminate all the players on the board
+                //for(Joueur joueur : model.getJoueurs()){
+                //    model.eliminerJoueur(joueur);
+                //}
+            }
         }
     }
 

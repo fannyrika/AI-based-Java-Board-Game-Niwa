@@ -192,7 +192,7 @@ public class JoueurIA extends Joueur{
             jeu.incrementAlmostBlockedCount();
             if(jeu.getAlmostBlockedCount()>20){
                 //eliminerJoueur(getJoueurCourant());
-                jeu.setGagneur(jeu.getJoueurs().get((jeu.getJoueurCourant().getID()+1)%2));
+                jeu.setPerdant(jeu.getJoueurCourant());
             }
             
         }
