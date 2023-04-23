@@ -448,19 +448,16 @@ public class InterfaceDeJeu extends JFrame implements KeyListener, Runnable {
             switch (e.getKeyChar()) {
                 case 'r'://placer l'autre tuile avec temple
                     if(model.getJeuEtat()==JeuEtat.CHOOSING_TUILE_LOCATION && model.getSacTemples().size()>0){
-                        Coordonnee coordonnee = model.getTuileCourant().getLocationInGridTuile();
-                        model.getPlateau().removeTuileBrutForce(coordonnee);
-                        SwingUtilities.invokeLater(() -> {
-                            repaint();
-                        });
-                        
-                        
-                        model.setTuileCourante(model.popTemple());
-                        model.getPlateau().placeTuileBrutForce( model.getTuileCourant(), coordonnee );
-                        SwingUtilities.invokeLater(() -> {
-                            repaint();
-                        });
-                        
+                        if(!(model.getTuileCourant() instanceof TuileTemple)){
+                            Coordonnee coordonnee = model.getTuileCourant().getLocationInGridTuile();
+                            model.getPlateau().removeTuileBrutForce(coordonnee);                            
+                            
+                            model.setTuileCourante(model.popTemple());
+                            model.getPlateau().placeTuileBrutForce( model.getTuileCourant(), coordonnee );
+                            SwingUtilities.invokeLater(() -> {
+                                repaint();
+                            });
+                        }
                     }
                     break;
                 case 's':   // gauche
