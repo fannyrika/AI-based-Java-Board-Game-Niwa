@@ -213,8 +213,12 @@ public class GridTuile extends JPanel implements KeyListener, MouseInputListener
                 System.out.println("Pion null");
                 continue;
             }
-            PionGraphique pionG = new PionGraphique(p);
-            pionG.draw(mainGraphics);
+            if(p!=null){
+                PionGraphique pionG = new PionGraphique(p);
+                pionG.draw(mainGraphics);}
+            else
+                continue;
+            
         }
 
         for (Circle c : circlesToDraw) {
@@ -366,9 +370,7 @@ public class GridTuile extends JPanel implements KeyListener, MouseInputListener
                                 if(model.aGagne(model.getJoueurCourant())){
                                     model.setGagneur(model.getJoueurCourant());
                                 }
-                                else{
-                                    model.setJeuEtat(JeuEtat.CONTINUE);
-                                }
+                                model.setJeuEtat(JeuEtat.CONTINUE);
                             }
                         }
                         else if(model.getJeuEtat()==JeuEtat.CHOOSING_PEARL_DESTINATION){

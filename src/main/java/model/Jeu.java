@@ -18,6 +18,7 @@ public class Jeu implements MapCreation {
      */
     protected ArrayList<Joueur> joueurs = new ArrayList<Joueur>();
     protected ArrayList<Joueur> gangeurs = new ArrayList<Joueur>();
+    protected ArrayList<Joueur> perdants = new ArrayList<Joueur>();
     /**
      * Représente le joueur courant, mis sur le premier joueur lorsque l'objet "Jeu" est crée
      */
@@ -205,8 +206,7 @@ public class Jeu implements MapCreation {
             //dont eliminate the player
                 setGagneur(joueurs.get( (joueurCourant.getID()+1) % joueurs.size() ));
             }else{
-            //eliminate the player
-                eliminerJoueur(getJoueurCourant());
+                perdants.add(joueurCourant);
             }
         }
         //set back the pion courant
@@ -283,18 +283,25 @@ public class Jeu implements MapCreation {
         //    }
         //}
         //save QTable of each player
-        for (Joueur j : joueurs) {
-            if(j instanceof JoueurIA){
-                ((JoueurIA) j).saveQTable();
-            }
-        }
+        if(joueurs.size()==2)
+            {for (Joueur j : joueurs) {
+                if(j instanceof JoueurIA){
+                    ((JoueurIA) j).saveQTable();
+                }
+            }}
         //to do: afficher les info....
     }
     
     //setters
     public void setJoueurCourant(Joueur j){ joueurCourant=j;}
     public void setPionCourant(Pion p){ pionCourant=p;}
-    public void setGagneur(Joueur j){ gangeurs.add(j);}
+    //set perdant
+    public void setPerdant(Joueur j){ 
+        if(!perdants.contains(j))
+            perdants.add(j);}
+    public void setGagneur(Joueur j){ 
+        if(!gangeurs.contains(j))
+            gangeurs.add(j);}
     public void setTuileCourante(Tuile t){ tuileCourante=t; }
     public void setJeuEtat(JeuEtat j){ jeuEtat=j;}
     public void setDernierEtat(JeuEtat d){ dernierEtat = d;}
@@ -308,6 +315,7 @@ public class Jeu implements MapCreation {
     public ArrayList<Tuile> getSac(){return sac;}
     public ArrayList<TuileTemple> getSacTemples(){return sacTemples;}
     public ArrayList<Joueur> getGagneurs(){ return gangeurs; }
+    public ArrayList<Joueur> getPerdants(){ return perdants; }
     public Joueur getJoueurCourant() { return joueurCourant; }
     public Tuile getTuileCourant(){ return tuileCourante; }
     public Pion getPionCourant(){ return pionCourant; }

@@ -127,8 +127,7 @@ public class InterfaceDeJeu extends JFrame implements KeyListener, Runnable {
         
         while(model.getJeuEtat() != JeuEtat.GAME_INTERRUPT){
             //for(int i=0; i<model.getJoueurs().size(); i++) System.out.println("affiche joueurs:"+model.getJoueurs().get(i));
-            for(int i=0; i<model.getJoueurs().size(); i++){
-                //controleur.rotationTmp=0;
+            for(int i=0; i<model.getJoueurs().size(); i++){                
                 model.setJoueurCourant(model.getJoueurs().get(i));
                 tableauDeBord.setJoueurCourant("<html><h2>Création du plateau</h2></html>");
                 if(StockageSettings.DEBUG_MODE)
@@ -220,15 +219,18 @@ public class InterfaceDeJeu extends JFrame implements KeyListener, Runnable {
 
         //in order to avoid one part being too long
         int nbTour = 0;
+        //update the current player correctly
+
         while(model.getJeuEtat()!=JeuEtat.GAME_OVER && model.getJeuEtat() != JeuEtat.GAME_INTERRUPT){
             nbTour++;
+            ArrayList<Joueur> joueurListeComplete = new ArrayList<>(model.getJoueurs());
             //for(int i=0; i<model.getJoueurs().size(); i++) System.out.println("affiche joueurs:"+model.getJoueurs().get(i));
             for(int i=0; i<model.getJoueurs().size(); i++){
                 model.resetAlmostBlockedCount();
 
                 //controleur.rotationTmp=0;
                 System.out.println("current player changed!");//debug
-                model.setJoueurCourant(model.getJoueurs().get(i));
+                model.setJoueurCourant(joueurListeComplete.get(i));
                 System.out.println(model.getJoueurCourant());//debug
                 tableauDeBord.setJoueurCourant("<html> "+model.getJoueurCourant()+"</html>");
                 SwingUtilities.invokeLater(() -> {
@@ -265,7 +267,12 @@ public class InterfaceDeJeu extends JFrame implements KeyListener, Runnable {
                     ArrayList<Action> legalActions = ((JoueurIA) model.getJoueurCourant()).getLegalActions(model);
                     if(legalActions.isEmpty()){
                         System.out.println("No legal actions for the current state, the current player loses the game.");
-                        model.setGagneur(model.getJoueurs().get((i+1)%2));//must be 2 players
+                        if(model.getJoueurs().size()==2)
+                            {model.setGagneur(model.getJoueurs().get((i+1)%2));}//must be 2 players
+                        else{
+                            System.out.println("eliminer loser");
+                            model.eliminerJoueur(model.getJoueurCourant());
+                        }
                         break;
                     }
                     // draw circle around the possible destinations of the legal actions
@@ -306,6 +313,7 @@ public class InterfaceDeJeu extends JFrame implements KeyListener, Runnable {
                     //locationsPossibles = afficherPossibleDestination();
                     //indexChoisi=0;
                     //waiting
+                    
                     while(model.getJeuEtat()!=JeuEtat.CONTINUE){
                         if(model.getJeuEtat() == JeuEtat.GAME_INTERRUPT){return;}
                         System.out.print("");
@@ -324,20 +332,31 @@ public class InterfaceDeJeu extends JFrame implements KeyListener, Runnable {
                         }
                     }
                 }
+                //check if we need to eliminate the current player
+                if(!model.isAiTraining())
+                    if(model.getGagneurs().contains(model.getJoueurCourant()) || model.getPerdants().contains(model.getJoueurCourant())){
+                        System.out.println("eliminer the current player");
+                        model.eliminerJoueur(model.getJoueurCourant());
+                }
+
+                System.out.println("gagneurs:"+model.getGagneurs());
+                System.out.println("joueurs:"+model.getJoueurs());
+                if(model.getJoueurs().size()==1 || nbTour>200){
+                    //print the q-table
+                    //((JoueurIA) (model.getJoueurCourant())).getQTable().print();
+                    System.out.println("----------nbTour:"+nbTour);
+                    //game over
+                    gameOver();
+                    break;
+                    //
+                    
+                    ////eliminate all the players on the board
+                    //for(Joueur joueur : model.getJoueurs()){
+                    //    model.eliminerJoueur(joueur);
+                    //}
+                }
             }
-            if(model.getGagneurs().size()==model.getJoueurs().size()-1 || nbTour>200){
-                //print the q-table
-                //((JoueurIA) (model.getJoueurCourant())).getQTable().print();
-                System.out.println("----------nbTour:"+nbTour);
-                //game over
-                gameOver();
-                //
-                
-                ////eliminate all the players on the board
-                //for(Joueur joueur : model.getJoueurs()){
-                //    model.eliminerJoueur(joueur);
-                //}
-            }
+
         }
     }
 
