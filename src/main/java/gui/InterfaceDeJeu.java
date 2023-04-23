@@ -43,7 +43,7 @@ public class InterfaceDeJeu extends JFrame implements KeyListener, Runnable {
     
     public InterfaceDeJeu(Jeu m){
         setLayout(new BorderLayout());
-        setTitle("NIWA");
+        setTitle("Niwa");
         
         model=m;
         gridTuile = new GridTuile(model);
@@ -294,6 +294,8 @@ public class InterfaceDeJeu extends JFrame implements KeyListener, Runnable {
 
                     //update the model
                     nextState.updateGame(model);
+
+                    gridTuile.circlesToDraw.clear();
                     //update the view
                     SwingUtilities.invokeLater(() -> {
                         repaint();

@@ -92,7 +92,7 @@ public class ValiderButton extends JPanel implements ActionListener {
                 // Message d'erreur s'affichant si le nmb de tuile choisi n'est pas valide
                 if (Integer.valueOf(nmbTuile.getText()) < 10 || Integer.valueOf(nmbTuile.getText()) > 24) {
                     JOptionPane.showMessageDialog(this,
-                            "Veuillez chosir un nombre de Tuiles compris entre 10 et 24 : ");
+                            "Veuillez choisir un nombre de tuiles compris entre 10 et 24 : ");
                 } else {
                     StockageSettings.NB_TUILES = Integer.valueOf(nmbTuile.getText());
                     frame.dispose();
@@ -108,7 +108,7 @@ public class ValiderButton extends JPanel implements ActionListener {
                 frame.beep();
                 // Message d'erreur s'affichant si le nmb de tuile choisi n'est pas valide
                 if (!map1.isSelected() && !map2.isSelected()) {
-                    JOptionPane.showMessageDialog(this, "Veuillez chosir une map : ");
+                    JOptionPane.showMessageDialog(this, "Veuillez choisir une map : ");
                 } else {
                     if (StockageSettings.NB_JOUEURS_TOTAL == 2) {
                         StockageSettings.MAP_ETAT = map1.isSelected() ? MapEtat.MAP1_2P : MapEtat.MAP2_2P;
@@ -153,8 +153,7 @@ public class ValiderButton extends JPanel implements ActionListener {
     }
 
     private static void lancerPartie() {
-        Jeu model = new Jeu(StockageSettings.NB_HUMAIN, StockageSettings.NB_IA, StockageSettings.MAP_ETAT,
-                StockageSettings.NB_TUILES);
+        Jeu model = new Jeu(StockageSettings.NB_HUMAIN, StockageSettings.NB_IA, StockageSettings.MAP_ETAT,StockageSettings.NB_TUILES);
         InterfaceDeJeu interfaceDeJeu = new InterfaceDeJeu(model);
         interfaceDeJeu.start();
     }

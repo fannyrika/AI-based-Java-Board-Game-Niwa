@@ -164,7 +164,7 @@ public class JouerButton extends JPanel implements ActionListener {
             // mode du plateau n'est selctionn�
             if (!(j2.isSelected()) && !(j4.isSelected())
                     || !(manuelButton.isSelected()) && !(autoButton.isSelected())) {
-                JOptionPane.showMessageDialog(this, "Veuillez Completer Vos Choix : ");
+                JOptionPane.showMessageDialog(this, "Veuillez completer vos choix : ");
 
                 // Sinon si le joueur a bien fait ses choix on affiche la page suivante
                 // A laquelle on envoie dans son constructeur le nombre de joueur ainsi que le

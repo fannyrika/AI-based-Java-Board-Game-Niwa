@@ -37,7 +37,7 @@ public class NiwaWindow extends JFrame implements Runnable {
         // Fonctions permettant l'affichage correcte de la fenetre
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setExtendedState(JFrame.MAXIMIZED_BOTH);
-        setTitle("MENU NIWA");
+        setTitle("Menu Niwa");
         // setLocationRelativeTo(null); // Pour centrer la fenetre
         setDefaultCloseOperation(EXIT_ON_CLOSE);
 
