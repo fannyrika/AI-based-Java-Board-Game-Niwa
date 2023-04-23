@@ -37,4 +37,23 @@ Si vous avez décider de créer votre plateau à la main, voici les choses à sa
 
 - `R` pour placer un temple
 
+Attention aux contraintes de placement des tuiles :
+
+- Vous devez placer une tuile en restant en `contact` avec une autre tuile.
+
+- Vous ne pouvez pas placer un `temple` à côté d'un autre `temple`.
+
+Pas d'inquiétude, ces cas sont pris en compte dans le programme (pas de bugs).
+
+
 ## Création du plateau automatique
+
+Vous avez donc choisi une création du plateau automatique, il ne vous manque plus qu'à placer les pions autour des temples, et de commencer à jouer.
+
+# Groupe
+
+- `ABICHOU` Roua
+- `BENTRAH` Ines
+- `CHEKOUR` Gwenaelle
+- `TANG` Li Wa
+- `YAZICI` Servan
