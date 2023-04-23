@@ -14,7 +14,7 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.*;
 
-public class JouerButton extends JouerFrame implements ActionListener, Runnable {
+public class JouerButton extends JouerFrame implements ActionListener {
 
     public Thread t;
     public static final String threadName = "Thread_JB";
@@ -99,7 +99,6 @@ public class JouerButton extends JouerFrame implements ActionListener, Runnable 
             }
             botsChecked = 0;
 
-            p1.setEnabled(true);
             manuelButton.setEnabled(true);
             repaint();
         });
@@ -112,10 +111,11 @@ public class JouerButton extends JouerFrame implements ActionListener, Runnable 
             }
             botsChecked = 0;
 
-            p1.setEnabled(false);
             manuelButton.setEnabled(true);
             repaint();
         });
+
+        p1.setEnabled(false);
 
         buttonGroup.add(j2);
         buttonGroup.add(j4);

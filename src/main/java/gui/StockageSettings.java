@@ -13,7 +13,7 @@ public class StockageSettings {
      * -
      * - *à rajouter si nécessaire...*
      */
-    public static final boolean DEBUG_MODE = true;
+    public static final boolean DEBUG_MODE = false;
     /**
      * Pour le debogage, sert à montrer les coordonnées des hexagones en direct
      */

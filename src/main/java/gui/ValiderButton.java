@@ -15,7 +15,7 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.*;
 
-public class ValiderButton extends JouerFrame implements ActionListener, Runnable {
+public class ValiderButton extends JouerFrame implements ActionListener {
 
     public Thread t;
     public static final String threadName = "Thread_VB";
