@@ -347,34 +347,58 @@ public class GridTuile extends JPanel implements KeyListener, MouseInputListener
                                         }
                                         circlesToDraw.add(circle);
                                     }
+                                    
+                                    model.setJeuEtat(JeuEtat.CONTINUE);
+                                }
+                                SwingUtilities.invokeLater(() -> {
+                                    repaint();
+                                });
+                            }
+                        }
+                        else if(model.getJeuEtat()==JeuEtat.PLACING_PION){
+
+                            if(model.getPlateau().getGridPion().containsKey(c.getLocationInGridHexagone()) && model.getPlateau().getGridPion().get(c.getLocationInGridHexagone()).getProprietaire() == model.getJoueurCourant()){
+                                model.setPionCourant(pionChoisi);
+                                circlesToDraw.clear();
+                                ArrayList<Coordonnee> locationsPossible = model.getPlateau().canMoveLocations(model.getPionCourant());
+                                // si il y a des locations possibles a placer
+                                if(locationsPossible.size()>0){
+                                    for (Coordonnee coordonnee : locationsPossible) {
+                                        Circle circle = allCircles.get(coordonnee);
+                                        if(!pionChoisi.isEmpty()){
+                                            circle.setColor(ColorsSwitcher.toColor(pionChoisi.peek()));
+                                        }
+                                        else{
+                                            circle.setColor(Color.BLACK);
+                                        }
+                                        circlesToDraw.add(circle);
+                                    }
+                                }
+                                SwingUtilities.invokeLater(() -> {
+                                    repaint();
+                                });
+                            }
+                            else{
+                                Coordonnee depart = model.getPionCourant().getLocation();
+                                ArrayList<Coordonnee> locationsPossible = model.getPlateau().canMoveLocations(model.getPionCourant());
+                                if(locationsPossible.contains(c.getLocationInGridHexagone())){
+                                    model.getPlateau().getGridPion().remove(depart);
+                                    model.getPlateau().placerPionForce(model.getPionCourant(), c.getLocationInGridHexagone());
+                                    model.getPionCourant().setLocation(c.getLocationInGridHexagone());
+                                    circlesToDraw.clear();
+                                    model.verifyIfPlayerBlocked();
                                     SwingUtilities.invokeLater(() -> {
                                         repaint();
                                     });
                                     
-                                    model.setJeuEtat(JeuEtat.CONTINUE);
+    
+                                    //Après que le pion a été déplacer, on check si le joueur courant a gagne
+                                    System.out.println("checking if player won");
+                                    if(model.aGagne(model.getJoueurCourant())){
+                                        model.setGagneur(model.getJoueurCourant());
+                                    }
+                                    model.setJeuEtat(JeuEtat.CONTINUE);   
                                 }
-                            }
-                        }
-                        else if(model.getJeuEtat()==JeuEtat.PLACING_PION){
-                            Coordonnee depart = model.getPionCourant().getLocation();
-                            ArrayList<Coordonnee> locationsPossible = model.getPlateau().canMoveLocations(model.getPionCourant());
-                            if(locationsPossible.contains(c.getLocationInGridHexagone())){
-                                model.getPlateau().getGridPion().remove(depart);
-                                model.getPlateau().placerPionForce(model.getPionCourant(), c.getLocationInGridHexagone());
-                                model.getPionCourant().setLocation(c.getLocationInGridHexagone());
-                                circlesToDraw.clear();
-                                model.verifyIfPlayerBlocked();
-                                SwingUtilities.invokeLater(() -> {
-                                    repaint();
-                                });
-                                
-
-                                //Après que le pion a été déplacer, on check si le joueur courant a gagne
-                                System.out.println("checking if player won");
-                                if(model.aGagne(model.getJoueurCourant())){
-                                    model.setGagneur(model.getJoueurCourant());
-                                }
-                                model.setJeuEtat(JeuEtat.CONTINUE);
                             }
                         }
                         else if(model.getJeuEtat()==JeuEtat.CHOOSING_PEARL_DESTINATION){
@@ -484,9 +508,14 @@ public class GridTuile extends JPanel implements KeyListener, MouseInputListener
                         }
                     }
                     else if(model.getJeuEtat()==JeuEtat.PLACING_PION){
-                        ArrayList<Coordonnee> possibilites = model.getPlateau().canMoveLocations(model.getPionCourant());
-                        if(possibilites.stream().anyMatch(v -> {return c.getLocationInGridHexagone().equals(v);})){
-                            this.setCursor(new Cursor(Cursor.HAND_CURSOR));
+                        if(model.getPlateau().getGridPion().containsKey(c.getLocationInGridHexagone()) && model.getPlateau().getGridPion().get(c.getLocationInGridHexagone()).getProprietaire() == model.getJoueurCourant()){
+                            this.setCursor(new CursorInfo(Cursor.HAND_CURSOR, position, model.getPlateau().getGridPion().get(c.getLocationInGridHexagone())));
+                        }
+                        else{
+                            ArrayList<Coordonnee> possibilites = model.getPlateau().canMoveLocations(model.getPionCourant());
+                            if(possibilites.stream().anyMatch(v -> {return c.getLocationInGridHexagone().equals(v);})){
+                                this.setCursor(new Cursor(Cursor.HAND_CURSOR));
+                            }
                         }
                     }
                     else if(model.getJeuEtat()==JeuEtat.CHOOSING_PEARL_DESTINATION){
