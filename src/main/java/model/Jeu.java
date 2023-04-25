@@ -100,7 +100,14 @@ public class Jeu implements MapCreation {
             sacTemples.add(j.temple);   // On ajoute chaque temple dans la liste des temples
         }
         for (int i = 0; i < nb_joueurs_ia; i++) {
-            JoueurIA j = new JoueurIA(1.0, 0.5, 0.9);
+            JoueurIA j=null;
+            //quand y'a 4 joueurs en total, ia bouge aleatoirement, c-a-d epsilon = 1.0
+            if(nb_joueurs_humain+nb_joueurs_ia==4){
+                j = new JoueurIA(1.0, 0.5, 0.9);
+            }else{//sinon, ia bouge intelligemment, c-a-d epsilon = 0.1(10% de chance de bouger aleatoirement)
+                j = new JoueurIA(0.1, 0.5, 0.9);
+                j.loadQTable();
+            }
             joueurs.add(j);             // On ajoute les joueurs dans la liste de joueurs
             sacTemples.add(j.temple);   // On ajoute chaque temple dans la liste des temples
         }

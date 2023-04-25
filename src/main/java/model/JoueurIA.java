@@ -39,7 +39,6 @@ public class JoueurIA extends Joueur{
         this.epsilon = epsilon;
         this.alpha = alpha;
         this.gamma = gamma;
-        loadQTable();
     }
 
     /**
