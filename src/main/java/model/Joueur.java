@@ -7,15 +7,6 @@ import java.util.ArrayList;
  */
 public class Joueur implements Cloneable{
 
-    /**
-     * MAX_PIONS : le nombre de pions maximal qu'un joueur peut avoir (il ne faut pas dépasser 6 parce qu'il n'y a que 6 emplacements autour d'un temple)
-     */
-    public static final int MAX_PIONS = 3;
-    /**
-     * NB_PEARLS_AT_START : le nombre de perles par pions au début de partie
-     */
-    protected static final int NB_PEARLS_AT_START = 2;
-
     protected static int ID_STATIC = 0;
     protected int id;
 
@@ -51,10 +42,10 @@ public class Joueur implements Cloneable{
      * Méthode privée, permet d'initialiser les pions du joueur
      */
     private void initalisePions(){
-        for (int i = 0; i < MAX_PIONS; i++) {
+        for (int i = 0; i < Jeu.NB_PIONS; i++) {
             Pion p = new Pion(this);
             p.setID(i);
-            for (int j = 0; j < NB_PEARLS_AT_START; j++) {
+            for (int j = 0; j < Jeu.NB_PEARLS_AT_START; j++) {
                 p.add(Couleurs.values()[i%Couleurs.values().length]);   
             }
             pions.add(p);

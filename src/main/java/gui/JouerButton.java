@@ -4,6 +4,7 @@ import javax.swing.*;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.LineBorder;
 
+import main.java.model.Jeu;
 import main.java.model.MapEtat;
 
 import java.awt.BorderLayout;
@@ -69,9 +70,11 @@ public class JouerButton extends JPanel implements ActionListener {
 
         JCheckBox[] botsChoices = { p1, p2, p3, p4 };
 
-        conteneur3.add(labelBot);
-        for (JCheckBox btn : botsChoices) {
-            conteneur3.add(btn);
+        if(Jeu.isDefaultGame()){
+            conteneur3.add(labelBot);
+            for (JCheckBox btn : botsChoices) {
+                conteneur3.add(btn);
+            }
         }
 
         labelBot.setVisible(false);

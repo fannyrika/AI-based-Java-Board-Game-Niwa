@@ -73,7 +73,7 @@ public class GridTuile extends JPanel implements KeyListener, MouseInputListener
 
             if(perle != null){
 
-                if(pion_copy.size() >= Joueur.MAX_PIONS){
+                if(pion_copy.size() >= Jeu.NB_PEARL_MAX){
 
                     g2d.setColor(Color.BLACK);
                     g2d.setStroke(new BasicStroke(3));
@@ -125,8 +125,6 @@ public class GridTuile extends JPanel implements KeyListener, MouseInputListener
      * Certainement temporaire, représente la taille de l'écran
      */
     protected static Dimension screen = new Dimension((int)(Toolkit.getDefaultToolkit().getScreenSize().getWidth()/InterfaceDeJeu.TABLEAU_DE_BORD_RATIO),(int)Toolkit.getDefaultToolkit().getScreenSize().getHeight()/InterfaceDeJeu.TABLEAU_DE_BORD_RATIO);
-
-    protected static final int BORDER_RATIO = 6;
 
     /**
      * Décalage des tuiles sur le graphique en x

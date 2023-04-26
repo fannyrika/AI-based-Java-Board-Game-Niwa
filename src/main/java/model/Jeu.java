@@ -50,9 +50,17 @@ public class Jeu implements MapCreation {
     protected MapEtat mapEtat;
     
     /**
-     * Représente le nombre de perles qu'un pion peut garder sur sa tête
+     * NB_PEARL_MAX : Représente le nombre de perles qu'un pion peut garder sur sa tête
      */
-    public static final int NB_PEARL_MAX = 3;
+    public static int NB_PEARL_MAX = 3;
+    /**
+     * NB_PEARLS_AT_START : le nombre de perles par pions au début de partie
+     */
+    public static int NB_PEARLS_AT_START = 2;
+    /**
+     * MAX_PIONS : le nombre de pions qu'un joueur peut avoir (il ne faut pas dépasser 6 parce qu'il n'y a que 6 emplacements autour d'un temple)
+     */
+    public static int NB_PIONS = 3;
 
     /**
      * to avoid infinite loop when the game is almost blocked
@@ -372,6 +380,17 @@ public class Jeu implements MapCreation {
             s += j.toString();
         }
         return s;
+    }
+
+    /**
+     * Méthode pour savoir si la partie est une partie par défaut ou non, c'est-à-dire :
+     * - Nombre de perles max = 3
+     * - Nombre de perles de départ = 2
+     * - Nombre de pions = 3
+     * @return true si c'est une partie par défaut, false si c'est personalisé
+     */
+    public static boolean isDefaultGame(){
+        return NB_PEARL_MAX == 3 && NB_PEARLS_AT_START == 2 && NB_PIONS == 3;
     }
 
 }
