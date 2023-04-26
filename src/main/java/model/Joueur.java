@@ -1,11 +1,12 @@
 package main.java.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  * Classe qui va représenter un joueur
  */
-public class Joueur implements Cloneable{
+public class Joueur implements Cloneable, Serializable{
 
     protected static int ID_STATIC = 0;
     protected int id;

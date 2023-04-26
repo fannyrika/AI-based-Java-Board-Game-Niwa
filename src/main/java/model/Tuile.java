@@ -1,5 +1,6 @@
 package main.java.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -13,7 +14,7 @@ import java.util.Random;
  * 
  * C'est un hexagone, dont seulement 2 portes sont définis
  */
-public class Tuile {
+public class Tuile implements Serializable{
 
     /**
      * Attribut privé, utile pour la création des portes des hexagones

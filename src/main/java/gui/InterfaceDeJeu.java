@@ -20,9 +20,9 @@ import javax.swing.plaf.basic.BasicHTML;
 import javax.swing.plaf.basic.BasicScrollBarUI;
 import main.java.model.*;
 import main.java.model.Action;
-public class InterfaceDeJeu extends JFrame implements KeyListener, Runnable {
+public class InterfaceDeJeu extends JFrame implements KeyListener, Runnable, Serializable {
 
-    public Thread t;
+    public transient Thread t;
     public static final String threadName = "Thread_IDJ";
 
     protected static final int TABLEAU_DE_BORD_RATIO = 4;
@@ -53,11 +53,6 @@ public class InterfaceDeJeu extends JFrame implements KeyListener, Runnable {
         scrollPane.setBackground(new Color(61, 58, 58));
         scrollPane.getHorizontalScrollBar().setUI(new CustomScrollBarUI());
         tableauDeBord=new TableauDeBord(model);
-        tableauDeBord.boutonQuitter.addActionListener(e->{
-            this.dispose();
-            model.setJeuEtat(JeuEtat.GAME_INTERRUPT);
-            new NiwaWindow().start();
-        });
         tableauDeBord.boutonZoom.addActionListener(e->{
             TuileGraphique.zoom(GridTuile.DISTANCE_ZOOM);
             //gridTuile.setPreferredSize(new Dimension(10*GridTuile.DISTANCE_ZOOM+gridTuile.getSize().width,10*GridTuile.DISTANCE_ZOOM+gridTuile.getSize().height));
@@ -80,6 +75,51 @@ public class InterfaceDeJeu extends JFrame implements KeyListener, Runnable {
                 model.getPlateau().placeTuileBrutForce( model.getTuileCourant(), coordonnee );
                 repaint();
             }
+        });
+        tableauDeBord.boutonMenu.addActionListener(e ->{
+            // Bouton menu
+            String[] choix = {"Reprendre", "Enregistrer et aller au menu principal", "Aller au menu principal", "Quitter"};
+            int i = JOptionPane.showOptionDialog(null,
+                "Que souhaitez-vous faire ^^ ?",
+                "Menu",
+                JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, choix, choix[0]);
+
+                if (i == 0); // reprendre ne change rien
+                else if(i == 1){
+                    // proposer de choisir le nom de la sauvegarde 
+                    String name = searchSave.nameSave();
+
+                    File fichier = new File(name + ".ser");
+                    try{
+                        // serialization de la partie
+                        FileOutputStream file = new FileOutputStream(fichier);
+                        ObjectOutputStream tmp = new ObjectOutputStream(file);
+                        tmp.writeObject(this);
+
+                        tmp.close();
+                        file.close();
+                    }catch(Exception exception){exception.printStackTrace();}
+
+                    //fermeture de la partie donc ouverture du menu principal
+                    model.setJeuEtat(model.getJeuEtat().GAME_INTERRUPT);
+                    (new NiwaWindow()).run();
+                }else if(i == 2 || i == 3){
+                    int q = -1;
+                    while(!(q == 0 || q == 1)){
+                        // Avertissement avant de quitter et de perdre sa progression
+                        q = JOptionPane.showOptionDialog(null, "Si vous quittez maintenant, votre partie sera perdue.\n Voulez-vous continuez ?", 
+                        "Êtes-vous sûre ?", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, 
+                        null, null, null);
+
+                        if (q == JOptionPane.YES_OPTION) {
+                            // Confirmation du choix
+                            this.dispose();
+                            if(i == 3) model.setJeuEtat(JeuEtat.GAME_INTERRUPT);
+                            else if(i == 2) (new NiwaWindow()).run();
+                        } else if (q == JOptionPane.NO_OPTION);
+                        else;
+                    }
+                };
         });
         tableauDeBord.boutonRotationAntiHoraire.addActionListener(e->{
             if(model.getJeuEtat()==JeuEtat.ROTATING_TUILE){
@@ -355,7 +395,26 @@ public class InterfaceDeJeu extends JFrame implements KeyListener, Runnable {
                 //print the q-table
                 //((JoueurIA) (model.getJoueurCourant())).getQTable().print();
                 System.out.println("----------nbTour:"+nbTour);
-                //game over
+                //game over donc affichage d'un message avec le classement des joueurs
+                String s = "Classement de la partie : ";
+                int i = JOptionPane.showOptionDialog(null, 
+                    s + afficheGagnants(model.getGagneurs().size()),
+                    "Partie terminée", 
+                    JOptionPane.YES_NO_CANCEL_OPTION,
+                    JOptionPane.QUESTION_MESSAGE, null, 
+                    new String[]{"Nouvelle partie", "Aller au menu principal", "Quitter"}, null
+                );
+                    
+                    if (i == JOptionPane.YES_OPTION){
+                        // Relance la fiche de choix de map
+                    }else if(i == JOptionPane.NO_OPTION){
+                        // retour au menu principal
+                        dispose();
+                        (new NiwaWindow()).run();
+                    }else if(i == JOptionPane.CANCEL_OPTION) {
+                        // quitter
+                        System.exit(0);
+                };
                 gameOver();
                 break;
                 //
@@ -366,6 +425,22 @@ public class InterfaceDeJeu extends JFrame implements KeyListener, Runnable {
                 //}
             }
         }
+    }
+
+    public String afficheGagnants(int x){
+        // Chaine de caractere contenant le classement de la partie
+        String res = "";
+        for(int i = 0; i < x; i++){
+            if(i == 0){
+                res = ((i + 1) + "er ->  " + model.getGagneurs().get(i).getID() + "(Grand gagnant/e de la partie) \n");
+            }else if(i == 1){
+                res = res + ((i + 1) + "nd ->  " + model.getGagneurs().get(i).getID() + "\n");
+            }else{
+                res = res + ((i + 1) + "rd -> " + model.getGagneurs().get(i) + "\n");
+            }
+        }
+
+        return res;
     }
 
     public void gameOver(){

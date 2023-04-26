@@ -1,5 +1,7 @@
 package main.java.model;
 
+import java.io.Serializable;
+
 import main.java.model.interfaces.Copy;
 
 /**
@@ -20,7 +22,7 @@ import main.java.model.interfaces.Copy;
  *     \ /
  *   3     2
  */
-public class Hexagone implements Copy<Hexagone> {
+public class Hexagone implements Copy<Hexagone>, Serializable{
     
     /**
      * La liste contenant ces portes (de taille 6 pour chaque face d'un hexagone)

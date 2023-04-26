@@ -1,5 +1,6 @@
 package main.java.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -8,7 +9,7 @@ import main.java.model.interfaces.DeplacementPion;
 import main.java.model.interfaces.HexagoneAutour;
 import main.java.model.interfaces.TuilesAutour;
 
-public class Plateau implements DeplacementPion {
+public class Plateau implements DeplacementPion, Serializable {
 
     /**
      * Attributs permettant de définir un plateau

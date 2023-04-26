@@ -1,5 +1,6 @@
 package main.java.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -8,7 +9,7 @@ import main.java.model.interfaces.MapCreation;
 /**
  * La classe qui va gérer le déroulement du jeu
  */
-public class Jeu implements MapCreation {
+public class Jeu implements MapCreation, Serializable{
 
     /**
      * Liste qui va contenir la liste des joueurs

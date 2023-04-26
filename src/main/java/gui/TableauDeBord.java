@@ -6,19 +6,21 @@ import javax.swing.*;
 import java.awt.event.*;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.io.Serializable;
+
 import javax.swing.WindowConstants;
 import javax.swing.plaf.basic.BasicHTML;
 import javax.swing.text.html.*;
 
 import main.java.model.Jeu;
 
-public class TableauDeBord extends JPanel {
+public class TableauDeBord extends JPanel implements Serializable{
     protected Jeu model;
     protected JLabel pioche;
     protected JLabel joueurCourant;
     protected JLabel etapeCourante;
     protected PionGraphique pionSelectione;
-    protected JButton boutonQuitter;
+    protected JButton boutonMenu;
     protected JButton boutonRegles;
     protected JButton boutonRotationHoraire;
     protected JButton boutonRotationAntiHoraire;
@@ -44,7 +46,7 @@ public class TableauDeBord extends JPanel {
         JPanel gestionPartiePanel=new JPanel();
         gestionPartiePanel.setBackground(new Color(61, 58, 58));
         gestionPartiePanel.setLayout(new FlowLayout());
-        gestionPartiePanel.add(boutonQuitter);
+        gestionPartiePanel.add(boutonMenu);
         gestionPartiePanel.add(boutonRegles);
 
         JPanel gestionTuilePanel=new JPanel();
@@ -108,13 +110,13 @@ public class TableauDeBord extends JPanel {
         boutonRegles.setPreferredSize(new Dimension(120, 30));
         boutonRegles.setFocusable(false);
 
-        boutonQuitter=new JButton("Quitter");
-        boutonQuitter.setFont(new Font("Arial", Font.BOLD, 16)); 
-        boutonQuitter.setForeground(Color.WHITE); 
-        boutonQuitter.setBackground(Color.BLACK);
-        boutonQuitter.setBorder(BorderFactory.createRaisedBevelBorder()); 
-        boutonQuitter.setPreferredSize(new Dimension(120, 30));
-        boutonQuitter.setFocusable(false);
+        boutonMenu=new JButton("Menu");
+        boutonMenu.setFont(new Font("Arial", Font.BOLD, 16)); 
+        boutonMenu.setForeground(Color.WHITE); 
+        boutonMenu.setBackground(Color.BLACK);
+        boutonMenu.setBorder(BorderFactory.createRaisedBevelBorder()); 
+        boutonMenu.setPreferredSize(new Dimension(120, 30));
+        boutonMenu.setFocusable(false);
 
         boutonRotationHoraire=new JButton("⟳");
         boutonRotationHoraire.setFont(new Font("Calibri", Font.BOLD, 20)); 

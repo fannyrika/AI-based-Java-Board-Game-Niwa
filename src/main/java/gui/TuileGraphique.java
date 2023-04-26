@@ -1,15 +1,16 @@
 package main.java.gui;
 
 import java.awt.*;
+import java.io.Serializable;
 
 import main.java.model.Coordonnee;
 import main.java.model.Couleurs;
 import main.java.model.Tuile;
 import main.java.model.interfaces.HexagoneAutour;
 
-public class TuileGraphique extends Polygon {
+public class TuileGraphique extends Polygon implements Serializable{
 
-    public static class Circle {
+    public static class Circle implements Serializable{
 
         protected int x;
         protected int y;

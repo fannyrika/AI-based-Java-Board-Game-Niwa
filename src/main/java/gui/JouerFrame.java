@@ -1,7 +1,11 @@
 package main.java.gui;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.util.ArrayList;
 
 import javax.swing.JFrame;
 
@@ -45,6 +49,51 @@ public class JouerFrame extends JPanel {
         jouerButton.addActionListener(e -> {
             // Pour le son lorqu'on clique sur le bouton
             frame.beep();
+
+             // Proposition d'ouverture de sauvegarde
+             if(searchSave.existSer(new File("."))){
+                int o = -1;
+                while(o == -1){
+                    o = JOptionPane.showOptionDialog(null, "Il existe une/des sauvegardes.\nVoulez-vous ouvrir une sauvegarde ?", 
+                    "Ouvrir une sauvegarde ?", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, 
+                    null, null, null);
+
+                    if (o == JOptionPane.YES_OPTION){
+                        ArrayList<File> files = searchSave.tabSer(new File("."), new ArrayList<File>());
+                        File[] filesNames = files.toArray(new File[0]);
+                        // Affichage d'une liste de tout les .ser existants dans le dossier courant
+                        File save = (File) JOptionPane.showInputDialog(null, 
+                        "Sélectionnez la sauvegarde souhaitée:", 
+                        "Ouvrir une sauvegarde ?", 
+                        JOptionPane.PLAIN_MESSAGE, null, 
+                        filesNames, filesNames[0]);
+
+                        if(save == null) o = -1;
+                        // ouvrir la sauvegarde save
+                        // REMARQUE : les fichiers qtable0 et qtable1 ne sont pas des parties sauvegardés
+                        try{
+                            // execution de la deserialization
+                            FileInputStream file = new FileInputStream(save);
+                            ObjectInputStream obj = new ObjectInputStream(new FileInputStream(save));
+                            InterfaceDeJeu game = (InterfaceDeJeu) obj.readObject();
+
+                            obj.close();
+                            file.close();
+
+                            // Suppression du fichier afin d'eviter toutes confusions
+                            save.delete();
+
+                            // Lancement de la partie deserializer
+                            game.start();
+                        } catch (Exception e1) {
+                            e1.printStackTrace();
+                            JOptionPane.showMessageDialog(null, "Impossible d'ouvrir la sauvegarde :( ", "Erreur !", JOptionPane.ERROR_MESSAGE);
+                        }
+                    
+                    }else if (o == JOptionPane.NO_OPTION);
+                    else;
+                }
+            }
             frame.setPanel(new JouerButton(frame));
         });
         jouerButton.addMouseListener(new MouseAdapter() {

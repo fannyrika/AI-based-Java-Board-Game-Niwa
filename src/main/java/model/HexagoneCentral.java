@@ -1,10 +1,12 @@
 package main.java.model;
 
+import java.io.Serializable;
+
 /**
  * Class HexagoneCentral extends Hexagone :
  * Pareil qu'un Hexagone basique, mais avec un attribut boolean "temple", qui permet de savoir si l'hexagone (donc la tuile) est un temple ou non
  */
-public class HexagoneCentral extends Hexagone {
+public class HexagoneCentral extends Hexagone implements Serializable{
 
     /**
      * Attribut boolean temple

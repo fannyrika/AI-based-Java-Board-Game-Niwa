@@ -1,11 +1,12 @@
 package main.java.gui;
 
 import java.awt.*;
+import java.io.Serializable;
 
 import main.java.model.Joueur;
 import main.java.model.TuileTemple;
 
-public class TuileTempleGraphique extends TuileGraphique {
+public class TuileTempleGraphique extends TuileGraphique implements Serializable{
 
     /**
      * Constructeur pour une tuileTemple graphique
