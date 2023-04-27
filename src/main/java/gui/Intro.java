@@ -1,19 +1,12 @@
 package main.java.gui;
 import java.awt.*;
-import java.io.IOException;
-import java.util.Random;
 
 import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.SwingUtilities;
-
-import main.java.model.Joueur;
-import main.java.model.Pion;
 
 public class Intro extends JPanel{
     private Dimension size;
