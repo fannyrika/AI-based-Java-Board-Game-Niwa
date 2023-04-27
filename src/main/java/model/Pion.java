@@ -1,6 +1,5 @@
 package main.java.model;
 
-import java.io.Serializable;
 import java.util.Stack;
 
 /**
@@ -9,7 +8,7 @@ import java.util.Stack;
  * 
  * En faisant étendre la classe "Stack", plus besoin de redéfinir les méthodes telles que : add(), pop(), peek(), empty(), ...
  */
-public class Pion extends Stack<Couleurs> implements Serializable{
+public class Pion extends Stack<Couleurs> {
 
     /**
      * Attributs permettant de définir un pion

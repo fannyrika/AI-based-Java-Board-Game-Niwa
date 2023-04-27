@@ -120,7 +120,7 @@ public interface MapCreation {
     * Pour cela, nous avons une liste "allTuiles" contenant les 36 tuiles différentes possibles.
     * Nous allons parcourir cette liste, en faisant des sauts de longueur {@code jump = 25}, qui est premier avec 36 {@code (PGCD(36,25) = 1)} pour justement éviter des possibles répétitions.
     */
-    public default void initMAP1_2P(Jeu jeu){
+    public default void initMAP1_2PDefault(Jeu jeu){
         jeu.setJeuEtat(JeuEtat.PLACING_START_PION);
         Plateau plateau = jeu.getPlateau();
         ArrayList<TuileTemple> sacTemples = jeu.getSacTemples();

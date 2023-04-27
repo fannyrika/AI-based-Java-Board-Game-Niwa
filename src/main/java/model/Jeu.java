@@ -85,7 +85,7 @@ public class Jeu implements MapCreation, Serializable{
         initSac(map, NB_TUILES);
         //if there is 2 ai player training each other
         if(map==MapEtat.MAP1_2P && nb_joueurs_humain==0 && nb_joueurs_ia==2){
-            initMAP1_2P(this);
+            initMAP1_2PDefault(this);
             plateau.placerPionForce(joueurs.get(0).pions.get(0), new Coordonnee(5,0));
             plateau.placerPionForce(joueurs.get(0).pions.get(1), new Coordonnee(7,0));
             plateau.placerPionForce(joueurs.get(0).pions.get(2), new Coordonnee(5,-1));
@@ -96,7 +96,7 @@ public class Jeu implements MapCreation, Serializable{
         }
         //if there is 1 human player and 1 ai player
         else if(map==MapEtat.MAP1_2P && nb_joueurs_humain==1 && nb_joueurs_ia==1){
-            initMAP1_2P(this);
+            initMAP1_2PDefault(this);
             plateau.placerPionForce(joueurs.get(1).pions.get(0), new Coordonnee(-5,0));
             plateau.placerPionForce(joueurs.get(1).pions.get(1), new Coordonnee(-7,0));
             plateau.placerPionForce(joueurs.get(1).pions.get(2), new Coordonnee(-5,-1));
