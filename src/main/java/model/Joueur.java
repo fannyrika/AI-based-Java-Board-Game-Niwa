@@ -1,33 +1,32 @@
 package main.java.model;
 
-import java.util.ArrayList;
-
 public class Joueur {
-    public int id;
-    public ArrayList<Pion> pions;
+    private static String nom;
+    private int id;
+    private int nbrHexagone;
+    public boolean aGagne;
+    //on remplacera ca par des tuiles
+    // ou voir si on fait pas un sac comme -> public SacTuiles tuiles
 
-    public Joueur(){
-        this.id=-1;
-        this.pions=new ArrayList<Pion>();
-    }
-    
-    public void setId(int id){
-        this.id=id;
-        for(int i=0;i<3;i++){
-            Pion newPion = new Pion(id);
-            newPion.setId(i);
-            pions.add(newPion);
-        }
+    public Joueur(String n, int i, int h){
+        nom = n;
+        i = id;
+        nbrHexagone = h;
     }
 
-    public int getId(){
+    public String getName(){
+        return nom;
+    }
+
+    public int getID(){
         return id;
     }
 
-    //TODO:
-    //public Pion choisirUnPion()
-    
-    //public void placerPion()
+    public int getNbrHexagone(){
+        return nbrHexagone;
+    }
 
+    public void setGagne(){
+        aGagne = true;
+    }
 }
-
