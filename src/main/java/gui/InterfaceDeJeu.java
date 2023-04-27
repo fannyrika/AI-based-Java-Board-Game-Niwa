@@ -100,8 +100,9 @@ public class InterfaceDeJeu extends JFrame implements KeyListener, Runnable, Ser
                         file.close();
                     }catch(Exception exception){exception.printStackTrace();}
 
+                    model.getJeuEtat();
                     //fermeture de la partie donc ouverture du menu principal
-                    model.setJeuEtat(model.getJeuEtat().GAME_INTERRUPT);
+                    model.setJeuEtat(JeuEtat.GAME_INTERRUPT);
                     (new NiwaWindow()).run();
                 }else if(i == 2 || i == 3){
                     int q = -1;
@@ -394,27 +395,28 @@ public class InterfaceDeJeu extends JFrame implements KeyListener, Runnable, Ser
             if(model.getGagneurs().size()==model.getJoueurs().size()-1 || model.getPerdants().size()==model.getJoueurs().size()-1 || nbTour>200){
                 //print the q-table
                 //((JoueurIA) (model.getJoueurCourant())).getQTable().print();
-                System.out.println("----------nbTour:"+nbTour);
-                //game over donc affichage d'un message avec le classement des joueurs
-                String s = "Classement de la partie : ";
-                int i = JOptionPane.showOptionDialog(null, 
-                    s + afficheGagnants(model.getGagneurs().size()),
-                    "Partie terminée", 
-                    JOptionPane.YES_NO_CANCEL_OPTION,
-                    JOptionPane.QUESTION_MESSAGE, null, 
-                    new String[]{"Nouvelle partie", "Aller au menu principal", "Quitter"}, null
-                );
-                    
-                    if (i == JOptionPane.YES_OPTION){
-                        // Relance la fiche de choix de map
-                    }else if(i == JOptionPane.NO_OPTION){
-                        // retour au menu principal
-                        dispose();
-                        (new NiwaWindow()).run();
-                    }else if(i == JOptionPane.CANCEL_OPTION) {
-                        // quitter
-                        System.exit(0);
-                };
+                    System.out.println("----------nbTour:"+nbTour);
+                    if(!model.isAiTraining()){
+                        //game over donc affichage d'un message avec le classement des joueurs
+                        String s = "Classement de la partie : ";
+                        int i = JOptionPane.showOptionDialog(null, 
+                            s + afficheGagnants(model.getGagneurs().size()),
+                            "Partie terminée", 
+                            JOptionPane.YES_NO_CANCEL_OPTION,
+                            JOptionPane.QUESTION_MESSAGE, null, 
+                            new String[]{"Nouvelle partie", "Aller au menu principal", "Quitter"}, null
+                        );
+                            
+                            if (i == JOptionPane.YES_OPTION){
+                                // Relance la fiche de choix de map
+                            }else if(i == JOptionPane.NO_OPTION){
+                                // retour au menu principal
+                                dispose();
+                                (new NiwaWindow()).run();
+                            }else if(i == JOptionPane.CANCEL_OPTION) {
+                                // quitter
+                                System.exit(0);
+                        };}
                 gameOver();
                 break;
                 //

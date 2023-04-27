@@ -77,6 +77,10 @@ public class Pion extends Stack<Couleurs> implements Serializable{
         return false;
     }
 
+    public void setIsPlaced(boolean b){
+        this.isPlaced = b;
+    }
+
     @Override
     public String toString() {
         return super.toString()+"-id:"+id+"-location:"+location+"-isPlaced:"+isPlaced;

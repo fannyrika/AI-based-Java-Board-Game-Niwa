@@ -114,7 +114,7 @@ public class Jeu implements MapCreation, Serializable{
             if(nb_joueurs_humain+nb_joueurs_ia==4){
                 j = new JoueurIA(1.0, 0.5, 0.9);
             }else{//sinon, ia bouge intelligemment, c-a-d epsilon = 0.1(10% de chance de bouger aleatoirement)
-                j = new JoueurIA(0.1, 0.5, 0.9);
+                j = new JoueurIA(1.0, 0.5, 0.9);
                 j.loadQTable();
             }
             joueurs.add(j);             // On ajoute les joueurs dans la liste de joueurs
@@ -392,6 +392,42 @@ public class Jeu implements MapCreation, Serializable{
      */
     public static boolean isDefaultGame(){
         return NB_PEARL_MAX == 3 && NB_PEARLS_AT_START == 2 && NB_PIONS == 3;
+    }
+
+    public static void main(String[] args) {
+        //tester si le qTable fonctionne bien
+        Jeu model =  new Jeu(0, 2, MapEtat.MAP1_2P, 10);
+        JoueurIA iaA = (JoueurIA)model.getJoueurs().get(0);
+        JoueurIA iaB = (JoueurIA)model.getJoueurs().get(1);
+        //get the qTable of the first player
+        qTable QTable0 = iaA.getQTable();
+        State stateInitA= new State(model);
+        //define the action:Action{selectedPion=[ROUGE, ROUGE]-id:0-location:main.java.model.Coordonnee@406c -> [x = 5, y = 0]-isPlaced:false, moveDirection=main.java.model.Coordonnee@404e -> [x = 4, y = 1], targetPion=[VERT, VERT]-id:1-location:main.java.model.Coordonnee@40aa -> [x = 7, y = 0]-isPlaced:false}
+        //define the selectedPion =[ROUGE, ROUGE] and the targetPion=[VERT, VERT] of joueurA
+        Pion selectedPionA = iaA.getPions().get(0);
+        selectedPionA.setLocation(5,0);
+        selectedPionA.clear();
+        selectedPionA.add(Couleurs.ROUGE);
+        selectedPionA.add(Couleurs.ROUGE);
+        selectedPionA.setIsPlaced(false);//s'adapter à la nouvelle version de Pion
+
+        //define moveDirection
+        Coordonnee moveDirection = new Coordonnee(4,1);
+
+        //define targetPion =[VERT, VERT] of joueurA
+        Pion targetPionA = iaA.getPions().get(1);
+        targetPionA.setLocation(7,0);
+        targetPionA.clear();
+        targetPionA.add(Couleurs.VERT);
+        targetPionA.add(Couleurs.VERT);
+        targetPionA.setIsPlaced(false);//s'adapter à la nouvelle version de Pion
+
+        //define the action
+        Action actionA = new Action(selectedPionA, moveDirection, targetPionA);
+
+        //get the qValue of the action
+        double qValue = iaA.getQValue(stateInitA, actionA);
+        System.out.println("qValue of the actionA is: "+qValue);//doit être >0
     }
 
 }
