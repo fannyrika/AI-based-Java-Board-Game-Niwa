@@ -32,11 +32,12 @@ public class OptionButtoon extends JPanel implements ActionListener {
 
 	public class Arrow extends JButton {
 
-		protected static ImageIcon arrow_left = new ImageIcon(StockageSettings.file_arrow_left.getAbsolutePath());
-		protected static ImageIcon arrow_right = new ImageIcon(StockageSettings.file_arrow_right.getAbsolutePath());
+		protected ImageIcon arrow_left = new ImageIcon(StockageSettings.file_arrow_left.getAbsolutePath());
+		protected ImageIcon arrow_right = new ImageIcon(StockageSettings.file_arrow_right.getAbsolutePath());
 
 		public Arrow(boolean isLeft){
-			super((isLeft) ? arrow_left : arrow_right);
+			super();
+			this.setIcon(isLeft ? arrow_left : arrow_right);
 			this.setPreferredSize(new Dimension(50, 50));
 			this.setBackground(new Color(245,236,206));
 			this.setFocusPainted(false);
