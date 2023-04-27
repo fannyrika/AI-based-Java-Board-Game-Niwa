@@ -7,6 +7,7 @@ import javax.swing.JOptionPane;
 public class searchSave {
     //verifie que nom est bien une sauvegarde .ser
     public static boolean isSave(String nom){
+        if(nom.equals("qtable0.ser") || nom.equals("qtable1.ser")) return false;
         return (nom.charAt(nom.length() - 1) == 'r' 
         && nom.charAt(nom.length() - 2) == 'e' 
         && nom.charAt(nom.length() - 3) == 's');

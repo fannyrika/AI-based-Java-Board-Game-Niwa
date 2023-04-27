@@ -3,15 +3,7 @@ package main.java.gui;
 import java.awt.*;
 
 import javax.swing.*;
-import java.awt.event.*;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 import java.io.Serializable;
-
-import javax.swing.WindowConstants;
-import javax.swing.plaf.basic.BasicHTML;
-import javax.swing.text.html.*;
-
 import main.java.model.Jeu;
 
 public class TableauDeBord extends JPanel implements Serializable{

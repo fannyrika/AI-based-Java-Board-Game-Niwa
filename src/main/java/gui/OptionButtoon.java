@@ -6,22 +6,19 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.GridLayout;
-import java.awt.Rectangle;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
 
-import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.LineBorder;
 
+import main.java.gui.NiwaWindow.Arrow;
+import main.java.gui.NiwaWindow.Option;
+import main.java.gui.NiwaWindow.Value;
 import main.java.model.Jeu;
 
 public class OptionButtoon extends JPanel implements ActionListener {
@@ -29,46 +26,6 @@ public class OptionButtoon extends JPanel implements ActionListener {
 	protected GridBagConstraints pos = new GridBagConstraints();
 
 	protected static final int nb_panels = 6;
-
-	public class Arrow extends JButton {
-
-		protected ImageIcon arrow_left = new ImageIcon(StockageSettings.file_arrow_left.getAbsolutePath());
-		protected ImageIcon arrow_right = new ImageIcon(StockageSettings.file_arrow_right.getAbsolutePath());
-
-		public Arrow(boolean isLeft){
-			super();
-			this.setIcon(isLeft ? arrow_left : arrow_right);
-			this.setPreferredSize(new Dimension(50, 50));
-			this.setBackground(new Color(245,236,206));
-			this.setFocusPainted(false);
-			this.setOpaque(false);
-			this.setBorder(null);
-		}
-	}
-  
-	public class Option extends JLabel {
-
-		public Option(String s){
-			super(s);
-			this.setFont(new Font("Congenial Black", Font.BOLD, 15));
-			this.setForeground(Color.ORANGE);
-			this.setBackground(Color.WHITE);
-			this.setBorder(new LineBorder(Color.CYAN));
-			this.setOpaque(false); 
-		}
-	}
-
-	public class Value extends JLabel {
-		
-		public Value(String s, int pos){
-			super(s,JLabel.CENTER);
-			this.setFont(new Font("Congenial Black", Font.BOLD, 15));
-			this.setForeground(Color.ORANGE);
-			this.setBackground(Color.WHITE);
-			this.setPreferredSize(new Dimension(50, 50));
-			this.setBorder(new LineBorder(Color.CYAN)); 
-		}
-	}
 
 	public OptionButtoon(NiwaWindow frame) {
    		

@@ -1,8 +1,5 @@
 package main.java.gui;
-import java.awt.*;
-import javax.swing.*;
 
-import main.java.model.Joueur;
 public class Outro extends Intro{
     Outro(){
         super();

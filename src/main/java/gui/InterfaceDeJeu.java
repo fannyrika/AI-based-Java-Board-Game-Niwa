@@ -1,13 +1,10 @@
 package main.java.gui;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
-import javax.swing.plaf.synth.SynthSpinnerUI;
 
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.event.KeyEvent;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -15,8 +12,6 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-import javax.swing.plaf.ScrollBarUI;
-import javax.swing.plaf.basic.BasicHTML;
 import javax.swing.plaf.basic.BasicScrollBarUI;
 import main.java.model.*;
 import main.java.model.Action;
@@ -115,8 +110,11 @@ public class InterfaceDeJeu extends JFrame implements KeyListener, Runnable, Ser
                         if (q == JOptionPane.YES_OPTION) {
                             // Confirmation du choix
                             this.dispose();
-                            if(i == 3) model.setJeuEtat(JeuEtat.GAME_INTERRUPT);
-                            else if(i == 2) (new NiwaWindow()).run();
+                            model.setJeuEtat(JeuEtat.GAME_INTERRUPT);
+                            if(i == 3) {
+                                model.setJeuEtat(JeuEtat.GAME_INTERRUPT);
+                                System.exit(0);
+                            }else if(i == 2) (new NiwaWindow()).run();
                         } else if (q == JOptionPane.NO_OPTION);
                         else;
                     }
@@ -446,6 +444,26 @@ public class InterfaceDeJeu extends JFrame implements KeyListener, Runnable, Ser
     }
 
     public void gameOver(){
+        String s = "Classement de la partie : ";
+        int i = JOptionPane.showOptionDialog(null, 
+            s + afficheGagnants(model.getGagneurs().size()),
+            "Partie terminée", 
+            JOptionPane.YES_NO_CANCEL_OPTION,
+            JOptionPane.QUESTION_MESSAGE, null, 
+            new String[]{"Nouvelle partie", "Aller au menu principal", "Quitter"}, null
+        );
+            
+            if (i == JOptionPane.YES_OPTION){
+                // Relance la fiche de choix de map
+            }else if(i == JOptionPane.NO_OPTION){
+                // retour au menu principal
+                dispose();
+                (new NiwaWindow()).run();
+            }else if(i == JOptionPane.CANCEL_OPTION) {
+                // quitter
+                System.exit(0);
+        };
+
         model.gameOver();
         System.out.println("Game over!");//debug
         gridTuile.clearAllCircles();

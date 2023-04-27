@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import javax.swing.JFrame;
-
+import javax.swing.border.LineBorder;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
@@ -104,5 +104,45 @@ public class NiwaWindow extends JFrame implements Runnable {
         frame.start();
 
     }
+
+    public static class Arrow extends JButton {
+
+		protected ImageIcon arrow_left = new ImageIcon(StockageSettings.file_arrow_left.getAbsolutePath());
+		protected ImageIcon arrow_right = new ImageIcon(StockageSettings.file_arrow_right.getAbsolutePath());
+
+		public Arrow(boolean isLeft){
+			super();
+			this.setIcon(isLeft ? arrow_left : arrow_right);
+			this.setPreferredSize(new Dimension(50, 50));
+			this.setBackground(new Color(245,236,206));
+			this.setFocusPainted(false);
+			this.setOpaque(false);
+			this.setBorder(null);
+		}
+	}
+  
+	public static class Option extends JLabel {
+
+		public Option(String s){
+			super(s);
+			this.setFont(new Font("Congenial Black", Font.BOLD, 15));
+			this.setForeground(Color.ORANGE);
+			this.setBackground(Color.WHITE);
+			this.setBorder(new LineBorder(Color.CYAN));
+			this.setOpaque(false); 
+		}
+	}
+
+	public static class Value extends JLabel {
+		
+		public Value(String s, int pos){
+			super(s,JLabel.CENTER);
+			this.setFont(new Font("Congenial Black", Font.BOLD, 15));
+			this.setForeground(Color.ORANGE);
+			this.setBackground(Color.WHITE);
+			this.setPreferredSize(new Dimension(50, 50));
+			this.setBorder(new LineBorder(Color.CYAN)); 
+		}
+	}
 
 }

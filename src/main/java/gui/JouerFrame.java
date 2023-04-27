@@ -2,18 +2,15 @@ package main.java.gui;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
-
-import javax.swing.JFrame;
-
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.Clip;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
+
+import main.java.model.JeuEtat;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -49,6 +46,9 @@ public class JouerFrame extends JPanel {
         jouerButton.addActionListener(e -> {
             // Pour le son lorqu'on clique sur le bouton
             frame.beep();
+            
+            // Pour savoir si on doit lancer la page de shcoix de maps (et du coup une nouvelle partie)
+            boolean x = false;
 
              // Proposition d'ouverture de sauvegarde
              if(searchSave.existSer(new File("."))){
@@ -83,7 +83,64 @@ public class JouerFrame extends JPanel {
                             // Suppression du fichier afin d'eviter toutes confusions
                             save.delete();
 
+                            // Set des actions des boutons de la partie
+                            game.tableauDeBord.boutonRegles.addActionListener(a->{
+                                ManuelDuJeu mdj=new ManuelDuJeu();
+                            });
+
+                            game.tableauDeBord.boutonMenu.addActionListener(b ->{
+                                // Bouton menu
+                                String[] choix = {"Reprendre", "Enregistrer et aller au menu principal", "Aller au menu principal", "Quitter"};
+                                int i = JOptionPane.showOptionDialog(null,
+                                    "Que souhaitez-vous faire ^^ ?",
+                                    "Menu",
+                                    JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, choix, choix[0]);
+                    
+                                    if (i == 0); // reprendre ne change rien
+                                    else if(i == 1){
+                                        // proposer de choisir le nom de la sauvegarde 
+                                        String name = searchSave.nameSave();
+                    
+                                        File fichier = new File(name + ".ser");
+                                        try{
+                                            // serialization de la partie
+                                            FileOutputStream f = new FileOutputStream(fichier);
+                                            ObjectOutputStream tmp = new ObjectOutputStream(f);
+                                            tmp.writeObject(this);
+                    
+                                            tmp.close();
+                                            file.close();
+                                        }catch(Exception exception){exception.printStackTrace();}
+                    
+                                        //fermeture de la partie donc ouverture du menu principal
+                                        game.model.setJeuEtat(game.model.getJeuEtat().GAME_INTERRUPT);
+                                        frame.dispose();
+                                        (new NiwaWindow()).run();
+                                    }else if(i == 2 || i == 3){
+                                        int q = -1;
+                                        while(!(q == 0 || q == 1)){
+                                            // Avertissement avant de quitter et de perdre sa progression
+                                            q = JOptionPane.showOptionDialog(null, "Si vous quittez maintenant, votre partie sera perdue.\n Voulez-vous continuez ?", 
+                                            "Êtes-vous sûre ?", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, 
+                                            null, null, null);
+                    
+                                            if (q == JOptionPane.YES_OPTION) {
+                                                // Confirmation du choix
+                                                frame.dispose();
+                                                if(i == 3){
+                                                    game.model.setJeuEtat(JeuEtat.GAME_INTERRUPT);
+                                                    System.exit(0);
+                                                }
+                                                else if(i == 2) (new NiwaWindow()).run();
+                                            } else if (q == JOptionPane.NO_OPTION);
+                                            else;
+                                        }
+                                    };
+                            });
+                            x = true;
+
                             // Lancement de la partie deserializer
+                            frame.dispose();
                             game.start();
                         } catch (Exception e1) {
                             e1.printStackTrace();
@@ -94,7 +151,7 @@ public class JouerFrame extends JPanel {
                     else;
                 }
             }
-            frame.setPanel(new JouerButton(frame));
+            if(x == false) frame.setPanel(new JouerButton(frame));
         });
         jouerButton.addMouseListener(new MouseAdapter() {
             public void mouseEntered(MouseEvent evt) {

@@ -1,19 +1,14 @@
 package main.java.gui;
 
-import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import javax.swing.ImageIcon;
-import java.awt.Image;
 import javax.swing.JEditorPane;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
-
 
 public class ManuelDuJeu extends JFrame{
     ManuelDuJeu(){
