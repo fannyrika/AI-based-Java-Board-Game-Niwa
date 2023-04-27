@@ -4,6 +4,8 @@ import javax.swing.*;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.LineBorder;
 
+import main.java.gui.NiwaWindow.Arrow;
+import main.java.gui.NiwaWindow.Value;
 import main.java.model.Jeu;
 import main.java.model.MapEtat;
 
@@ -20,11 +22,8 @@ public class JouerButton extends JPanel implements ActionListener {
     JPanel conteneur;
     JButton btn;
     JRadioButton manuelButton, autoButton, j2, j4;
-    JCheckBox p1, p2, p3, p4;
     JTextField nmbJoueur;
     JLabel background;
-
-    int botsChecked;
 
     public JouerButton(NiwaWindow frame) {
 
@@ -63,36 +62,53 @@ public class JouerButton extends JPanel implements ActionListener {
 
         JLabel labelBot = new JLabel(" N O M B R E   D E   B O T S    : ", JLabel.CENTER);
         labelBot.setFont(new Font("Congenial Black", Font.BOLD, 15));
-        p1 = new JCheckBox("J1");
-        p2 = new JCheckBox("J2");
-        p3 = new JCheckBox("J3");
-        p4 = new JCheckBox("J4");
 
-        JCheckBox[] botsChoices = { p1, p2, p3, p4 };
+        // Remise à zéro du nombre de bots
+        StockageSettings.NB_IA = 0;
+
+        Value nb_bots = new Value(String.valueOf(StockageSettings.NB_IA), JLabel.CENTER);
+        Arrow left = new Arrow(true);
+        left.addActionListener(e -> {
+            if(StockageSettings.NB_IA > 0){
+                StockageSettings.NB_IA--;
+                nb_bots.setText(String.valueOf(StockageSettings.NB_IA));
+            }
+            if(StockageSettings.NB_IA == 0){
+                manuelButton.setEnabled(true);
+                repaint();
+            }
+        });
+        Arrow right = new Arrow(false);
+        right.addActionListener(e -> {
+            if((j2.isSelected() && StockageSettings.NB_IA < 1) || (j4.isSelected() && StockageSettings.NB_IA < 3)){
+                StockageSettings.NB_IA++;
+                nb_bots.setText(String.valueOf(StockageSettings.NB_IA));
+                manuelButton.setEnabled(false);
+                autoButton.setSelected(true);
+                repaint();
+            }
+        });
 
         if(Jeu.isDefaultGame()){
             conteneur3.add(labelBot);
-            for (JCheckBox btn : botsChoices) {
-                conteneur3.add(btn);
-            }
+            conteneur3.add(left);
+            conteneur3.add(nb_bots);
+            conteneur3.add(right);
         }
 
         labelBot.setVisible(false);
-        for (JCheckBox btn : botsChoices) {
-            btn.setVisible(false);
-        }
+        left.setVisible(false);
+        nb_bots.setVisible(false);
+        right.setVisible(false);
 
         j2.addActionListener(e -> {
             labelBot.setVisible(true);
-            p1.setVisible(true);
-            p2.setVisible(true);
-            p3.setVisible(false);
-            p4.setVisible(false);
+            left.setVisible(true);
+            nb_bots.setVisible(true);
+            right.setVisible(true);
 
-            for (JCheckBox btn : botsChoices) {
-                btn.setSelected(false);
-            }
-            botsChecked = 0;
+            StockageSettings.NB_IA = 0;
+            nb_bots.setText(String.valueOf(StockageSettings.NB_IA));
 
             manuelButton.setEnabled(true);
             repaint();
@@ -100,17 +116,16 @@ public class JouerButton extends JPanel implements ActionListener {
 
         j4.addActionListener(e -> {
             labelBot.setVisible(true);
-            for (JCheckBox btn : botsChoices) {
-                btn.setVisible(true);
-                btn.setSelected(false);
-            }
-            botsChecked = 0;
+            left.setVisible(true);
+            nb_bots.setVisible(true);
+            right.setVisible(true);
+
+            StockageSettings.NB_IA = 0;
+            nb_bots.setText(String.valueOf(StockageSettings.NB_IA));
 
             manuelButton.setEnabled(true);
             repaint();
         });
-
-        p1.setEnabled(false);
 
         buttonGroup.add(j2);
         buttonGroup.add(j4);
@@ -134,23 +149,6 @@ public class JouerButton extends JPanel implements ActionListener {
         conteneur2.add(label1);
         conteneur2.add(manuelButton);
         conteneur2.add(autoButton);
-
-        for (JCheckBox JCB : botsChoices) {
-            JCB.addActionListener(e -> {
-                if (JCB.isSelected()) {
-                    botsChecked += 1;
-                    manuelButton.setSelected(false);
-                    manuelButton.setEnabled(false);
-                    autoButton.setSelected(true);
-                } else if (!JCB.isSelected()) {
-                    botsChecked -= 1;
-                    if (botsChecked == 0) {
-                        manuelButton.setEnabled(true);
-                    }
-                }
-                repaint();
-            });
-        }
 
         // Bouton permettant le passage � la fenetre d'apres apres verification de la
         // validite des choix du joueur
@@ -176,19 +174,6 @@ public class JouerButton extends JPanel implements ActionListener {
 
             else {
                 StockageSettings.NB_JOUEURS_TOTAL = j2.isSelected() ? 2 : 4;
-                StockageSettings.NB_IA = 0;
-                if (p1.isSelected()) {
-                    StockageSettings.NB_IA += 1;
-                }
-                if (p2.isSelected()) {
-                    StockageSettings.NB_IA += 1;
-                }
-                if (p3.isSelected()) {
-                    StockageSettings.NB_IA += 1;
-                }
-                if (p4.isSelected()) {
-                    StockageSettings.NB_IA += 1;
-                }
                 StockageSettings.NB_HUMAIN = StockageSettings.NB_JOUEURS_TOTAL - StockageSettings.NB_IA;
                 StockageSettings.MAP_ETAT = manuelButton.isSelected() ? MapEtat.MANUEL : null;
                 frame.setPanel(new ValiderButton(frame));
