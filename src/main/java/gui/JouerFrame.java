@@ -127,7 +127,10 @@ public class JouerFrame extends JPanel {
                                             if (q == JOptionPane.YES_OPTION) {
                                                 // Confirmation du choix
                                                 frame.dispose();
-                                                if(i == 3) game.model.setJeuEtat(JeuEtat.GAME_INTERRUPT);
+                                                if(i == 3){
+                                                    game.model.setJeuEtat(JeuEtat.GAME_INTERRUPT);
+                                                    System.exit(0);
+                                                }
                                                 else if(i == 2) (new NiwaWindow()).run();
                                             } else if (q == JOptionPane.NO_OPTION);
                                             else;
