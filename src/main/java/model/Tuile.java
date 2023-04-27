@@ -55,6 +55,118 @@ public class Tuile implements Serializable{
     }
 
     /**
+     * Constructeur pour avoir une copie
+     * @param tuile La tuile a copiée
+     */
+    public Tuile(Tuile tuile){
+        this.centre = tuile.centre.copy();
+        hexagones[0] = tuile.hexagones[0].copy();
+        hexagones[1] = tuile.hexagones[1].copy();
+        hexagones[2] = tuile.hexagones[2].copy();
+        hexagones[3] = tuile.hexagones[3].copy();
+        hexagones[4] = tuile.hexagones[4].copy();
+        hexagones[5] = tuile.hexagones[5].copy();
+    }
+
+    /**
+     * Constructeur pour créer une tuile customisé à la main
+     * @param ne porte Nord-Est de l'hexagone central
+     * @param e porte Est de l'hexagone central
+     * @param se porte Sud-Est de l'hexagone central
+     * @param so porte Sud-Ouest de l'hexagone central
+     * @param o porte Ouest de l'hexagone central
+     * @param no porte Nord-Ouest de l'hexagone central
+     * @param brancheNE porte située sur la branche en haut à droite
+     * @param brancheS porte située sur la branche du bas
+     * @param brancheNO porte située sur la branche en haut à gauche
+     */
+    public Tuile(Couleurs ne, Couleurs e, Couleurs se, Couleurs so, Couleurs o, Couleurs no, Couleurs brancheNE, Couleurs brancheS, Couleurs brancheNO){
+        this.centre = new HexagoneCentral(ne, e, se, so, o, no);
+        this.hexagones[0] = new Hexagone(null, null, brancheNE, centre.portes[0], null, null);
+        this.hexagones[1] = new Hexagone(null, null, null, null, centre.portes[1], brancheNE);
+
+        this.hexagones[2] = new Hexagone(null, null, null, null, brancheS, centre.portes[2]);
+        this.hexagones[3] = new Hexagone(centre.portes[3], brancheS, null, null, null, null);
+
+        this.hexagones[4] = new Hexagone(brancheNO, centre.portes[4], null, null, null, null);
+        this.hexagones[5] = new Hexagone(null, null, centre.portes[5], brancheNO, null, null);
+    }
+
+    /**
+     * Méthode qui permet de définir toutes les tuiles possibles
+     * Deux tuiles sont identiques si leurs :
+     * - id_type % 2 sont égaux ET
+     * - id_couleur % 6 sont égaux ET
+     * - id_rotation % 3 sont égaux.
+     */
+    public static Tuile tuileByID(int id_type, int id_couleur, int id_rotation){
+        Couleurs couleurs[] = new Couleurs[3];
+        if(id_couleur % 6 == 0){
+            couleurs[0] = Couleurs.ROUGE;
+            couleurs[1] = Couleurs.ORANGE;
+            couleurs[2] = Couleurs.VERT;
+        }
+        else if(id_couleur % 6 == 1){
+            couleurs[0] = Couleurs.ROUGE;
+            couleurs[1] = Couleurs.VERT;
+            couleurs[2] = Couleurs.ORANGE;
+        }
+        else if(id_couleur % 6 == 2){
+            couleurs[0] = Couleurs.ORANGE;
+            couleurs[1] = Couleurs.ROUGE;
+            couleurs[2] = Couleurs.VERT;
+        }
+        else if(id_couleur % 6 == 3){
+            couleurs[0] = Couleurs.ORANGE;
+            couleurs[1] = Couleurs.VERT;
+            couleurs[2] = Couleurs.ROUGE;
+        }
+        else if(id_couleur % 6 == 4){
+            couleurs[0] = Couleurs.VERT;
+            couleurs[1] = Couleurs.ROUGE;
+            couleurs[2] = Couleurs.ORANGE;
+        }
+        else if(id_couleur % 6 == 5){
+            couleurs[0] = Couleurs.VERT;
+            couleurs[1] = Couleurs.ORANGE;
+            couleurs[2] = Couleurs.ROUGE;
+        }
+
+        Tuile tuile;
+
+        // Tuiles possédant 2 couleurs sur 3 faces de l'hexagone du centre
+        if(id_type % 2 == 0){
+            tuile = new Tuile(couleurs[0], couleurs[0], couleurs[0], couleurs[1], couleurs[1], couleurs[1], couleurs[2], couleurs[2], couleurs[2]);
+        }
+        // Tuiles possédant 3 couleurs sur 2 faces de l'hexagone du centre
+        else{
+            tuile = new Tuile(couleurs[0], couleurs[1], couleurs[2], couleurs[0], couleurs[1], couleurs[2], couleurs[2], couleurs[1], couleurs[0]);
+        }
+
+        if(id_rotation % 3 == 1){
+            tuile.rotate();
+        }
+        else if(id_rotation % 3 == 2){
+            tuile.rotate();
+            tuile.rotate();
+        }
+
+        return tuile;
+    }
+
+    public static ArrayList<Tuile> allTuiles(){
+        ArrayList<Tuile> allTuiles = new ArrayList<Tuile>();
+        for (int type = 0; type < 2; type++) {
+            for (int couleur = 0; couleur < 6; couleur++) {
+                for (int rotation = 0; rotation < 3; rotation++) {
+                    allTuiles.add(Tuile.tuileByID(type, couleur, rotation));
+                }
+            }
+        }
+        return allTuiles;
+    }
+
+    /**
      * Méthode privée, pour remplir la liste de couleurs disponible pour une seule tuile (3 rouge, 3 vert, et 3 orange)
      */
     private void setPortesDispo(){

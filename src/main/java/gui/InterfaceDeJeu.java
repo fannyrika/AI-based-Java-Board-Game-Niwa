@@ -96,7 +96,7 @@ public class InterfaceDeJeu extends JFrame implements KeyListener, Runnable, Ser
                     }catch(Exception exception){exception.printStackTrace();}
 
                     //fermeture de la partie donc ouverture du menu principal
-                    model.setJeuEtat(model.getJeuEtat().GAME_INTERRUPT);
+                    model.setJeuEtat(JeuEtat.GAME_INTERRUPT);
                     (new NiwaWindow()).run();
                 }else if(i == 2 || i == 3){
                     int q = -1;
@@ -109,6 +109,7 @@ public class InterfaceDeJeu extends JFrame implements KeyListener, Runnable, Ser
                         if (q == JOptionPane.YES_OPTION) {
                             // Confirmation du choix
                             this.dispose();
+                            model.setJeuEtat(JeuEtat.GAME_INTERRUPT);
                             if(i == 3) {
                                 model.setJeuEtat(JeuEtat.GAME_INTERRUPT);
                                 System.exit(0);

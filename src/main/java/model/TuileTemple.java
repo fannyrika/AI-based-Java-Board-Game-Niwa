@@ -1,8 +1,6 @@
 package main.java.model;
 
-import java.io.Serializable;
-
-public class TuileTemple extends Tuile implements Serializable{
+public class TuileTemple extends Tuile {
 
     /**
      * Attribut pour savoir à qui est le temple
