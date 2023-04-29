@@ -70,13 +70,13 @@ public class Tuile implements Serializable{
      * @param tuile La tuile a copiée
      */
     public Tuile(Tuile tuile){
-        this.centre = tuile.centre.copy();
-        hexagones[0] = tuile.hexagones[0].copy();
-        hexagones[1] = tuile.hexagones[1].copy();
-        hexagones[2] = tuile.hexagones[2].copy();
-        hexagones[3] = tuile.hexagones[3].copy();
-        hexagones[4] = tuile.hexagones[4].copy();
-        hexagones[5] = tuile.hexagones[5].copy();
+        this.centre = tuile.centre.clone();
+        hexagones[0] = tuile.hexagones[0].clone();
+        hexagones[1] = tuile.hexagones[1].clone();
+        hexagones[2] = tuile.hexagones[2].clone();
+        hexagones[3] = tuile.hexagones[3].clone();
+        hexagones[4] = tuile.hexagones[4].clone();
+        hexagones[5] = tuile.hexagones[5].clone();
     }
 
     /**
@@ -161,6 +161,10 @@ public class Tuile implements Serializable{
         }
     }
 
+    /**
+     * Méthode permettant d'avoir toutes les tuiles possibles dans une liste
+     * @return La liste contenant toutes les tuiles
+     */
     public static ArrayList<Tuile> allTuiles(){
         ArrayList<Tuile> allTuiles = new ArrayList<Tuile>();
         for (int type = 0; type < 2; type++) {

@@ -36,7 +36,7 @@ public class HexagoneCentral extends Hexagone {
     }    
 
     @Override
-    public HexagoneCentral copy(){
+    public HexagoneCentral clone(){
         HexagoneCentral copy = new HexagoneCentral(portes[0], portes[1], portes[2], portes[3], portes[4],portes[5]);
         copy.setLocation(location);
         copy.setTemple(temple);

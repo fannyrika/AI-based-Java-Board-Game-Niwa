@@ -75,7 +75,7 @@ public class Plateau implements DeplacementPion, Serializable {
      */
     private void placerHexagones(Tuile t, Coordonnee ghc){
         t.centre.setLocation(ghc);
-        gridHexagone.put(ghc, t.centre.copy());
+        gridHexagone.put(ghc, t.centre.clone());
         Coordonnee[] ha = HexagoneAutour.get(ghc);
         for (int i = 0; i < t.hexagones.length; i++) {
             tamponHexagone(t.hexagones[i], ha[i]);
@@ -95,7 +95,7 @@ public class Plateau implements DeplacementPion, Serializable {
             old.tamponBy(h);
         }
         else{
-            gridHexagone.put(c, h.copy());
+            gridHexagone.put(c, h.clone());
         }
     }
 
