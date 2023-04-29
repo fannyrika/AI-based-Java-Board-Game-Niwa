@@ -2,8 +2,6 @@ package main.java.model;
 
 import java.io.Serializable;
 
-import main.java.model.interfaces.Copy;
-
 /**
  * Class Hexagone :
  * 
