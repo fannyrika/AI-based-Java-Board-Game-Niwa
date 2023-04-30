@@ -3,10 +3,9 @@ package main.java.gui;
 import java.awt.*;
 
 import javax.swing.*;
-import java.io.Serializable;
 import main.java.model.Jeu;
 
-public class TableauDeBord extends JPanel implements Serializable{
+public class TableauDeBord extends JPanel{
     protected Jeu model;
     protected JLabel pioche;
     protected JLabel joueurCourant;

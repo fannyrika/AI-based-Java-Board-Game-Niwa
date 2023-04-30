@@ -8,7 +8,7 @@ import main.java.model.Couleurs;
 import main.java.model.Tuile;
 import main.java.model.interfaces.HexagoneAutour;
 
-public class TuileGraphique extends Polygon implements Serializable{
+public class TuileGraphique extends Polygon{
 
     public static class Circle implements Serializable{
 

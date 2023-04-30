@@ -1,16 +1,11 @@
 package main.java.gui;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 
-import main.java.model.JeuEtat;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -51,7 +46,7 @@ public class JouerFrame extends JPanel {
             boolean x = false;
 
              // Proposition d'ouverture de sauvegarde
-             if(searchSave.existSer(new File("."))){
+             if(Save.existSer(new File("."))){
                 int o = -1;
                 while(o == -1){
                     o = JOptionPane.showOptionDialog(null, "Il existe une/des sauvegardes.\nVoulez-vous ouvrir une sauvegarde ?", 
@@ -59,7 +54,7 @@ public class JouerFrame extends JPanel {
                     null, null, null);
 
                     if (o == JOptionPane.YES_OPTION){
-                        ArrayList<File> files = searchSave.tabSer(new File("."), new ArrayList<File>());
+                        ArrayList<File> files = Save.tabSer(new File("."), new ArrayList<File>());
                         File[] filesNames = files.toArray(new File[0]);
                         // Affichage d'une liste de tout les .ser existants dans le dossier courant
                         File save = (File) JOptionPane.showInputDialog(null, 
@@ -73,77 +68,17 @@ public class JouerFrame extends JPanel {
                         // REMARQUE : les fichiers qtable0 et qtable1 ne sont pas des parties sauvegardés
                         try{
                             // execution de la deserialization
-                            FileInputStream file = new FileInputStream(save);
-                            ObjectInputStream obj = new ObjectInputStream(new FileInputStream(save));
-                            InterfaceDeJeu game = (InterfaceDeJeu) obj.readObject();
+                            InterfaceDeJeu game = Save.ouvrirSave(save);
+                            if(game != null){
+                                x = true;
 
-                            obj.close();
-                            file.close();
-
-                            // Suppression du fichier afin d'eviter toutes confusions
-                            save.delete();
-
-                            // Set des actions des boutons de la partie
-                            game.tableauDeBord.boutonRegles.addActionListener(a->{
-                                ManuelDuJeu mdj=new ManuelDuJeu();
-                            });
-
-                            game.tableauDeBord.boutonMenu.addActionListener(b ->{
-                                // Bouton menu
-                                String[] choix = {"Reprendre", "Enregistrer et aller au menu principal", "Aller au menu principal", "Quitter"};
-                                int i = JOptionPane.showOptionDialog(null,
-                                    "Que souhaitez-vous faire ^^ ?",
-                                    "Menu",
-                                    JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, choix, choix[0]);
-                    
-                                    if (i == 0); // reprendre ne change rien
-                                    else if(i == 1){
-                                        // proposer de choisir le nom de la sauvegarde 
-                                        String name = searchSave.nameSave();
-                    
-                                        File fichier = new File(name + ".ser");
-                                        try{
-                                            // serialization de la partie
-                                            FileOutputStream f = new FileOutputStream(fichier);
-                                            ObjectOutputStream tmp = new ObjectOutputStream(f);
-                                            tmp.writeObject(this);
-                    
-                                            tmp.close();
-                                            file.close();
-                                        }catch(Exception exception){exception.printStackTrace();}
-                    
-                                        //fermeture de la partie donc ouverture du menu principal
-                                        game.model.setJeuEtat(game.model.getJeuEtat().GAME_INTERRUPT);
-                                        frame.dispose();
-                                        (new NiwaWindow()).run();
-                                    }else if(i == 2 || i == 3){
-                                        int q = -1;
-                                        while(!(q == 0 || q == 1)){
-                                            // Avertissement avant de quitter et de perdre sa progression
-                                            q = JOptionPane.showOptionDialog(null, "Si vous quittez maintenant, votre partie sera perdue.\n Voulez-vous continuez ?", 
-                                            "Êtes-vous sûre ?", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, 
-                                            null, null, null);
-                    
-                                            if (q == JOptionPane.YES_OPTION) {
-                                                // Confirmation du choix
-                                                frame.dispose();
-                                                if(i == 3){
-                                                    game.model.setJeuEtat(JeuEtat.GAME_INTERRUPT);
-                                                    System.exit(0);
-                                                }
-                                                else if(i == 2) (new NiwaWindow()).run();
-                                            } else if (q == JOptionPane.NO_OPTION);
-                                            else;
-                                        }
-                                    };
-                            });
-                            x = true;
-
-                            // Lancement de la partie deserializer
-                            frame.dispose();
-                            game.start();
+                                // Lancement de la partie deserializer
+                                frame.dispose();
+                                game.start();
+                            }
                         } catch (Exception e1) {
                             e1.printStackTrace();
+                            save.delete();
                             JOptionPane.showMessageDialog(null, "Impossible d'ouvrir la sauvegarde :( ", "Erreur !", JOptionPane.ERROR_MESSAGE);
                         }
                     

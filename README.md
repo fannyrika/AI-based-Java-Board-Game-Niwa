@@ -15,7 +15,14 @@ src/main/java/gui/NiwaWindow.java
 ```
 Ou bien la classe `Launcher.java` située dans un dossier propre à lui :
 ```
-src/main/java/gui/Launcher.java
+src/main/java/launcher/Launcher.java
+```
+
+## Si votre IDE ne veut pas lancer le projet, depuis le CMD, en étant dans le dossier `src`, faites :
+```
+> javac main/java/gui/*.java main/java/launcher/*.java main/java/model/*.java main/java/model/interfaces/*.java
+
+> java main/java/launcher/Launcher.java 
 ```
 
 # Comment jouer ?

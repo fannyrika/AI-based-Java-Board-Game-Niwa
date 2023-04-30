@@ -1,8 +1,7 @@
 package main.java.model;
 
-import java.io.Serializable;
 
-public class Action implements Serializable{
+public class Action{
 
     private Pion selectedPion;
     private Coordonnee moveDirection;

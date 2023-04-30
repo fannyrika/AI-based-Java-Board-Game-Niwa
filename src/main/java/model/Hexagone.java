@@ -2,8 +2,6 @@ package main.java.model;
 
 import java.io.Serializable;
 
-import main.java.model.interfaces.Copy;
-
 /**
  * Class Hexagone :
  * 
@@ -22,7 +20,7 @@ import main.java.model.interfaces.Copy;
  *     \ /
  *   3     2
  */
-public class Hexagone implements Copy<Hexagone>, Serializable{
+public class Hexagone implements Cloneable, Serializable{
     
     /**
      * La liste contenant ces portes (de taille 6 pour chaque face d'un hexagone)
@@ -85,7 +83,7 @@ public class Hexagone implements Copy<Hexagone>, Serializable{
      * Méthode qui : @return une copie de l'hexagone actuel (copie de ses portes)
      */
     @Override
-    public Hexagone copy(){
+    public Hexagone clone(){
         return new Hexagone(portes[0], portes[1], portes[2], portes[3], portes[4],portes[5]);
     }
 

@@ -17,11 +17,6 @@ import java.util.Random;
 public class Tuile implements Serializable{
 
     /**
-     * Attribut privé, utile pour la création des portes des hexagones
-     */
-    private ArrayList<Couleurs> portesDispo;
-
-    /**
      * Hexagone centrale
      * +
      * Liste d'hexagones non-complet de taille 6
@@ -36,14 +31,30 @@ public class Tuile implements Serializable{
     public Hexagone[] getHexagones(){return hexagones;}
 
     /**
-     * Constructeur initialisant une tuile sans temple
+     * Constructeur qui permet de définir une tuile en fonction de 3 parametres
+     * Deux tuiles sont identiques si leurs :
+     * - id_type % 2 sont égaux ET
+     * - id_couleur % 6 sont égaux ET
+     * - id_rotation % 3 sont égaux.
      */
-    public Tuile(){
-        setPortesDispo();
-        setHexagoneCentral();
-        setHexagoneNonComplet();
+    public Tuile(int id_type, int id_couleur, int id_rotation){
+        this.fillTuileByID(id_type, id_couleur, id_rotation);
     }
 
+    /**
+     * Constructeur initialisant une tuile aléatoire
+     */
+    public Tuile(){
+        Random r = new Random();
+        int typeID = r.nextInt(0, 2);
+        int couleurID = r.nextInt(0, 6);
+        int rotationID = r.nextInt(0, 3);
+        this.fillTuileByID(typeID, couleurID, rotationID);
+    }
+
+    /**
+     * Constructeur qui donne une tuile en fonction des hexagones qu'elle doit contenir
+     */
     public Tuile(HexagoneCentral centre,Hexagone ne, Hexagone e, Hexagone se, Hexagone so, Hexagone o, Hexagone no){
         this.centre = centre;
         hexagones[0] = ne;
@@ -55,21 +66,21 @@ public class Tuile implements Serializable{
     }
 
     /**
-     * Constructeur pour avoir une copie
+     * Constructeur pour avoir la copie d'une tuile
      * @param tuile La tuile a copiée
      */
     public Tuile(Tuile tuile){
-        this.centre = tuile.centre.copy();
-        hexagones[0] = tuile.hexagones[0].copy();
-        hexagones[1] = tuile.hexagones[1].copy();
-        hexagones[2] = tuile.hexagones[2].copy();
-        hexagones[3] = tuile.hexagones[3].copy();
-        hexagones[4] = tuile.hexagones[4].copy();
-        hexagones[5] = tuile.hexagones[5].copy();
+        this.centre = tuile.centre.clone();
+        hexagones[0] = tuile.hexagones[0].clone();
+        hexagones[1] = tuile.hexagones[1].clone();
+        hexagones[2] = tuile.hexagones[2].clone();
+        hexagones[3] = tuile.hexagones[3].clone();
+        hexagones[4] = tuile.hexagones[4].clone();
+        hexagones[5] = tuile.hexagones[5].clone();
     }
 
     /**
-     * Constructeur pour créer une tuile customisé à la main
+     * Méthode pour remplir les portes d'une tuile à la main
      * @param ne porte Nord-Est de l'hexagone central
      * @param e porte Est de l'hexagone central
      * @param se porte Sud-Est de l'hexagone central
@@ -80,7 +91,7 @@ public class Tuile implements Serializable{
      * @param brancheS porte située sur la branche du bas
      * @param brancheNO porte située sur la branche en haut à gauche
      */
-    public Tuile(Couleurs ne, Couleurs e, Couleurs se, Couleurs so, Couleurs o, Couleurs no, Couleurs brancheNE, Couleurs brancheS, Couleurs brancheNO){
+    private void fillTuile(Couleurs ne, Couleurs e, Couleurs se, Couleurs so, Couleurs o, Couleurs no, Couleurs brancheNE, Couleurs brancheS, Couleurs brancheNO){
         this.centre = new HexagoneCentral(ne, e, se, so, o, no);
         this.hexagones[0] = new Hexagone(null, null, brancheNE, centre.portes[0], null, null);
         this.hexagones[1] = new Hexagone(null, null, null, null, centre.portes[1], brancheNE);
@@ -93,13 +104,13 @@ public class Tuile implements Serializable{
     }
 
     /**
-     * Méthode qui permet de définir toutes les tuiles possibles
+     * Méthode qui permet de remplir les portes d'une tuile en fonction de 3 parametres
      * Deux tuiles sont identiques si leurs :
      * - id_type % 2 sont égaux ET
      * - id_couleur % 6 sont égaux ET
      * - id_rotation % 3 sont égaux.
      */
-    public static Tuile tuileByID(int id_type, int id_couleur, int id_rotation){
+    private void fillTuileByID(int id_type, int id_couleur, int id_rotation){
         Couleurs couleurs[] = new Couleurs[3];
         if(id_couleur % 6 == 0){
             couleurs[0] = Couleurs.ROUGE;
@@ -132,169 +143,40 @@ public class Tuile implements Serializable{
             couleurs[2] = Couleurs.ROUGE;
         }
 
-        Tuile tuile;
-
         // Tuiles possédant 2 couleurs sur 3 faces de l'hexagone du centre
         if(id_type % 2 == 0){
-            tuile = new Tuile(couleurs[0], couleurs[0], couleurs[0], couleurs[1], couleurs[1], couleurs[1], couleurs[2], couleurs[2], couleurs[2]);
+            this.fillTuile(couleurs[0], couleurs[0], couleurs[0], couleurs[1], couleurs[1], couleurs[1], couleurs[2], couleurs[2], couleurs[2]);
         }
         // Tuiles possédant 3 couleurs sur 2 faces de l'hexagone du centre
         else{
-            tuile = new Tuile(couleurs[0], couleurs[1], couleurs[2], couleurs[0], couleurs[1], couleurs[2], couleurs[2], couleurs[1], couleurs[0]);
+            this.fillTuile(couleurs[0], couleurs[1], couleurs[2], couleurs[0], couleurs[1], couleurs[2], couleurs[2], couleurs[1], couleurs[0]);
         }
 
         if(id_rotation % 3 == 1){
-            tuile.rotate();
+            this.rotate();
         }
         else if(id_rotation % 3 == 2){
-            tuile.rotate();
-            tuile.rotate();
+            this.rotate();
+            this.rotate();
         }
-
-        return tuile;
     }
 
+    /**
+     * Méthode permettant d'avoir toutes les tuiles possibles dans une liste
+     * @return La liste contenant toutes les tuiles
+     */
     public static ArrayList<Tuile> allTuiles(){
         ArrayList<Tuile> allTuiles = new ArrayList<Tuile>();
         for (int type = 0; type < 2; type++) {
             for (int couleur = 0; couleur < 6; couleur++) {
                 for (int rotation = 0; rotation < 3; rotation++) {
-                    allTuiles.add(Tuile.tuileByID(type, couleur, rotation));
+                    allTuiles.add(new Tuile(type, couleur, rotation));
                 }
             }
         }
         return allTuiles;
     }
-
-    /**
-     * Méthode privée, pour remplir la liste de couleurs disponible pour une seule tuile (3 rouge, 3 vert, et 3 orange)
-     */
-    private void setPortesDispo(){
-        portesDispo = new ArrayList<Couleurs>();
-        for (Couleurs p : Couleurs.values()){
-            for (int i = 0; i < Couleurs.values().length; i++) {
-                portesDispo.add(p);
-            }
-        }
-    }
-
-    /**
-     * Méthode privée pour initialiser l'hexagone centrale
-     */
-    private void setHexagoneCentral(){
-        Random r = new Random();
-        if(r.nextInt(2) == 0){                                      // Cas ou : l'hexagone central a seulement 2 couleurs chacun sur 3 faces 
-            Couleurs p1 = Couleurs.values()[r.nextInt(Couleurs.values().length)];
-            Couleurs p2 = p1;
-            while (p2 == p1) {
-                p2 = Couleurs.values()[r.nextInt(Couleurs.values().length)];
-            }
-            for (int i = 0; i < hexagones.length/2; i++) {
-                portesDispo.remove(p1);
-                portesDispo.remove(p2);
-            }
-
-            int debutP1 = r.nextInt(hexagones.length);
-            for (int i = 0; i < hexagones.length; i++) {
-                if(i+debutP1 >= hexagones.length){
-                    if(i < hexagones.length/2){
-                        centre.portes[i+debutP1 - hexagones.length] = p1;
-                    }
-                    else{
-                        centre.portes[i+debutP1 - hexagones.length] = p2;
-                    }
-                }
-                else{
-                    if(i < hexagones.length/2){
-                        centre.portes[i+debutP1] = p1;
-                    }
-                    else{
-                        centre.portes[i+debutP1] = p2;
-                    }
-                }
-            }
-        }
-        else{           // Cas ou : l'hexagone central a les 3 couleurs chacun sur 2 faces (mais jamais 2 couleurs cote à cote)
-            ArrayList<Couleurs> portes = new ArrayList<Couleurs>();
-            portes.add(Couleurs.ROUGE);portes.add(Couleurs.VERT);portes.add(Couleurs.ORANGE);
-            Couleurs p1 = portes.get(r.nextInt(portes.size()));
-            portes.remove(p1);
-            Couleurs p2 = portes.get(r.nextInt(portes.size()));
-            portes.remove(p2);
-            Couleurs p3 = portes.get(r.nextInt(portes.size()));
-            portes.remove(p3);
-
-            for (int i = 0; i < hexagones.length/3; i++) {
-                portesDispo.remove(p1);
-                portesDispo.remove(p2);
-                portesDispo.remove(p3);
-            }
-
-            int debutP1 = r.nextInt(hexagones.length);
-            for (int i = 0; i < hexagones.length; i++) {
-                if(i+debutP1 >= hexagones.length){
-                    if(i%3==0){
-                        centre.portes[i+debutP1 - hexagones.length] = p1;
-                    }
-                    else if(i%3==1){
-                        centre.portes[i+debutP1 - hexagones.length] = p2;
-                    }
-                    else{
-                        centre.portes[i+debutP1 - hexagones.length] = p3;
-                    }
-                }
-                else{
-                    if(i%3==0){
-                        centre.portes[i+debutP1] = p1;
-                    }
-                    else if(i%3==1){
-                        centre.portes[i+debutP1] = p2;
-                    }
-                    else{
-                        centre.portes[i+debutP1] = p3;
-                    }
-                }
-            }
-        }
-    }
-
-    private void setHexagoneNonComplet(){
-        Random r = new Random();
-        Couleurs p1 = null;
-        Couleurs p2 = null;
-        Couleurs p3 = null;
-
-        while (p1 == null) {
-            Couleurs p = portesDispo.get(r.nextInt(portesDispo.size()));
-            if(p != centre.portes[0] && p != centre.portes[1]){
-                p1 = p;
-                portesDispo.remove(p1);
-            }
-        }
-
-        p2 = portesDispo.get(0);
-        if(p2 != centre.portes[2] && p2 != centre.portes[3]){
-            portesDispo.remove(p2);
-            p3 = portesDispo.get(0);
-            portesDispo.remove(p3);
-        }
-        else{
-            p3 = p2;
-            portesDispo.remove(p3);
-            p2 = portesDispo.get(0);
-            portesDispo.remove(p2);
-        }
-
-        hexagones[0] = new Hexagone(null, null, p1, centre.portes[0], null, null);
-        hexagones[1] = new Hexagone(null, null, null, null, centre.portes[1], p1);
-
-        hexagones[2] = new Hexagone(null, null, null, null, p2, centre.portes[2]);
-        hexagones[3] = new Hexagone(centre.portes[3], p2, null, null, null, null);
-
-        hexagones[4] = new Hexagone(p3, centre.portes[4], null, null, null, null);
-        hexagones[5] = new Hexagone(null, null, centre.portes[5], p3, null, null);
-    }
-
+    
     /**
      * Méthode qui tourne d'un cran dans le sens horaire la tuile actuelle
      */
