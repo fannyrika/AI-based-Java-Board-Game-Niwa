@@ -99,8 +99,7 @@ public class Pion extends Stack<Couleurs> {
                 return false;
             }
             if(p.id == this.id 
-            && p.location.equals(this.location) && p.isPlaced == this.isPlaced 
-            && this.containsAll(p) && p.containsAll(this)){
+            && p.location.equals(this.location) && this.containsAll(p) && p.containsAll(this)){
                 return true;
             }
         }

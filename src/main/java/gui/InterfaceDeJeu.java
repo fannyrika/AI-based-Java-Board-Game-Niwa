@@ -394,27 +394,7 @@ public class InterfaceDeJeu extends JFrame implements KeyListener, Runnable, Ser
                 //print the q-table
                 //((JoueurIA) (model.getJoueurCourant())).getQTable().print();
                     System.out.println("----------nbTour:"+nbTour);
-                    if(!model.isAiTraining()){
-                        //game over donc affichage d'un message avec le classement des joueurs
-                        String s = "Classement de la partie : ";
-                        int i = JOptionPane.showOptionDialog(null, 
-                            s + afficheGagnants(model.getGagneurs().size()),
-                            "Partie terminée", 
-                            JOptionPane.YES_NO_CANCEL_OPTION,
-                            JOptionPane.QUESTION_MESSAGE, null, 
-                            new String[]{"Nouvelle partie", "Aller au menu principal", "Quitter"}, null
-                        );
-                            
-                            if (i == JOptionPane.YES_OPTION){
-                                // Relance la fiche de choix de map
-                            }else if(i == JOptionPane.NO_OPTION){
-                                // retour au menu principal
-                                dispose();
-                                (new NiwaWindow()).run();
-                            }else if(i == JOptionPane.CANCEL_OPTION) {
-                                // quitter
-                                System.exit(0);
-                        };}
+
                 gameOver();
                 break;
                 //
@@ -444,25 +424,29 @@ public class InterfaceDeJeu extends JFrame implements KeyListener, Runnable, Ser
     }
 
     public void gameOver(){
-        String s = "Classement de la partie : ";
-        int i = JOptionPane.showOptionDialog(null, 
-            s + afficheGagnants(model.getGagneurs().size()),
-            "Partie terminée", 
-            JOptionPane.YES_NO_CANCEL_OPTION,
-            JOptionPane.QUESTION_MESSAGE, null, 
-            new String[]{"Nouvelle partie", "Aller au menu principal", "Quitter"}, null
-        );
-            
-            if (i == JOptionPane.YES_OPTION){
-                // Relance la fiche de choix de map
-            }else if(i == JOptionPane.NO_OPTION){
-                // retour au menu principal
-                dispose();
-                (new NiwaWindow()).run();
-            }else if(i == JOptionPane.CANCEL_OPTION) {
-                // quitter
-                System.exit(0);
-        };
+        if(!model.isAiTraining()){
+            //print debug info
+            System.out.println("debugggg=============");
+            //game over donc affichage d'un message avec le classement des joueurs
+            String s = "Classement de la partie : ";
+            int i = JOptionPane.showOptionDialog(null, 
+                s + afficheGagnants(model.getGagneurs().size()),
+                "Partie terminée", 
+                JOptionPane.YES_NO_CANCEL_OPTION,
+                JOptionPane.QUESTION_MESSAGE, null, 
+                new String[]{"Nouvelle partie", "Aller au menu principal", "Quitter"}, null
+            );
+                
+                if (i == JOptionPane.YES_OPTION){
+                    // Relance la fiche de choix de map
+                }else if(i == JOptionPane.NO_OPTION){
+                    // retour au menu principal
+                    dispose();
+                    (new NiwaWindow()).run();
+                }else if(i == JOptionPane.CANCEL_OPTION) {
+                    // quitter
+                    System.exit(0);
+            };}
 
         model.gameOver();
         System.out.println("Game over!");//debug
@@ -805,8 +789,8 @@ protected void configureScrollBarColors() {
 
         //System.out.println("from main: mapsetting: "+model.getMapEtat());
 
-        //test 1: 1000000 rounds of 2 AI players
-        for(int i=0; i<10000; i++){
+        //test 1:  rounds of 2 AI players
+        for(int i=0; i<1000000; i++){
             System.out.println("-------------round "+i+"----------------");
             //Jeu model =  new Jeu(1, 1, MapEtat.MAP1_2P,10);
             Jeu model =  new Jeu(0, 2, MapEtat.MAP1_2P, 10);
