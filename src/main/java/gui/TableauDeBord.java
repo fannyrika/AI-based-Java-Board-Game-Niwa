@@ -147,7 +147,7 @@ public class TableauDeBord extends JPanel implements Serializable{
         etapeCourante.setText(instruction);
     }
     
-protected void setJoueurCourant(String nom){
+    protected void setJoueurCourant(String nom){
         joueurCourant.setText(nom);
     }
 

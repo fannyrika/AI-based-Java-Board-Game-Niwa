@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Random;
 
+import main.java.gui.StockageSettings;
 import main.java.model.interfaces.MapCreation;
 
 /**
@@ -36,8 +37,7 @@ public class Jeu implements MapCreation, Serializable{
      * Représente le sac des temples
      */
     protected ArrayList<TuileTemple> sacTemples = new ArrayList<TuileTemple>();
-    protected Tuile tuileCourante = new Tuile();
-    
+    protected Tuile tuileCourante = new Tuile(); 
     /**
      * Représente le pion courant, mis sur le premier pion du premier joueur lorsque l'objet "Jeu" est crée
      */
@@ -67,6 +67,8 @@ public class Jeu implements MapCreation, Serializable{
      * to avoid infinite loop when the game is almost blocked
      */
     protected int almostBlockedCount=0;
+
+    // protected int NB_TUILES_DEBUT;
     
      /**
      * Constructeur permettant d'initialiser les attributs
@@ -74,6 +76,7 @@ public class Jeu implements MapCreation, Serializable{
      * @param nb_joueurs -> Le nombre de joueurs que le jeu pourra acueillir
      */
     public Jeu(int nb_joueurs_humain, int nb_joueurs_ia, MapEtat map, int NB_TUILES){
+        // NB_TUILES_DEBUT = NB_TUILES;
         Joueur.ID_STATIC = 0;
         mapEtat = map;
         if(map == MapEtat.MAP1_2P || map == MapEtat.MAP2_2P){initJoueurs(nb_joueurs_humain, 2-nb_joueurs_humain);}
