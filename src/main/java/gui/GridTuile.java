@@ -5,7 +5,6 @@ import javax.swing.event.MouseInputListener;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.io.Serializable;
 
 import main.java.model.interfaces.ColorsSwitcher;
 import main.java.model.interfaces.HexagoneAutour;
@@ -18,7 +17,7 @@ import java.util.TimerTask;
 import main.java.gui.TuileGraphique.Circle;
 import main.java.model.*;
 
-public class GridTuile extends JPanel implements KeyListener, MouseInputListener, Serializable {
+public class GridTuile extends JPanel implements KeyListener, MouseInputListener{
 
     public class CursorInfo extends Cursor {
 

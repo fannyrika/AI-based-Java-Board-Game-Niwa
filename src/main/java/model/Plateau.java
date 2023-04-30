@@ -9,7 +9,7 @@ import main.java.model.interfaces.DeplacementPion;
 import main.java.model.interfaces.HexagoneAutour;
 import main.java.model.interfaces.TuilesAutour;
 
-public class Plateau implements DeplacementPion, Serializable {
+public class Plateau implements DeplacementPion, Serializable{
 
     /**
      * Attributs permettant de définir un plateau

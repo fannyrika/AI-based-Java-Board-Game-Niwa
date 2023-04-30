@@ -5,10 +5,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.event.KeyEvent;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -48,6 +45,30 @@ public class InterfaceDeJeu extends JFrame implements KeyListener, Runnable, Ser
         scrollPane.setBackground(new Color(61, 58, 58));
         scrollPane.getHorizontalScrollBar().setUI(new CustomScrollBarUI());
         tableauDeBord=new TableauDeBord(model);
+        this.setActionButton();
+        JPanel vueComplete=new JPanel(new BorderLayout());
+        vueComplete.setBackground(new Color(61, 58, 58));
+        vueComplete.add(scrollPane, BorderLayout.CENTER);
+        vueComplete.add(tableauDeBord,BorderLayout.LINE_END);
+        Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
+        size.width /= TABLEAU_DE_BORD_RATIO; // divide the width by 4
+        tableauDeBord.setPreferredSize(size);
+        //controleur=new Controleur(model, this);
+        //TODO: construire l'interface graphique (avec la tuileTemple du joueur0 comme la tuile initiale)
+        addKeyListener(gridTuile);
+        addKeyListener(this);
+        addWindowListener(new WindowAdapter() {
+            public void windowOpened(WindowEvent e) { 
+            requestFocus();	
+            }
+        });
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        add(vueComplete, BorderLayout.CENTER);
+        //setLocationRelativeTo(null);
+        //setVisible(true);
+    }
+
+    public void setActionButton(){
         tableauDeBord.boutonZoom.addActionListener(e->{
             TuileGraphique.zoom(GridTuile.DISTANCE_ZOOM);
             //gridTuile.setPreferredSize(new Dimension(10*GridTuile.DISTANCE_ZOOM+gridTuile.getSize().width,10*GridTuile.DISTANCE_ZOOM+gridTuile.getSize().height));
@@ -72,51 +93,40 @@ public class InterfaceDeJeu extends JFrame implements KeyListener, Runnable, Ser
             }
         });
         tableauDeBord.boutonMenu.addActionListener(e ->{
-            // Bouton menu
             String[] choix = {"Reprendre", "Enregistrer et aller au menu principal", "Aller au menu principal", "Quitter"};
-            int i = JOptionPane.showOptionDialog(null,
-                "Que souhaitez-vous faire ^^ ?",
-                "Menu",
-                JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, choix, choix[0]);
+        int i = JOptionPane.showOptionDialog(null,
+            "Que souhaitez-vous faire ^^ ?",
+            "Menu",
+            JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, choix, choix[0]);
 
-                if (i == 0); // reprendre ne change rien
-                else if(i == 1){
-                    // proposer de choisir le nom de la sauvegarde 
-                    String name = searchSave.nameSave();
+            if (i == 0); // reprendre ne change rien
+            else if(i == 1){
+                // proposer de choisir le nom de la sauvegarde 
+                String name = Save.nameSave();
 
-                    File fichier = new File(name + ".ser");
-                    try{
-                        // serialization de la partie
-                        FileOutputStream file = new FileOutputStream(fichier);
-                        ObjectOutputStream tmp = new ObjectOutputStream(file);
-                        tmp.writeObject(this);
+                Save.creerSave(this, name);
 
-                        tmp.close();
-                        file.close();
-                    }catch(Exception exception){exception.printStackTrace();}
+                //fermeture de la partie donc ouverture du menu principal
+                model.setJeuEtat(JeuEtat.GAME_INTERRUPT);
+                (new NiwaWindow()).run();
+            }else if(i == 2 || i == 3){
+                int q = -1;
+                while(!(q == 0 || q == 1)){
+                    // Avertissement avant de quitter et de perdre sa progression
+                    q = JOptionPane.showOptionDialog(null, "Si vous quittez maintenant, votre partie sera perdue.\n Voulez-vous continuez ?", 
+                    "Êtes-vous sûre ?", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, 
+                    null, null, null);
 
-                    model.getJeuEtat();
-                    //fermeture de la partie donc ouverture du menu principal
-                    model.setJeuEtat(JeuEtat.GAME_INTERRUPT);
-                    (new NiwaWindow()).run();
-                }else if(i == 2 || i == 3){
-                    int q = -1;
-                    while(!(q == 0 || q == 1)){
-                        // Avertissement avant de quitter et de perdre sa progression
-                        q = JOptionPane.showOptionDialog(null, "Si vous quittez maintenant, votre partie sera perdue.\n Voulez-vous continuez ?", 
-                        "Êtes-vous sûre ?", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, 
-                        null, null, null);
-
-                        if (q == JOptionPane.YES_OPTION) {
-                            // Confirmation du choix
-                            this.dispose();
-                            model.setJeuEtat(JeuEtat.GAME_INTERRUPT);
-                            if(i == 3) System.exit(0);
-                            else if(i == 2) (new NiwaWindow()).run();
-                        } else if (q == JOptionPane.NO_OPTION);
-                        else;
-                    }
-                };
+                    if (q == JOptionPane.YES_OPTION) {
+                        // Confirmation du choix
+                        dispose();
+                        model.setJeuEtat(JeuEtat.GAME_INTERRUPT);
+                        if(i == 3) System.exit(0);
+                        else if(i == 2) (new NiwaWindow()).run();
+                    } else if (q == JOptionPane.NO_OPTION);
+                    else;
+                }
+            };
         });
         tableauDeBord.boutonRotationAntiHoraire.addActionListener(e->{
             if(model.getJeuEtat()==JeuEtat.ROTATING_TUILE){
@@ -134,28 +144,10 @@ public class InterfaceDeJeu extends JFrame implements KeyListener, Runnable, Ser
                 repaint();
             }
         });
-        JPanel vueComplete=new JPanel(new BorderLayout());
-        vueComplete.setBackground(new Color(61, 58, 58));
-        vueComplete.add(scrollPane, BorderLayout.CENTER);
-        vueComplete.add(tableauDeBord,BorderLayout.LINE_END);
-        Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
-        size.width /= TABLEAU_DE_BORD_RATIO; // divide the width by 4
-        tableauDeBord.setPreferredSize(size);
-        //controleur=new Controleur(model, this);
-        //TODO: construire l'interface graphique (avec la tuileTemple du joueur0 comme la tuile initiale)
-        addKeyListener(gridTuile);
-        addKeyListener(this);
-        addWindowListener(new WindowAdapter() {
-            public void windowOpened(WindowEvent e) { 
-            requestFocus();	
-            }
+        tableauDeBord.boutonRegles.addActionListener(a->{
+            ManuelDuJeu mdj=new ManuelDuJeu();
         });
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        add(vueComplete, BorderLayout.CENTER);
-        //setLocationRelativeTo(null);
-        //setVisible(true);
     }
-
 
     /**
      * creer plateau
