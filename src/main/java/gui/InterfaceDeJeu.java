@@ -111,8 +111,10 @@ public class InterfaceDeJeu extends JFrame implements KeyListener, Runnable, Ser
                             // Confirmation du choix
                             this.dispose();
                             model.setJeuEtat(JeuEtat.GAME_INTERRUPT);
-                            if(i == 3) System.exit(0);
-                            else if(i == 2) (new NiwaWindow()).run();
+                            if(i == 3) {
+                                model.setJeuEtat(JeuEtat.GAME_INTERRUPT);
+                                System.exit(0);
+                            }else if(i == 2) (new NiwaWindow()).run();
                         } else if (q == JOptionPane.NO_OPTION);
                         else;
                     }
@@ -394,7 +396,25 @@ public class InterfaceDeJeu extends JFrame implements KeyListener, Runnable, Ser
                     System.out.println("----------nbTour:"+nbTour);
                     if(!model.isAiTraining()){
                         //game over donc affichage d'un message avec le classement des joueurs
-                    }
+                        String s = "Classement de la partie : ";
+                        int i = JOptionPane.showOptionDialog(null, 
+                            s + afficheGagnants(model.getGagneurs().size()),
+                            "Partie terminée", 
+                            JOptionPane.YES_NO_CANCEL_OPTION,
+                            JOptionPane.QUESTION_MESSAGE, null, 
+                            new String[]{"Nouvelle partie", "Aller au menu principal", "Quitter"}, null
+                        );
+                            
+                            if (i == JOptionPane.YES_OPTION){
+                                // Relance la fiche de choix de map
+                            }else if(i == JOptionPane.NO_OPTION){
+                                // retour au menu principal
+                                dispose();
+                                (new NiwaWindow()).run();
+                            }else if(i == JOptionPane.CANCEL_OPTION) {
+                                // quitter
+                                System.exit(0);
+                        };}
                 gameOver();
                 break;
                 //
@@ -409,15 +429,14 @@ public class InterfaceDeJeu extends JFrame implements KeyListener, Runnable, Ser
 
     public String afficheGagnants(int x){
         // Chaine de caractere contenant le classement de la partie
-        String res = "Classement de la partie : \n";
-
+        String res = "";
         for(int i = 0; i < x; i++){
             if(i == 0){
-                res = res + "   " + ((i + 1) + "er ->  " + model.getGagneurs().get(i).getID() + "(Grand gagnant/e de la partie) \n");
+                res = ((i + 1) + "er ->  " + model.getGagneurs().get(i).getID() + "(Grand gagnant/e de la partie) \n");
             }else if(i == 1){
-                res = res + "   " + ((i + 1) + "nd ->  " + model.getGagneurs().get(i).getID() + "\n");
+                res = res + ((i + 1) + "nd ->  " + model.getGagneurs().get(i).getID() + "\n");
             }else{
-                res = res + "   " + ((i + 1) + "rd -> " + model.getGagneurs().get(i) + "\n");
+                res = res + ((i + 1) + "rd -> " + model.getGagneurs().get(i) + "\n");
             }
         }
 
@@ -425,31 +444,26 @@ public class InterfaceDeJeu extends JFrame implements KeyListener, Runnable, Ser
     }
 
     public void gameOver(){
-        int i = -1;
-        while(i == -1){
-            i = JOptionPane.showOptionDialog(null, 
-                afficheGagnants(model.getGagneurs().size()),
-                "Partie terminée", 
-                JOptionPane.YES_NO_CANCEL_OPTION,
-                JOptionPane.QUESTION_MESSAGE, null, 
-                new String[]{"Nouvelle partie", "Aller au menu principal", "Quitter"}, null
-            );
-        }
+        String s = "Classement de la partie : ";
+        int i = JOptionPane.showOptionDialog(null, 
+            s + afficheGagnants(model.getGagneurs().size()),
+            "Partie terminée", 
+            JOptionPane.YES_NO_CANCEL_OPTION,
+            JOptionPane.QUESTION_MESSAGE, null, 
+            new String[]{"Nouvelle partie", "Aller au menu principal", "Quitter"}, null
+        );
             
-        if (i == JOptionPane.YES_OPTION){
-            // Relance une partie à partir des mêmes paramêtres
-            Jeu nv = new Jeu(StockageSettings.NB_HUMAIN, StockageSettings.NB_IA, StockageSettings.MAP_ETAT, StockageSettings.NB_TUILES);
-            model.setJeuEtat(JeuEtat.GAME_INTERRUPT);
-            InterfaceDeJeu jeu = new InterfaceDeJeu(nv);
-            jeu.start();    
-        }else if(i == JOptionPane.NO_OPTION){
-            // retour au menu principal
-            model.setJeuEtat(JeuEtat.GAME_INTERRUPT);
-            (new NiwaWindow()).run();
-        }else if(i == JOptionPane.CANCEL_OPTION) {
-            // quitter
-            System.exit(0);
-        }
+            if (i == JOptionPane.YES_OPTION){
+                // Relance la fiche de choix de map
+            }else if(i == JOptionPane.NO_OPTION){
+                // retour au menu principal
+                dispose();
+                (new NiwaWindow()).run();
+            }else if(i == JOptionPane.CANCEL_OPTION) {
+                // quitter
+                System.exit(0);
+        };
+
         model.gameOver();
         System.out.println("Game over!");//debug
         gridTuile.clearAllCircles();
@@ -751,39 +765,39 @@ public class InterfaceDeJeu extends JFrame implements KeyListener, Runnable, Ser
     }
 
 
-    ///scrollbar du plateau
-    class CustomScrollBarUI extends BasicScrollBarUI{   
-        CustomScrollBarUI(){}
+///scrollbar du plateau
+class CustomScrollBarUI extends BasicScrollBarUI{
+    CustomScrollBarUI(){
+      
+}
+@Override
+protected void configureScrollBarColors() {
+ 
+    super.thumbColor = Color.BLACK;
+    super.trackColor = new Color(61, 58, 58);
 
-        @Override
-        protected void configureScrollBarColors() {
-        
-            super.thumbColor = Color.BLACK;
-            super.trackColor = new Color(61, 58, 58);
+            }
+            @Override
+            protected JButton createDecreaseButton(int orientation) {
+            
+                return new JButton() {
+                    @Override
+                    public Dimension getPreferredSize() {
+                        return new Dimension(0, 0);
+                    }
+                };
+            }
 
-        }
-
-        @Override
-        protected JButton createDecreaseButton(int orientation) {
-        
-            return new JButton() {
-                @Override
-                public Dimension getPreferredSize() {
-                    return new Dimension(0, 0);
-                }
-            };
-        }
-
-        @Override
-        protected JButton createIncreaseButton(int orientation) {
-            // Remove the increase button
-            return new JButton() {
-                @Override
-                public Dimension getPreferredSize() {
-                    return new Dimension(0, 0);
-                }
-            };
-        }
+            @Override
+            protected JButton createIncreaseButton(int orientation) {
+                // Remove the increase button
+                return new JButton() {
+                    @Override
+                    public Dimension getPreferredSize() {
+                        return new Dimension(0, 0);
+                    }
+                };
+            }
 
     }
 
