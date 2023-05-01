@@ -1,6 +1,6 @@
 package main.java.model;
 
-public enum JeuEtat {
+public enum JeuEtat{
     CHOOSING_TUILE_LOCATION,
     ROTATING_TUILE,
 

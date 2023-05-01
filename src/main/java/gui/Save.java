@@ -104,6 +104,7 @@ public class Save {
     }
 
     public static InterfaceDeJeu ouvrirSave(File fichier){
+        if(fichier == null) return null;
         try{
             // execution de la deserialization
             FileInputStream file = new FileInputStream(fichier);

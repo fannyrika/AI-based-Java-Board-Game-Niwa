@@ -78,8 +78,10 @@ public class JouerFrame extends JPanel {
                             }
                         } catch (Exception e1) {
                             e1.printStackTrace();
-                            save.delete();
-                            JOptionPane.showMessageDialog(null, "Impossible d'ouvrir la sauvegarde :( ", "Erreur !", JOptionPane.ERROR_MESSAGE);
+                            if(save != null){
+                                save.delete();
+                                JOptionPane.showMessageDialog(null, "Impossible d'ouvrir la sauvegarde :( ", "Erreur !", JOptionPane.ERROR_MESSAGE);
+                            }
                         }
                     
                     }else if (o == JOptionPane.NO_OPTION);

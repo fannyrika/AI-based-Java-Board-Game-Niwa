@@ -101,14 +101,25 @@ public class InterfaceDeJeu extends JFrame implements KeyListener, Runnable, Ser
 
             if (i == 0); // reprendre ne change rien
             else if(i == 1){
-                // proposer de choisir le nom de la sauvegarde 
-                String name = Save.nameSave();
+                boolean tmp = false;
+                // On empêche le joueur de sauvegarder sa partie s'il n'a pas choisit où sa perle partait (problème de logique sinon)
+                if(model.getJeuEtat() == JeuEtat.CHOOSING_PEARL_DESTINATION){
+                    JOptionPane.showMessageDialog(null, "Veuillez d'abord sélectionnez le pion reçevant votre perle !", "Erreur !", JOptionPane.ERROR_MESSAGE);
+                    tmp = true;
+                }
 
-                Save.creerSave(this, name);
+                gridTuile.circlesToDraw.clear();
 
-                //fermeture de la partie donc ouverture du menu principal
-                model.setJeuEtat(JeuEtat.GAME_INTERRUPT);
-                (new NiwaWindow()).run();
+                if(tmp == false){
+                    // proposer de choisir le nom de la sauvegarde 
+                    String name = Save.nameSave();
+
+                    Save.creerSave(this, name);
+
+                    //fermeture de la partie donc ouverture du menu principal
+                    model.setJeuEtat(JeuEtat.GAME_INTERRUPT);
+                    (new NiwaWindow()).run();
+                }
             }else if(i == 2 || i == 3){
                 int q = -1;
                 while(!(q == 0 || q == 1)){
