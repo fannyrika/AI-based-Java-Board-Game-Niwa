@@ -3,6 +3,7 @@ package main.java.model;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.Stack;
 
 import main.java.model.interfaces.MapCreation;
 
@@ -17,6 +18,7 @@ public class Jeu implements MapCreation, Serializable{
      * Pourquoi avoir fait une liste de joueurs et pas un tableau ou autre ?
      * Si nous voulons rajouter un option qui permettra de jouer au jeu avec un nombre variable de joueurs, il est plus facile de passer par une liste.
      */
+    protected Stack<Joueur> podium = new Stack<Joueur>();
     protected ArrayList<Joueur> joueurs = new ArrayList<Joueur>();
     protected ArrayList<Joueur> gangeurs = new ArrayList<Joueur>();
     protected ArrayList<Joueur> perdants = new ArrayList<Joueur>();
@@ -207,12 +209,9 @@ public class Jeu implements MapCreation, Serializable{
                         //System.out.println("j.temple.getLocationInGridHexagone() = "+j.temple.getLocationInGridHexagone());
                         if(!p.getLocation().equals(j.temple.getLocationInGridHexagone())){    // On exclue le cas où le pion est dans sa propre base
                             System.out.println("Le joueur "+j.id+" a gagné");
-                            //setGagneur(j);
                             //find the player who lost, that means find the propriety of the temple
                             for (Joueur joueur : joueurs) {
-                                System.out.println("TOUR mr : "+joueur.id + " | " + joueur.temple.getLocationInGridHexagone());
                                 if(joueur.temple.getLocationInGridHexagone().equals(p.getLocation())){
-                                    System.out.println("DAAAAAAMMMMN mr : "+joueur.id + " | " + joueur.temple.getLocationInGridHexagone());
                                     perdants.add(joueur);
                                 }
                             }
@@ -325,15 +324,6 @@ public class Jeu implements MapCreation, Serializable{
             }}
         //to do: afficher les info....
     }
-
-    public boolean gameOverTest(int nbTour){
-        if(this.getGagneurs().size()==this.getJoueurs().size()-1 || this.getPerdants().size()==this.getJoueurs().size()-1 || nbTour>200){
-            System.out.println("----------nbTour:"+nbTour);
-            gameOver();
-            return true;
-        }
-        return false;
-    }
     
     //setters
     public void setJoueurCourant(Joueur j){ joueurCourant=j;}
@@ -342,6 +332,7 @@ public class Jeu implements MapCreation, Serializable{
     public void setPerdant(Joueur j){ 
         if(!perdants.contains(j)){
             perdants.add(j);
+            podium.push(j);
             for (Pion p : j.pions) {
                 plateau.gridPion.remove(p.getLocation());
             }
@@ -350,6 +341,7 @@ public class Jeu implements MapCreation, Serializable{
     public void setPerdantPar(Joueur perdant, Joueur gagnant){
         if(!perdants.contains(perdant)){
             perdants.add(perdant);
+            podium.push(perdant);
             for (Pion p : perdant.pions) {
                 p.setProprietaire(gagnant);
                 gagnant.pions.add(p);
@@ -381,6 +373,7 @@ public class Jeu implements MapCreation, Serializable{
         sacTemples.remove(sacTemples.size()-1);
         return temple;
     }
+    public Stack<Joueur> getPodium(){return podium;}
 
     public void resetAlmostBlockedCount(){almostBlockedCount=0;}
     public void incrementAlmostBlockedCount(){almostBlockedCount++;}

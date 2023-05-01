@@ -416,18 +416,14 @@ public class InterfaceDeJeu extends JFrame implements KeyListener, Runnable, Ser
         }
     }
 
-    public String afficheGagnants(int x){
+    public String afficheGagnants(){
         // Chaine de caractere contenant le classement de la partie
         String res = "Classement de la partie : \n";
+        int classement = 1;
 
-        for(int i = 0; i < x; i++){
-            if(i == 0){
-                res = res + "   " + ((i + 1) + "er ->  " + model.getGagneurs().get(i).getID() + "(Grand gagnant/e de la partie) \n");
-            }else if(i == 1){
-                res = res + "   " + ((i + 1) + "nd ->  " + model.getGagneurs().get(i).getID() + "\n");
-            }else{
-                res = res + "   " + ((i + 1) + "rd -> " + model.getGagneurs().get(i) + "\n");
-            }
+        while (!model.getPodium().isEmpty()) {
+            res = res + "   " + (classement + ". ->  " + model.getPodium().pop() +"\n");
+            classement++;
         }
 
         return res;
@@ -435,12 +431,15 @@ public class InterfaceDeJeu extends JFrame implements KeyListener, Runnable, Ser
 
     public void gameOver(){
         if(!model.isAiTraining()){
+            if(model.getGagneurs().size() > 0){
+                model.getPodium().push(model.getGagneurs().get(model.getGagneurs().size()-1));
+            }
             //print debug info
             System.out.println("debugggg=============");
             //game over donc affichage d'un message avec le classement des joueurs
             String s = "Classement de la partie : ";
             int i = JOptionPane.showOptionDialog(null, 
-                s + afficheGagnants(model.getGagneurs().size()),
+                s + afficheGagnants(),
                 "Partie terminée", 
                 JOptionPane.YES_NO_CANCEL_OPTION,
                 JOptionPane.QUESTION_MESSAGE, null, 
