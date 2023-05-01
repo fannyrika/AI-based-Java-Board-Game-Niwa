@@ -32,6 +32,8 @@ public class InterfaceDeJeu extends JFrame implements KeyListener, Runnable, Ser
     protected GridTuile gridTuile;
     protected TableauDeBord tableauDeBord;
     protected static JScrollPane scrollPane;
+
+    protected int tour;
     
     public InterfaceDeJeu(Jeu m){
         setLayout(new BorderLayout());
@@ -228,15 +230,15 @@ public class InterfaceDeJeu extends JFrame implements KeyListener, Runnable, Ser
                 break;
             }
         }
-        tableauDeBord.boutonRotationAntiHoraire.setVisible(false);
-        tableauDeBord.boutonRotationHoraire.setVisible(false);
-        
     }
                                    
     /**
      * dealing the loop of the game
      */
     public void jouer() {
+        tableauDeBord.boutonRotationAntiHoraire.setVisible(false);
+        tableauDeBord.boutonRotationHoraire.setVisible(false);
+        
         if(model.getJeuEtat() == JeuEtat.GAME_INTERRUPT){return;}
         //2 ai players trains each other
         if(model.isAiTraining()){
@@ -267,17 +269,20 @@ public class InterfaceDeJeu extends JFrame implements KeyListener, Runnable, Ser
             nbTour++;
             ArrayList<Joueur> joueurListeComplete = new ArrayList<>(model.getJoueurs());
             //for(int i=0; i<model.getJoueurs().size(); i++) System.out.println("affiche joueurs:"+model.getJoueurs().get(i));
-            for(int i=0; i<model.getJoueurs().size(); i++){
+            while(tour < model.getJoueurs().size()){
+                // On regarde si le joueur courant est bloqué, et si oui, il rentrera dans la liste des perdants
+                model.verifyIfPlayerBlocked();
                 //skip the player if he is in the perdant list
                 if(!model.isAiTraining())
-                    if(model.getPerdants().contains(model.getJoueurs().get(i))){
+                    if(model.getPerdants().contains(model.getJoueurs().get(tour))){
+                        tour++;
                         continue;
                     }
                 model.resetAlmostBlockedCount();
 
                 //controleur.rotationTmp=0;
                 System.out.println("current player changed!");//debug
-                model.setJoueurCourant(joueurListeComplete.get(i));
+                model.setJoueurCourant(joueurListeComplete.get(tour));
                 System.out.println(model.getJoueurCourant());//debug
                 tableauDeBord.setJoueurCourant("<html> "+model.getJoueurCourant()+"</html>");
                 SwingUtilities.invokeLater(() -> {
@@ -387,11 +392,13 @@ public class InterfaceDeJeu extends JFrame implements KeyListener, Runnable, Ser
                 //        System.out.println("eliminer the current player");
                 //        model.eliminerJoueur(model.getJoueurCourant());
                 //}
+                tour++;
             }
+            tour = 0;
             System.out.println("gagneurs:"+model.getGagneurs());
             System.out.println("perdants:"+model.getPerdants());
             System.out.println("joueurs:"+model.getJoueurs());
-            if(model.getGagneurs().size()==model.getJoueurs().size()-1 || model.getPerdants().size()==model.getJoueurs().size()-1 || nbTour>200){
+            if(model.getPerdants().size() == model.getJoueurs().size()-1 || nbTour>200){
                 //print the q-table
                 //((JoueurIA) (model.getJoueurCourant())).getQTable().print();
                     //System.out.println("----------nbTour:"+nbTour);
@@ -442,6 +449,9 @@ public class InterfaceDeJeu extends JFrame implements KeyListener, Runnable, Ser
                 
                 if (i == JOptionPane.YES_OPTION){
                     // Relance la fiche de choix de map
+                    dispose();
+                    new InterfaceDeJeu(new Jeu(StockageSettings.NB_HUMAIN, StockageSettings.NB_IA, StockageSettings.MAP_ETAT, StockageSettings.NB_TUILES)).start();
+                    return;
                 }else if(i == JOptionPane.NO_OPTION){
                     // retour au menu principal
                     dispose();
@@ -480,12 +490,10 @@ public class InterfaceDeJeu extends JFrame implements KeyListener, Runnable, Ser
         }
         jouer();
         dispose();
-        //TODO: quitter le jeu (fermer la fen锚tre etc...)
     }
 
     public void afficherInstruction(String str){
         System.out.println(str);//debug
-        //TODO
         str="<html> <div>"+str+"</div></html>";
         tableauDeBord.setEtapeCourante(str);
     }

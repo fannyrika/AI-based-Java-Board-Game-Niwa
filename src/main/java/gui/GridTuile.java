@@ -392,6 +392,7 @@ public class GridTuile extends JPanel implements KeyListener, MouseInputListener
                         }
                         else if(model.getJeuEtat()==JeuEtat.PLACING_PION){
 
+                            // Cas ou le joueur veut changer son choix du pion
                             if(model.getPlateau().getGridPion().containsKey(c.getLocationInGridHexagone()) && model.getPlateau().getGridPion().get(c.getLocationInGridHexagone()).getProprietaire() == model.getJoueurCourant()){
                                 model.setPionCourant(pionChoisi);
                                 circlesToDraw.clear();

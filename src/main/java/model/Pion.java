@@ -61,6 +61,9 @@ public class Pion extends Stack<Couleurs> implements Serializable{
         this.location = c;
         isPlaced = true;
     }
+    public void setProprietaire(Joueur j){
+        this.proprietaire = j;
+    }
 
     public void setLocation(int x, int y){setLocation(new Coordonnee(x, y));}
 

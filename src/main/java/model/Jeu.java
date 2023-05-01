@@ -188,7 +188,16 @@ public class Jeu implements MapCreation, Serializable{
      * @return -> true s'il a atteint un temple adverse, false sinon
      */
     public boolean aGagne(Joueur j){
-        //System.out.println("inside aGagne");
+        boolean rep = false;
+        /*
+         * On voudrait que si le joueur a éliminer un joueur, il puisse absorber ses pions.
+         * Mais pour cela, il faudrait ajouter les pions du joueurs perdant dans la liste de pion du joueur ici.
+         * Le soucis, c'est qu'on ne peut pas ajouter quelque chose dans une liste lorsqu'on la parcours.
+         * Pour ce faire, on va juste prendre une liste dans laquelle on va mettre le/les perdants.
+         * Puis à la fin de la boucle, lui voler ses pions...
+         */
+        ArrayList<Joueur> perdants = new ArrayList<Joueur>();
+
         for (Pion p : j.getPions()){            // On regarde chaque pion du joueur
             if(p.getLocation() != null){        // On vérifie que le pion est placé
                 Hexagone emplacement = plateau.getGridHexagone().get(p.getLocation());        // On regarde sur quel hexagone le pion est posé
@@ -198,47 +207,42 @@ public class Jeu implements MapCreation, Serializable{
                         //System.out.println("j.temple.getLocationInGridHexagone() = "+j.temple.getLocationInGridHexagone());
                         if(!p.getLocation().equals(j.temple.getLocationInGridHexagone())){    // On exclue le cas où le pion est dans sa propre base
                             System.out.println("Le joueur "+j.id+" a gagné");
-                            setGagneur(j);
+                            //setGagneur(j);
                             //find the player who lost, that means find the propriety of the temple
                             for (Joueur joueur : joueurs) {
+                                System.out.println("TOUR mr : "+joueur.id + " | " + joueur.temple.getLocationInGridHexagone());
                                 if(joueur.temple.getLocationInGridHexagone().equals(p.getLocation())){
-                                    setPerdant(joueur);
+                                    System.out.println("DAAAAAAMMMMN mr : "+joueur.id + " | " + joueur.temple.getLocationInGridHexagone());
+                                    perdants.add(joueur);
                                 }
                             }
-                            return true;
+                            rep = true;
                         }
                     }
                 }
             }
         }
-        return false;
+        // On absorbe les pions ici
+        if(rep){
+            for (Joueur joueur : perdants) {
+                setPerdantPar(joueur,j);
+            }
+        }
+        return rep;
     }
 
-    public void verifyIfPlayerBlocked(){
+    public boolean verifyIfPlayerBlocked(){
         System.out.println("------------------------");
         System.out.println("verifyIfPlayerBlocked");
         System.out.println("------------------------");
-        int nbBlockedPion = 0;
-        Pion pionCourant = getPionCourant();
-        for (Pion pionReal : getJoueurCourant().getPions()) {
-            setPionCourant(pionReal);
-            //case 1: pion is blocked
-            if (getPlateau().canMoveLocations(getPionCourant())==null){
-                System.out.println("Pion is blocked");
-                nbBlockedPion++;
+
+        for (Pion p : joueurCourant.getPions()) {
+            if(getPlateau().canMoveLocations(p).size() > 0){
+                return false;
             }
         }
-        //all pions are blocked
-        if (nbBlockedPion==getJoueurCourant().getPions().size()){
-            if(isAiTraining()){
-            //dont eliminate the player
-                setPerdant(joueurCourant);
-            }else{
-                perdants.add(joueurCourant);
-            }
-        }
-        //set back the pion courant
-        setPionCourant(pionCourant);
+        setPerdant(joueurCourant);
+        return true;
     }
 
     /**
@@ -321,14 +325,37 @@ public class Jeu implements MapCreation, Serializable{
             }}
         //to do: afficher les info....
     }
+
+    public boolean gameOverTest(int nbTour){
+        if(this.getGagneurs().size()==this.getJoueurs().size()-1 || this.getPerdants().size()==this.getJoueurs().size()-1 || nbTour>200){
+            System.out.println("----------nbTour:"+nbTour);
+            gameOver();
+            return true;
+        }
+        return false;
+    }
     
     //setters
     public void setJoueurCourant(Joueur j){ joueurCourant=j;}
     public void setPionCourant(Pion p){ pionCourant=p;}
     //set perdant
     public void setPerdant(Joueur j){ 
-        if(!perdants.contains(j))
-            perdants.add(j);}
+        if(!perdants.contains(j)){
+            perdants.add(j);
+            for (Pion p : j.pions) {
+                plateau.gridPion.remove(p.getLocation());
+            }
+        }
+    }
+    public void setPerdantPar(Joueur perdant, Joueur gagnant){
+        if(!perdants.contains(perdant)){
+            perdants.add(perdant);
+            for (Pion p : perdant.pions) {
+                p.setProprietaire(gagnant);
+                gagnant.pions.add(p);
+            }
+        }
+    }
     public void setGagneur(Joueur j){ 
         if(!gangeurs.contains(j))
             gangeurs.add(j);}
