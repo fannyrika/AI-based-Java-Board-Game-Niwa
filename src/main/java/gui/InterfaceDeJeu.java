@@ -678,11 +678,13 @@ public class InterfaceDeJeu extends JFrame implements KeyListener, Runnable, Ser
                     if(model.getJeuEtat()==JeuEtat.CHANGING_VIEW){
                         //sortir la mode
                         model.setJeuEtat(model.getDernierEtat());
+                        gridTuile.viewModeChanged(false);
                         break;
                     }
                     //sinon entrer la mode
                     model.setDernierEtat(model.getJeuEtat());
                     model.setJeuEtat(JeuEtat.CHANGING_VIEW);
+                    gridTuile.viewModeChanged(true);
                     break;
                 case 'n':   // next step
                     if( model.getJeuEtat()==JeuEtat.CHOOSING_TUILE_LOCATION ||

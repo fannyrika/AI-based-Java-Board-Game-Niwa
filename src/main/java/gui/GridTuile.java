@@ -117,6 +117,38 @@ public class GridTuile extends JPanel implements KeyListener, MouseInputListener
         }
     }
 
+    public class CursorViewMode extends Cursor {
+
+        protected Point point;
+        protected boolean zoomMode;
+
+        public CursorViewMode(int type, Point point, boolean zoomMode) {
+            super(type);
+            this.point = point;
+            this.zoomMode = zoomMode;
+        }
+
+        public void draw(Graphics g, Point p){
+            Graphics2D g2d = (Graphics2D) g;
+
+            Color oldColor = g2d.getColor();
+
+            g2d.setColor(Color.GRAY);
+
+            if(zoomMode){
+                g2d.fillRect(point.x+5, point.y-20, 95,20);
+                g2d.setColor(Color.BLACK);
+                g2d.drawString("MOVE & ZOOM", point.x+10, point.y-5);
+            }
+            else{
+                g2d.fillRect(point.x+5, point.y-20, 55,20);
+                g2d.setColor(Color.BLACK);
+                g2d.drawString("IN GAME", point.x+10, point.y-5);
+            }
+
+            g2d.setColor(oldColor);
+        }
+    }
     /**
      * Le model sur lequel le graphique se base
      */
@@ -145,6 +177,7 @@ public class GridTuile extends JPanel implements KeyListener, MouseInputListener
     protected ArrayList<Circle> circlesToDraw = new ArrayList<Circle>(); 
 
     transient Timer vibe = new Timer();
+    transient Timer viewMode = new Timer();
 
     /**
      * Constructeur
@@ -231,6 +264,10 @@ public class GridTuile extends JPanel implements KeyListener, MouseInputListener
 
         if(getCursor() instanceof CursorInfo){
             CursorInfo cursor = (CursorInfo) getCursor();
+            cursor.draw(mainGraphics, cursor.point);
+        }
+        else if(getCursor() instanceof CursorViewMode){
+            CursorViewMode cursor = (CursorViewMode) getCursor();
             cursor.draw(mainGraphics, cursor.point);
         }
 
@@ -562,6 +599,29 @@ public class GridTuile extends JPanel implements KeyListener, MouseInputListener
                 }
                 if(time == 0){
                     cancel();
+                }
+                time--;
+            }
+            
+        },5,15);
+    }
+
+    public void viewModeChanged(boolean zoomMode){
+        vibe.schedule(new TimerTask() {
+
+            int time = 31;
+            Cursor old = getCursor();
+
+            @Override
+            public void run() {
+
+                setCursor(new CursorViewMode(old.getType(),getMousePosition(),zoomMode));
+                repaint();
+
+                if(time == 0){
+                    cancel();
+                    setCursor(old);
+                    repaint();
                 }
                 time--;
             }
