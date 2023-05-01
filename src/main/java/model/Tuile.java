@@ -46,9 +46,9 @@ public class Tuile implements Serializable{
      */
     public Tuile(){
         Random r = new Random();
-        int typeID = r.nextInt(0, 2);
-        int couleurID = r.nextInt(0, 6);
-        int rotationID = r.nextInt(0, 3);
+        int typeID = r.nextInt(2);
+        int couleurID = r.nextInt(6);
+        int rotationID = r.nextInt(3);
         this.fillTuileByID(typeID, couleurID, rotationID);
     }
 

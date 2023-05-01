@@ -1,11 +1,12 @@
 package main.java.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  * Represents the state of the game: store all the info of the pions
  */
-public class State{
+public class State implements Serializable{
     //representes the state of the game: store all the info of the pions
     protected ArrayList<Pion> pions= new ArrayList<Pion>();
 
