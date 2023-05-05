@@ -1,23 +1,36 @@
 package main.java.model;
 
-/*
+import java.io.Serializable;
+
+/**
  * La classe Coordonnee va servir pour définir le plateau
  */
-public class Coordonnee {
+public class Coordonnee implements Serializable{
 
-    /*
+    /**
      * Attributs permettant de définir une coordonnee
      */
     protected int x;
     protected int y;
 
-    /*
+    /**
      * Constructeur prenant un "x" et "y", et les affectant aux attributs
      */
     public Coordonnee(int x, int y){
         this.x = x;
         this.y = y;
     }
+    
+    /**
+     * deep copy constructor
+     */
+    public Coordonnee(Coordonnee c){
+        this.x = c.x;
+        this.y = c.y;
+    }
+
+    public int getX(){return x;}
+    public int getY(){return y;}
     
     /*
      * Pourquoi redéfinir equals() et hashCode() ?
@@ -33,13 +46,14 @@ public class Coordonnee {
      */
 
     /**
-     * Méthode qui @return true si les deux references pointent vers le même objet ou qu'ils ont les mêmes "x" et "y"
+     * @return true si les deux references pointent vers le même objet ou s'ils ont les mêmes "x" et "y"
      */
     @Override
     public boolean equals(Object o){
         if(o == null || getClass() != o.getClass()){
             return false;
         }
+        //System.out.println("equals() called");
         if(this == o){
             return true;
         }
@@ -52,6 +66,11 @@ public class Coordonnee {
         hash = 31 * hash + this.x;
         hash = 31 * hash + this.y;
         return hash;
+    }
+
+    @Override
+    public String toString(){
+        return getClass().getName()+"@"+Integer.toHexString(hashCode())+" -> [x = "+x+", y = "+y+"]";
     }
     
 }

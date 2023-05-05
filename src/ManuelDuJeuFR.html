@@ -1,0 +1,104 @@
+<!DOCTYPE html">
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <title>Manuel de jeu</title>
+  
+    <style type="text/css">
+      title{
+        color: #2d7ad3;
+      }
+      body{
+        margin: 10px 0 ;
+        padding: 0 ;
+        text-align: center ;
+      }
+      h2{
+        margin-left: 25px ;
+        margin-right: 25px;
+        padding-left: 5px ;
+        font-size: 1.8em ;
+        border-bottom: 1px solid #ff5733 ;
+        border-left: 3px solid #ff5733 ;
+        color: #ff5733 ;
+      }
+
+      h3{
+        padding-left: 25px ;
+        line-height: 25px ;
+        font-size: 1.4em ;
+        color: #2d7ad3 ;
+      }
+
+      h1{
+        color: #2d7ad3 ;
+        font-size: 2.2em ;
+      }
+    </style>
+  </head>
+  
+
+  <body>
+  <div id="règles">    
+    <h1 id="regle_jeu"><span>Niwa ~ Règles du jeu</span></h1>
+    
+    <div id="but_jeu">
+      <h2>But du jeu</h2>
+      <p>Être le premier à atteindre, avec l'un de ses trois personnages, la base adverse</p>
+    </div>
+
+    <div id="make_plateau">
+      <h2>Préparation du plateau</h2>
+        <p>Composer un circuit de jeu à l'aide des 12 tuiles en plaçant les deux bases à l'opposée l'une de l'autre.<br />
+            Le plateau ainsi créé représente un jardin japonais constitué de cases délimitées par des lignes de différentes couleurs
+            (Attention à bien connecter les illustrations des tuiles).<br />
+            Chaque joueur choisit une couleur et prend les 3 personnages de la couleur correspondante.<br />
+            Sur chacun, il dispose 2 perles de même couleur.<br />
+            Il pose ensuite ses 3 personnages sur 3 des 6 cases de son choix mais adjacentes à sa base.
+        </p>
+    </div>
+
+    <div id="deroulement_partie">
+      <h2>Déroulement de la partie</h2>
+        <h3>Les déplacements :</h3>
+        <p>&bull; Pour se déplacer d'une case à une autre, le personnage doit franchir les lignes de couleur. Pour
+          cela, il faut qu'il ait au sommet de sa tête, la perle de la couleur correspondant à la ligne à franchir.
+          (Attention, le personnage ne peut franchir qu'une ligne par perle).
+          Une fois la ligne franchie, le joueur prend la perle utilisée pour ce déplacement et la pose au
+          sommet de la tête d'un autre de ses personnages.
+          Le personnage qui vient de se déplacer a donc maintenant au sommet de la tête une autre perle
+          accessible qu'il peut utiliser pour franchir une nouvelle ligne. Ainsi lors d'un même déplacement,un personnage peut utiliser la totalité de ses perles.
+          <br><br>
+          &bull; Lors de son tour de jeu, le joueur peut décider de ne pas se déplacer et effectuer uniquement
+          une passe de perle : il déplace alors la perle du sommet de la tête d'un de ses personnages sur le
+          sommet de la tête d'un autre de ses personnages.
+          <br><br>
+          <strong>NB1 :</strong> Un personnage ne peut pas stationner sur sa propre base.<br />
+          <strong>NB2 :</strong> Un personnage ne peut ni passer ni s'arrêter sur une case déjà occupée.</p>
+
+        <h3>Les rencontres :</h3>
+          <p> Lorsque deux personnages (adverses ou non) se trouvent sur des cases adjacentes, il y a rencontre.
+            <br>&bull;<strong> Cas n°1 :</strong> un des personnages ne possède aucune perle sur la tête : il peut lors de son tour de jeu, 
+            sauter par-dessus l'autre personnage et se poser sur l'une des 3 cases situées derrière ce personnage. 
+            Si aucune de ces 3 cases n'est disponible, il peut se déplacer jusqu'à l'une des 2 cases suivantes. 
+            (dans ce cas il saute alors deux cases)
+            <br />&bull; 
+            <strong>Cas n°2 :</strong> Les deux personnages sont chargés de perles, ils se bloquent mutuellement le passage sur leur case 
+            respective. Ils devront alors se contourner ou vider leur chargement de perles (pour pouvoir avancer).
+            <br><br><strong>NB3 :</strong> Lors d'un même tour de jeu, un personnage peut utiliser tout son chargement, arriver sans perle 
+            devant un autre personnage et ainsi sauter par-dessus lui.
+            <br><strong>NB4 :</strong> On ne peut pas cumuler plusieurs rencontres dans le même tour de jeu
+            <br><strong>NB5 :</strong> Lors de ces déplacements, on ne tient pas compte de la couleur des lignes franchies.
+          </p>
+    </div>
+
+    <div id="end">
+      <h2>Fin de la partie :</h2>
+        <p>Dès qu'un joueur atteint la base adverse avec l'un de ses personnages, il est déclaré vainqueur ! 
+        </p>
+    </div>
+
+
+  </div>
+  </body>
+</html>

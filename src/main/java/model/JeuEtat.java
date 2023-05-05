@@ -1,0 +1,20 @@
+package main.java.model;
+
+public enum JeuEtat{
+    CHOOSING_TUILE_LOCATION,
+    ROTATING_TUILE,
+
+    PLACING_START_PION,
+
+    CHOOSING_PION,
+    PLACING_PION,
+    CHOOSING_PEARL_DESTINATION,
+    
+    CONTINUE,
+
+    GAME_OVER,
+
+    CHANGING_VIEW,
+
+    GAME_INTERRUPT;
+}
